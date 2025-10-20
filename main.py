@@ -1,7 +1,6 @@
 from pylatex import Document, Command, Enumerate
 from pylatex.utils import NoEscape
 from question_registry import create_question, Question
-import sympy as sp
 import logging
 import subprocess
 import os
