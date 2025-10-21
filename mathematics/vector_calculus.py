@@ -24,6 +24,6 @@ def generate_random_vector_field_component(dimension: int, C: CoordSys3D):
 def generate_random_vector_field(dimension: int, C: CoordSys3D):
     x_component = generate_random_vector_field_component(dimension, C)
     y_component = generate_random_vector_field_component(dimension, C)
-    z_component = 0 if dimension == 2 else generate_random_vector_field_component(dimension, C)
+    z_component = generate_random_vector_field_component(dimension, C) if dimension == 3 else 0
     F = x_component*C.i + y_component*C.j + z_component*C.k
     return F
