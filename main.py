@@ -11,7 +11,9 @@ RED = "\033[91m"
 PURPLE = "\033[35m"
 RESET = "\033[0m"
 PERMISSION_ERROR_STR = " is being used by other processes and cannot be deleted. Close it before attempting to rerun the problem sheet generation process."
-PROCESS_ERROR_STR =" LaTeX failed to process. This is mostly likely due to a mistake in the LaTeX syntax, the output files can't be overwritten or an issue with your LaTeX installation (such as not having Perl installed). See the log file for more details.\n\n An attempt will now be made to delete the output files to prevent issues when rerunning the code.\n"
+PROCESS_ERROR_STR =" LaTeX failed to process. This is mostly likely due to a mistake in the LaTeX syntax, the output files can't be overwritten or an " \
+    "issue with your LaTeX installation (such as not having Perl installed). See the log file for more details.\n\nAn attempt will now be made to delete " \
+    "the output files to prevent issues when rerunning the code."
 
 
 def fill_preamble(doc: Document, title: str, author: str = "", date: str ="") -> None:
@@ -32,13 +34,14 @@ if __name__ == "__main__":
     doc = Document()
     question: Question = create_question("vector_calculus", "line_integral")
     fill_preamble(doc, "Line Integral Questions")
-    while True:
+    n=1
+    """ while True:
         n = input("Enter number of questions:")
         try:
             n = int(n)
             break
         except:
-            print("That is not a valid input. Please try again.")
+            print("That is not a valid input. Please try again.") """
     with doc.create(Enumerate()) as enum:
         for i in range(n):
             enum.add_item(question.generate_question_latex())
