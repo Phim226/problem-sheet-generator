@@ -5,7 +5,7 @@ from sympy.vector import Vector, CoordSys3D, ParametricRegion, vector_integrate
 import sympy as sp
 from pylatex.utils import NoEscape
 from question_registry import register_question_type
-from mathematics.vector import generate_random_vector_field
+from mathematics.vector_calculus import generate_random_vector_field
 
 class Question(ABC):
     def __init__(self, topic: str, nested: bool = False, difficulty: str = "easy"):
