@@ -9,24 +9,24 @@ import os
 RED = "\033[91m"
 PURPLE = "\033[35m"
 RESET = "\033[0m"
-PERMISSION_ERROR_STR = " is being used by other processes and cannot be deleted. Close it before attempting to rerun the worksheet generation process."
-PROCESS_ERROR_STR =" LaTeX failed to process. This is mostly likely due to a mistake in the LaTeX syntax or the output files can't be overwritten. See the log file for more details.\n\n An attempt will now be made to delete the output files to prevent issues when rerunning the code.\n"
+PERMISSION_ERROR_STR = " is being used by other processes and cannot be deleted. Close it before attempting to rerun the problemsheet generation process."
+PROCESS_ERROR_STR =" LaTeX failed to process. This is mostly likely due to a mistake in the LaTeX syntax, the output files can't be overwritten or an issue with your LaTeX installation (such as not having Perl installed). See the log file for more details.\n\n An attempt will now be made to delete the output files to prevent issues when rerunning the code.\n"
 
 
-def configure_log():
+def configure_log() -> None:
     level = logging.DEBUG
     format = "[%(levelname)s] - %(message)s"
     logging.basicConfig(level = level, format = format)
 
 
-def fill_preamble(doc: Document, title: str, author: str = "", date: str =""):
+def fill_preamble(doc: Document, title: str, author: str = "", date: str ="") -> None:
     doc.preamble.append(Command("usepackage", "geometry", "left=2.5cm, right=2.5cm"))
     doc.preamble.append(Command("title", title))
     doc.preamble.append(Command("author", author))
     doc.preamble.append(Command("date", date))
     doc.append(NoEscape(r"\maketitle"))
 
-def try_delete_file(file_name: str):
+def try_delete_file(file_name: str) -> None:
     try:
         os.remove(file_name)
     except PermissionError as e:
