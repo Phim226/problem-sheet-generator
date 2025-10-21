@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict
 from sympy.abc import t
-from sympy.vector import VectorAdd, CoordSys3D, ParametricRegion, vector_integrate
+from sympy.vector import Vector, CoordSys3D, ParametricRegion, vector_integrate
 import sympy as sp
 from pylatex.utils import NoEscape
 from question_registry import register_question_type
@@ -42,7 +42,7 @@ class VectorCalculusQuestion(Question):
         
         C = CoordSys3D("C")
         self._curve = ParametricRegion((2*t, t, 2*t**2), (t, 0, 1))
-        self._F: VectorAdd = C.y*C.i + C.x*C.j + C.z*C.k
+        self._F: Vector = C.y*C.i + C.x*C.j + C.z*C.k
 
     def _reformat_vector_field_latex(self, latex: str) -> str:
         vector_field_latex_dict: Dict[str, str] = {r"\left(": "", r"\right)": "", "_{C}": "", r"\mathbf{{x}}": "x", r"\mathbf{{y}}": "y", r"\mathbf{{z}}": "z",}
