@@ -44,12 +44,13 @@ class VectorCalculusQuestion(Question):
         C = CoordSys3D("C")
         self._curve = ParametricRegion((2*t, t, 2*t**2), (t, 0, 1))
         self._F: Vector = generate_random_vector_field(dimension, C)
+        self._F: Vector = (1+C.x)*C.i + -2*C.y*C.j + C.z*C.k
 
     def _reformat_vector_field_latex(self, latex: str) -> str:
-        vector_field_latex_dict: Dict[str, str] = {r"\left(": "", r"\right)": "", "_{C}": "", r"\mathbf{{x}}": "x", r"\mathbf{{y}}": "y", r"\mathbf{{z}}": "z",}
+        vector_field_latex_dict: Dict[str, str] = {"_{C}": "", r"\mathbf{{x}}": "x", r"\mathbf{{y}}": "y", r"\mathbf{{z}}": "z", r"+ -": "-"}
         for unwanted_latex, replacement_latex in vector_field_latex_dict.items():
             latex = latex.replace(unwanted_latex, replacement_latex)
-        return rf"${self.VECTOR_FIELD_SYMBOL_LATEX}{"(x, y, z)" if self._dimension == 3 else "{x, y}"}={latex}$"
+        return rf"${self.VECTOR_FIELD_SYMBOL_LATEX}{"(x, y, z)" if self._dimension == 3 else "(x, y)"}={latex}$"
     
     def _format_curve_latex(self, curve: ParametricRegion) -> str:
         curve_def_x: str = sp.latex(curve.definition[0])
@@ -57,12 +58,14 @@ class VectorCalculusQuestion(Question):
         curve_def_z: str = sp.latex(curve.definition[2])
         curve_lower_lim: int = curve.limits[t][0]
         curve_upper_lim: int = curve.limits[t][1]
-        return rf"$\mathbf{{r}}(t)={curve_def_x}{self.I_HAT_LATEX}+{curve_def_y}{self.J_HAT_LATEX}+{curve_def_z}{self.K_HAT_LATEX}$ for ${curve_lower_lim}\le t\le {curve_upper_lim}$"
+        return rf"$\mathbf{{r}}(t)={curve_def_x}{self.I_HAT_LATEX}+{curve_def_y}{self.J_HAT_LATEX}+{curve_def_z}{self.K_HAT_LATEX}$ "\
+            rf"for ${curve_lower_lim}\le t\le {curve_upper_lim}$"
 
     def generate_question_latex(self) -> str:
         vector_field_latex: str = self._reformat_vector_field_latex(sp.latex(self._F))
         curve_latex: str = self._format_curve_latex(self._curve)
-        return NoEscape(rf"Let ${self.VECTOR_FIELD_SYMBOL_LATEX}$ be the vector field {vector_field_latex} and $C$ the curve given by {curve_latex}. Calculate $\displaystyle\int_C{self.VECTOR_FIELD_SYMBOL_LATEX}\cdot\mathbf{{dr}}$.")
+        return NoEscape(rf"Let ${self.VECTOR_FIELD_SYMBOL_LATEX}$ be the vector field {vector_field_latex} and $C$ the curve given by {curve_latex}. "\
+                        rf"Calculate $\displaystyle\int_C{self.VECTOR_FIELD_SYMBOL_LATEX}\cdot\mathbf{{dr}}$.")
     
     def generate_answer(self):
         return super().generate_answer()
