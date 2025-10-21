@@ -34,12 +34,12 @@ class VectorCalculusQuestion(Question):
     def __init__(self, topic: str, subtopic: str = "", dim: int = 3):
         super().__init__(topic)
 
-        if (dim != 2) or (dim !=3):
+        if dim not in (2, 3):
             raise ValueError(f"{dim} is not a valid dimension. Vector calculus questions should have dimension 2 or 3.")
         self._dim = dim
         
         C = CoordSys3D("C")
-        self._curve = ParametricRegion((t, t, 2*t**2), (t, 0, 1))
+        self._curve = ParametricRegion((2*t, t, 2*t**2), (t, 0, 1))
         self._F = C.y*C.i + C.x*C.j + C.z*C.k
 
     def _reformat_vector_field_latex(self, latex: str):
