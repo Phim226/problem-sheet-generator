@@ -31,12 +31,12 @@ class VectorCalculusQuestion(Question):
     K_HAT_LATEX = r"\mathbf{{\hat{{k}}}}"
     VECT_FIELD_LATEX = r"\mathbf{{F}}"
 
-    def __init__(self, topic: str, subtopic: str = "", dim: int = 3):
+    def __init__(self, topic: str, subtopic: str = "", dimension: int = 3):
         super().__init__(topic)
 
-        if dim not in (2, 3):
-            raise ValueError(f"{dim} is not a valid dimension. Vector calculus questions should have dimension 2 or 3.")
-        self._dim = dim
+        if dimension not in (2, 3):
+            raise ValueError(f"{dimension} is not a valid dimension. Vector calculus questions should have dimension 2 or 3.")
+        self._dimension = dimension
         
         C = CoordSys3D("C")
         self._curve = ParametricRegion((2*t, t, 2*t**2), (t, 0, 1))
