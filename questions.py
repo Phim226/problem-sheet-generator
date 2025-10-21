@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Dict
 from sympy.abc import t
 from sympy.vector import VectorAdd, CoordSys3D, ParametricRegion, vector_integrate
 import sympy as sp
@@ -29,7 +30,7 @@ class VectorCalculusQuestion(Question):
     I_HAT_LATEX = r"\mathbf{{\hat{{i}}}}"
     J_HAT_LATEX = r"\mathbf{{\hat{{j}}}}"
     K_HAT_LATEX = r"\mathbf{{\hat{{k}}}}"
-    VECT_FIELD_LATEX = r"\mathbf{{F}}"
+    VECTOR_FIELD_SYMBOL_LATEX = r"\mathbf{{F}}"
 
     def __init__(self, topic: str, subtopic: str = "", dimension: int = 3):
         super().__init__(topic)
@@ -43,10 +44,10 @@ class VectorCalculusQuestion(Question):
         self._F: VectorAdd = C.y*C.i + C.x*C.j + C.z*C.k
 
     def _reformat_vector_field_latex(self, latex: str) -> str:
-        vector_field_latex_dic = {r"\left(": "", r"\right)": "", "_{C}": "", r"\mathbf{{x}}": "x", r"\mathbf{{y}}": "y", r"\mathbf{{z}}": "z",}
-        for i, j in vector_field_latex_dic.items():
-            latex = latex.replace(i, j)
-        return rf"${self.VECT_FIELD_LATEX}(x, y, z)={latex}$"
+        vector_field_latex_dict: Dict[str, str] = {r"\left(": "", r"\right)": "", "_{C}": "", r"\mathbf{{x}}": "x", r"\mathbf{{y}}": "y", r"\mathbf{{z}}": "z",}
+        for unwanted_latex, replacement_latex in vector_field_latex_dict.items():
+            latex = latex.replace(unwanted_latex, replacement_latex)
+        return rf"${self.VECTOR_FIELD_SYMBOL_LATEX}{"(x, y, z)" if self._dimension == 3 else "{x, y}"}={latex}$"
     
     def _format_curve_latex(self, curve: ParametricRegion) -> str:
         curve_def_x: str = sp.latex(curve.definition[0])
@@ -59,7 +60,7 @@ class VectorCalculusQuestion(Question):
     def generate_question_latex(self) -> str:
         vector_field_latex: str = self._reformat_vector_field_latex(sp.latex(self._F))
         curve_latex: str = self._format_curve_latex(self._curve)
-        return NoEscape(rf"Let ${self.VECT_FIELD_LATEX}$ be the vector field {vector_field_latex} and $C$ the curve given by {curve_latex}. Calculate $\displaystyle\int_C{self.VECT_FIELD_LATEX}\cdot\mathbf{{dr}}$.")
+        return NoEscape(rf"Let ${self.VECTOR_FIELD_SYMBOL_LATEX}$ be the vector field {vector_field_latex} and $C$ the curve given by {curve_latex}. Calculate $\displaystyle\int_C{self.VECTOR_FIELD_SYMBOL_LATEX}\cdot\mathbf{{dr}}$.")
     
     def generate_answer(self):
         return super().generate_answer()
