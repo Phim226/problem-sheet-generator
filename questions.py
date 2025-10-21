@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from sympy.abc import t
-from sympy.vector import CoordSys3D, ParametricRegion, vector_integrate
+from sympy.vector import VectorAdd, CoordSys3D, ParametricRegion, vector_integrate
 import sympy as sp
 from pylatex.utils import NoEscape
 from question_registry import register_question_type
@@ -40,25 +40,25 @@ class VectorCalculusQuestion(Question):
         
         C = CoordSys3D("C")
         self._curve = ParametricRegion((2*t, t, 2*t**2), (t, 0, 1))
-        self._F = C.y*C.i + C.x*C.j + C.z*C.k
+        self._F: VectorAdd = C.y*C.i + C.x*C.j + C.z*C.k
 
-    def _reformat_vector_field_latex(self, latex: str):
+    def _reformat_vector_field_latex(self, latex: str) -> str:
         vector_field_latex_dic = {r"\left(": "", r"\right)": "", "_{C}": "", r"\mathbf{{x}}": "x", r"\mathbf{{y}}": "y", r"\mathbf{{z}}": "z",}
         for i, j in vector_field_latex_dic.items():
             latex = latex.replace(i, j)
         return rf"${self.VECT_FIELD_LATEX}(x, y, z)={latex}$"
     
-    def _format_curve_latex(self, curve: ParametricRegion):
-        curve_def_x = sp.latex(curve.definition[0])
-        curve_def_y = sp.latex(curve.definition[1])
-        curve_def_z = sp.latex(curve.definition[2])
-        curve_lower_lim = curve.limits[t][0]
-        curve_upper_lim = curve.limits[t][1]
+    def _format_curve_latex(self, curve: ParametricRegion) -> str:
+        curve_def_x: str = sp.latex(curve.definition[0])
+        curve_def_y: str = sp.latex(curve.definition[1])
+        curve_def_z: str = sp.latex(curve.definition[2])
+        curve_lower_lim: int = curve.limits[t][0]
+        curve_upper_lim: int = curve.limits[t][1]
         return rf"$\mathbf{{r}}(t)={curve_def_x}{self.I_HAT_LATEX}+{curve_def_y}{self.J_HAT_LATEX}+{curve_def_z}{self.K_HAT_LATEX}$ for ${curve_lower_lim}\le t\le {curve_upper_lim}$"
 
-    def generate_question_latex(self):
-        vector_field_latex = self._reformat_vector_field_latex(sp.latex(self._F))
-        curve_latex = self._format_curve_latex(self._curve)
+    def generate_question_latex(self) -> str:
+        vector_field_latex: str = self._reformat_vector_field_latex(sp.latex(self._F))
+        curve_latex: str = self._format_curve_latex(self._curve)
         return NoEscape(rf"Let ${self.VECT_FIELD_LATEX}$ be the vector field {vector_field_latex} and $C$ the curve given by {curve_latex}. Calculate $\displaystyle\int_C{self.VECT_FIELD_LATEX}\cdot\mathbf{{dr}}$.")
     
     def generate_answer(self):
