@@ -8,32 +8,30 @@ class Field():
 
     @abstractmethod
     def __init__(self, dimension: int):
+        if dimension not in (2, 3):
+            raise ValueError(f"{dimension} is not a valid dimension. Fields should have dimension 2 or 3.")
         self._dimension = dimension
 
     @property
     def field(self):
         return self._field
     
-    """ The method of random generation is we generate weighted random coefficients for the polynomial
-    (c_0x^2 + c_1x + c_2)(c_3y^2 + c_4y + c_5)(c_6z^2 + c_7z + c_8) and then evaluate the product.
-    This way we get a polynomial in x, y and z of max total degree 6 consisting of 26 possible
-    combinations of the multivariate monomial (x^n)(y^m)(z^t) with 0<=n,m,t<=2 plus a possible 
-    constant term, with only a small handful of coefficients being generated. If the dimension is
-    2 then we don't generate values for c_6, c_7 and c_8.
+    """ Weighted random coefficients for the polynomial (c_0x^2 + c_1x + c_2)(c_3y^2 + c_4y + c_5)(c_6z^2 + c_7z + c_8) and then evaluate the product.
+    This way we get a polynomial in x, y and z of max total degree 6 consisting of 26 possible combinations of the multivariate monomial (x^n)(y^m)(z^t) 
+    with 0<=n,m,t<=2 plus a possible constant term, with only a small handful of coefficients being generated. If the dimension is 2 then we don't 
+    generate values for c_6, c_7 and c_8.
     
-    To avoid each component being overly populated with monomials we first set all coefficients to be
-    0 and then randomly choose at most 4 to be non-zero. The random generation of the number of non-zero 
-    coefficients variable number_of_coeffs is weighted. For the weighting [0.6, 0.3, 0.07, 0.03] this 
-    produces 1 non-zero coefficient 60% of the time, 2 non-zero coefficients 30% of the time and so on. 
-    So with this weighting we aim to have simple expressions be most common.
+    To avoid each component being overly populated with monomials we first set all coefficients to be 0 and then randomly choose at most 4 to be non-zero. 
+    The random generation of the number of non-zero coefficients variable number_of_coeffs is weighted. For the weighting [0.6, 0.3, 0.07, 0.03] this 
+    produces 1 non-zero coefficient 60% of the time, 2 non-zero coefficients 30% of the time and so on. So with this weighting we aim to have simple 
+    expressions be most common.
 
-    The value of the coefficients is also weighted. A weighting [0.01, 0.05, 0.05, 0.1, 0.4, 0.2, 0.1, 0.09]
-    for the range of possible values [-4, -3, -2, -1, 1, 2, 3, 4] produces coefficients that tend towards
-    lower absolute values with a bias towards positive numbers (-1 is 10%, 1 is 40%, -2 is 5%, 2 is 20% and so on).
+    The value of the coefficients is also weighted. A weighting [0.01, 0.05, 0.05, 0.1, 0.4, 0.2, 0.1, 0.09] for the range of possible values 
+    [-4, -3, -2, -1, 1, 2, 3, 4] produces coefficients that tend towards lower absolute values with a bias towards positive numbers 
+    (-1 is 10%, 1 is 40%, -2 is 5%, 2 is 20% and so on).
 
-    Note that if the number of coefficients or the range of possible coefficient values is changed then the
-    weightings should be changed accordingly as well, otherwise you might get a ValueError if the number of
-    weights doesn't match.     
+    Note that if the number of coefficients or the range of possible coefficient values is changed then the weightings should be changed accordingly as 
+    well, otherwise you might get a ValueError if the number of weights doesn't match.     
     """
     def _generate_random_field_component(self, dimension: int) -> Expr:
         max_index = 3*dimension
@@ -70,10 +68,7 @@ class VectorField(Field):
     def _generate_random_vector_field(self, dimension: int, C: CoordSys3D) -> Vector:
         x_component: Expr = self._generate_random_field_component(dimension)
         y_component: Expr = self._generate_random_field_component(dimension)
-        z_component: Expr = self._generate_random_field_component(dimension) if dimension == 3 else 0
-        """ print(f"Type of {x_component} is {type(x_component)}")
-        print(f"Type of {y_component} is {type(y_component)}")
-        print(f"Type of {z_component} is {type(z_component)}") """
+        z_component: Expr = self._generate_random_field_component(dimension) if dimension == 3 else S.Zero
         field: Vector = x_component*C.i + y_component*C.j + z_component*C.k
         return field
 
