@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from random import choices
-from sympy import Add, Expr, factor, latex
+from sympy import Add, Expr, S, factor, latex
 from sympy.abc import x, y, z
 from sympy.vector import CoordSys3D, Vector
 
@@ -143,6 +143,19 @@ class VectorField(Field):
                                                                  z_component_latex)
 
     def _format_component_latex(self, component: Expr) -> str:
+        """
+        Format the latex for a component of the vector field.
+
+        If the component is 1 or -1 then we return "" and "-" respectively,
+        otherwise we could end up with a string -1i + yj + 1k for example.
+
+        If the component is an additive expression, such as x + 1, then
+        we put brackets around it so that the final string is (x + 1)i.
+        """
+        if component is S.NegativeOne:
+            return "-"
+        if component is S.One:
+            return ""
         if isinstance(component, Add):
             return rf"\left({latex(component)}\right)"
         return latex(component)
@@ -153,7 +166,17 @@ class VectorField(Field):
             y_latex: str,
             z_latex: str
     ) -> str:
-        """Format the LaTeX for the vector field expression."""
+        """
+        Format the LaTeX for the vector field expression.
+
+        First the x and y component are built, then the z is appended if the
+        dimension is 3. Since each component is connected by a + sign and
+        occasionally components will be negative we could end up with a string
+        such as +-2xj. So we replace all these instances with a - sign.
+
+        Finally F(x, y, z) or F(x, y) is attached to the start of the string
+        depending on the dimension.
+        """
 
         field_latex: str = (
             f"{x_latex}{self.I_HAT_LATEX}"
