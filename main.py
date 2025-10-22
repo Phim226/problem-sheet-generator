@@ -17,7 +17,7 @@ PROCESS_ERROR_STR =" LaTeX failed to process. This is mostly likely due to a mis
 
 
 def fill_preamble(doc: Document, title: str, author: str = "", date: str ="") -> None:
-    doc.preamble.append(Command("usepackage", "geometry", "left=2.5cm, right=2.5cm")) # adjusts margin size
+    doc.preamble.append(Command("usepackage", "geometry", "left=2.5cm, right=2.5cm"))  # Adjusts margin size of output pdf.
     doc.preamble.append(Command("title", title))
     doc.preamble.append(Command("author", author))
     doc.preamble.append(Command("date", date))
