@@ -1,11 +1,12 @@
+import logging
+import subprocess
+import os
 from pylatex import Document, Command, Enumerate
 from pylatex.utils import NoEscape
 from question.question_registry import create_question
 from question.questions import Question
 from utils import configure_log
-import logging
-import subprocess
-import os
+
 
 RED = "\033[91m"
 PURPLE = "\033[35m"
@@ -17,10 +18,15 @@ PROCESS_ERROR_STR =" LaTeX failed to process. This is mostly likely due to a mis
 
 
 def fill_preamble(doc: Document, title: str, author: str = "", date: str ="") -> None:
-    doc.preamble.append(Command("usepackage", "geometry", "left=2.5cm, right=2.5cm"))  # Adjusts margin size of output pdf.
-    doc.preamble.append(Command("title", title))
-    doc.preamble.append(Command("author", author))
-    doc.preamble.append(Command("date", date))
+    doc.preamble.append(Command("usepackage",
+                                "geometry",
+                                "left=2.5cm, right=2.5cm"))  # Adjusts margin size of output pdf.
+    doc.preamble.append(Command("title",
+                                 title))
+    doc.preamble.append(Command("author",
+                                author))
+    doc.preamble.append(Command("date",
+                                date))
     doc.append(NoEscape(r"\maketitle"))
 
 def try_delete_file(file_name: str) -> None:
