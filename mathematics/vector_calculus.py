@@ -1,10 +1,11 @@
 from abc import abstractmethod
 from random import choices
-from sympy import Expr, S
+from sympy import Expr, S, separatevars
 from sympy.abc import x, y, z
 from sympy.vector import CoordSys3D, Vector
 
 class Field():
+
 
     @abstractmethod
     def __init__(self, dimension: int):
@@ -47,24 +48,48 @@ class Field():
         """
 
         max_index = 3*dimension
-        coeffs: list[int] = [0]*max_index
-        number_of_coeffs: int = choices(population= range(1, 5), weights = [0.6, 0.3, 0.07, 0.03])[0]
+        coeffs: list[int] = [0] * max_index
+
+
+        number_of_coeffs: int = choices(
+            population= range(1, 5),
+            weights = [0.6, 0.3, 0.07, 0.03]
+        )[0]
+
         coeff_range: list[int] = list(range(-4, 5))
         coeff_range.remove(0)
+
         index_range: list[int] = list(range(max_index))
+
         for _ in range(number_of_coeffs):
             index = choices(population=index_range)[0]
             index_range.remove(index)
-            coeffs[index] = choices(population = coeff_range, weights =[0.01, 0.05, 0.05, 0.1, 0.4, 0.2, 0.1, 0.09])[0]
+            coeffs[index] = choices(
+                population = coeff_range,
+                weights =[0.01, 0.05, 0.05, 0.1, 0.4, 0.2, 0.1, 0.09]
+            )[0]
+
         x_coeffs: list[int] = coeffs[0:3]
         y_coeffs: list[int] = coeffs[3:6]
         z_coeffs: list[int] = coeffs[6:9] if dimension == 3 else None
-        component_x_terms: Expr = 1 if all(c==0 for c in x_coeffs) else x_coeffs[0]*x**2 + x_coeffs[1]*x + x_coeffs[2]
-        component_y_terms: Expr = 1 if all(c==0 for c in y_coeffs) else y_coeffs[0]*y**2 + y_coeffs[1]*y + y_coeffs[2]
-        component_z_terms: Expr = 1 if not z_coeffs or all(c==0 for c in z_coeffs) else z_coeffs[0]*z**2 + z_coeffs[1]*z + z_coeffs[2]
-        return component_x_terms*component_y_terms*component_z_terms
+
+        component_x_terms: Expr = (
+            1 if all(c==0 for c in x_coeffs)
+            else x_coeffs[0]*x**2 + x_coeffs[1]*x + x_coeffs[2]
+        )
+        component_y_terms: Expr = (
+            1 if all(c==0 for c in y_coeffs)
+            else y_coeffs[0]*y**2 + y_coeffs[1]*y + y_coeffs[2]
+        )
+        component_z_terms: Expr = (
+            1 if not z_coeffs or all(c==0 for c in z_coeffs)
+            else z_coeffs[0]*z**2 + z_coeffs[1]*z + z_coeffs[2]
+        )
+
+        return component_x_terms * component_y_terms * component_z_terms
 
 class ScalarField(Field):
+
 
     def __init__(self, dimension: int):
         super().__init__(dimension)
@@ -73,11 +98,12 @@ class ScalarField(Field):
 
 class VectorField(Field):
 
+
     def __init__(self, dimension: int):
         super().__init__(dimension)
-        self._x_component: Expr = self._generate_random_field_component(dimension)
-        self._y_component: Expr = self._generate_random_field_component(dimension)
-        self._z_component: Expr = self._generate_random_field_component(dimension) if dimension == 3 else S.Zero
+        self._x_component: Expr = separatevars(self._generate_random_field_component(dimension))
+        self._y_component: Expr = separatevars(self._generate_random_field_component(dimension))
+        self._z_component: Expr = separatevars(self._generate_random_field_component(dimension)) if dimension == 3 else S.Zero
         C: CoordSys3D = CoordSys3D("C")
         self._field: Vector = self._x_component*C.i + self._y_component*C.j + self._z_component*C.k
 

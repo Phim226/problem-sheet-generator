@@ -8,6 +8,8 @@ from question.question_registry import register_question_type
 from mathematics.vector_calculus import VectorField
 
 class Question(ABC):
+
+
     def __init__(self, topic: str, nested: bool = False, difficulty: str = "easy"):
         self._topic = topic
         self._nested = nested
@@ -28,6 +30,7 @@ class Question(ABC):
 
 @register_question_type("vector_calculus")
 class VectorCalculusQuestion(Question):
+
 
     I_HAT_LATEX = r"\mathbf{{\hat{{i}}}}"
     J_HAT_LATEX = r"\mathbf{{\hat{{j}}}}"
