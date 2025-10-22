@@ -1,16 +1,20 @@
+from abc import abstractmethod
 from random import choices
-from sympy.vector import CoordSys3D
+from sympy import Expr, S
+from sympy.abc import x, y, z
+from sympy.vector import CoordSys3D, Vector
 
-class ScalarField():
-    def __init__(self):
-        pass
+class Field():
 
-class VectorField():
+    @abstractmethod
+    def __init__(self, dimension: int):
+        self._dimension = dimension
 
-    def __init__(self, dimension: int, C: CoordSys3D, randomly_generated: bool = True):
-        pass
-
-""" The method of random generation is we generate weighted random coefficients for the polynomial
+    @property
+    def field(self):
+        return self._field
+    
+    """ The method of random generation is we generate weighted random coefficients for the polynomial
     (c_0x^2 + c_1x + c_2)(c_3y^2 + c_4y + c_5)(c_6z^2 + c_7z + c_8) and then evaluate the product.
     This way we get a polynomial in x, y and z of max total degree 6 consisting of 26 possible
     combinations of the multivariate monomial (x^n)(y^m)(z^t) with 0<=n,m,t<=2 plus a possible 
@@ -31,28 +35,45 @@ class VectorField():
     weightings should be changed accordingly as well, otherwise you might get a ValueError if the number of
     weights doesn't match.     
     """
-def generate_random_vector_field_component(dimension: int, C: CoordSys3D):
-    max_index = 3*dimension
-    coeffs: list[int] = [0]*max_index
-    number_of_coeffs: int = choices(population= range(1, 5), weights = [0.6, 0.3, 0.07, 0.03])[0]
-    coeff_range: list[int] = list(range(-4, 5))
-    coeff_range.remove(0)
-    index_range: list[int] = list(range(max_index))
-    for _ in range(number_of_coeffs):
-        index = choices(population=index_range)[0]
-        index_range.remove(index)
-        coeffs[index] = choices(population = coeff_range, weights =[0.01, 0.05, 0.05, 0.1, 0.4, 0.2, 0.1, 0.09])[0]
-    x_coeffs = coeffs[0:3]
-    y_coeffs = coeffs[3:6]
-    z_coeffs = coeffs[6:9] if dimension == 3 else None
-    component_x_terms = 1 if all(c==0 for c in x_coeffs) else x_coeffs[0]*C.x**2 + x_coeffs[1]*C.x + x_coeffs[2]
-    component_y_terms = 1 if all(c==0 for c in y_coeffs) else y_coeffs[0]*C.y**2 + y_coeffs[1]*C.y + y_coeffs[2]
-    component_z_terms = 1 if not z_coeffs or all(c==0 for c in z_coeffs) else z_coeffs[0]*C.z**2 + z_coeffs[1]*C.z + z_coeffs[2]
-    return component_x_terms*component_y_terms*component_z_terms
+    def _generate_random_field_component(self, dimension: int) -> Expr:
+        max_index = 3*dimension
+        coeffs: list[int] = [0]*max_index
+        number_of_coeffs: int = choices(population= range(1, 5), weights = [0.6, 0.3, 0.07, 0.03])[0]
+        coeff_range: list[int] = list(range(-4, 5))
+        coeff_range.remove(0)
+        index_range: list[int] = list(range(max_index))
+        for _ in range(number_of_coeffs):
+            index = choices(population=index_range)[0]
+            index_range.remove(index)
+            coeffs[index] = choices(population = coeff_range, weights =[0.01, 0.05, 0.05, 0.1, 0.4, 0.2, 0.1, 0.09])[0]
+        x_coeffs: list[int] = coeffs[0:3]
+        y_coeffs: list[int] = coeffs[3:6]
+        z_coeffs: list[int] = coeffs[6:9] if dimension == 3 else None
+        component_x_terms: Expr = 1 if all(c==0 for c in x_coeffs) else x_coeffs[0]*x**2 + x_coeffs[1]*x + x_coeffs[2]
+        component_y_terms: Expr = 1 if all(c==0 for c in y_coeffs) else y_coeffs[0]*y**2 + y_coeffs[1]*y + y_coeffs[2]
+        component_z_terms: Expr = 1 if not z_coeffs or all(c==0 for c in z_coeffs) else z_coeffs[0]*z**2 + z_coeffs[1]*z + z_coeffs[2]
+        return component_x_terms*component_y_terms*component_z_terms
 
-def generate_random_vector_field(dimension: int, C: CoordSys3D):
-    x_component = generate_random_vector_field_component(dimension, C)
-    y_component = generate_random_vector_field_component(dimension, C)
-    z_component = generate_random_vector_field_component(dimension, C) if dimension == 3 else 0
-    F = x_component*C.i + y_component*C.j + z_component*C.k
-    return F
+class ScalarField(Field):
+
+    def __init__(self, dimension: int):
+        super().__init__(dimension)
+        self._field = self._generate_random_field_component(dimension)
+        
+
+class VectorField(Field):
+
+    def __init__(self, dimension: int, C: CoordSys3D):
+        super().__init__(dimension)
+        self._field = self._generate_random_vector_field(dimension, C)
+
+    def _generate_random_vector_field(self, dimension: int, C: CoordSys3D) -> Vector:
+        x_component: Expr = self._generate_random_field_component(dimension)
+        y_component: Expr = self._generate_random_field_component(dimension)
+        z_component: Expr = self._generate_random_field_component(dimension) if dimension == 3 else 0
+        """ print(f"Type of {x_component} is {type(x_component)}")
+        print(f"Type of {y_component} is {type(y_component)}")
+        print(f"Type of {z_component} is {type(z_component)}") """
+        field: Vector = x_component*C.i + y_component*C.j + z_component*C.k
+        return field
+

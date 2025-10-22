@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 from typing import Dict
+import sympy as sp
 from sympy.abc import t
 from sympy.vector import Vector, CoordSys3D, ParametricRegion, vector_integrate
-import sympy as sp
 from pylatex.utils import NoEscape
 from question_registry import register_question_type
-from mathematics.vector_calculus import generate_random_vector_field
+from mathematics.vector_calculus import VectorField
 
 class Question(ABC):
     def __init__(self, topic: str, nested: bool = False, difficulty: str = "easy"):
@@ -43,8 +43,9 @@ class VectorCalculusQuestion(Question):
         
         C = CoordSys3D("C")
         self._curve = ParametricRegion((2*t, t, 2*t**2), (t, 0, 1))
-        self._F: Vector = generate_random_vector_field(dimension, C)
+        self._F: Vector = VectorField(dimension, C).field
         self._F: Vector = (1+C.x)*C.i + -2*C.y*C.j + C.z*C.k
+        
 
     def _reformat_vector_field_latex(self, latex: str) -> str:
         vector_field_latex_dict: Dict[str, str] = {"_{C}": "", r"\mathbf{{x}}": "x", r"\mathbf{{y}}": "y", r"\mathbf{{z}}": "z", r"+ -": "-"}
