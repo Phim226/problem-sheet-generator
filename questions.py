@@ -36,6 +36,7 @@ class VectorCalculusQuestion(Question):
 
     def __init__(self, topic: str, subtopic: str = "", dimension: int = 3, curve_is_parametric: bool = True, curve_is_implicit: bool = False):
         super().__init__(topic)
+        self._dimension = dimension
         C = CoordSys3D("C")
         self._curve = ParametricRegion((2*t, t, 2*t**2), (t, 0, 1))
         self._F: Vector = VectorField(dimension, C).field
