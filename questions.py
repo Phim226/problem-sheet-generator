@@ -36,11 +36,6 @@ class VectorCalculusQuestion(Question):
 
     def __init__(self, topic: str, subtopic: str = "", dimension: int = 3, curve_is_parametric: bool = True, curve_is_implicit: bool = False):
         super().__init__(topic)
-
-        if dimension not in (2, 3):
-            raise ValueError(f"{dimension} is not a valid dimension. Vector calculus questions should have dimension 2 or 3.")
-        self._dimension = dimension
-        
         C = CoordSys3D("C")
         self._curve = ParametricRegion((2*t, t, 2*t**2), (t, 0, 1))
         self._F: Vector = VectorField(dimension, C).field
