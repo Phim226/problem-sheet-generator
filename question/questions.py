@@ -4,7 +4,7 @@ import sympy as sp
 from sympy.abc import t
 from sympy.vector import Vector, CoordSys3D, ParametricRegion, vector_integrate
 from pylatex.utils import NoEscape
-from question_registry import register_question_type
+from question.question_registry import register_question_type
 from mathematics.vector_calculus import VectorField
 
 class Question(ABC):
@@ -16,7 +16,7 @@ class Question(ABC):
     @property
     def topic(self):
         return self._topic
-    
+
     @classmethod
     @abstractmethod
     def generate_question_latex(self):
@@ -39,16 +39,16 @@ class VectorCalculusQuestion(Question):
         self._dimension = dimension
         C = CoordSys3D("C")
         self._curve = ParametricRegion((2*t, t, 2*t**2), (t, 0, 1))
-        self._F: Vector = VectorField(dimension, C).field
+        self._F: Vector = VectorField(dimension).field
         self._F: Vector = (1+C.x)*C.i + -2*C.y*C.j + C.z*C.k
-        
+
 
     def _reformat_vector_field_latex(self, latex: str) -> str:
         vector_field_latex_dict: Dict[str, str] = {"_{C}": "", r"\mathbf{{x}}": "x", r"\mathbf{{y}}": "y", r"\mathbf{{z}}": "z", r"+ -": "-"}
         for unwanted_latex, replacement_latex in vector_field_latex_dict.items():
             latex = latex.replace(unwanted_latex, replacement_latex)
         return rf"${self.VECTOR_FIELD_SYMBOL_LATEX}{"(x, y, z)" if self._dimension == 3 else "(x, y)"}={latex}$"
-    
+
     def _format_curve_latex(self, curve: ParametricRegion) -> str:
         curve_def_x: str = sp.latex(curve.definition[0])
         curve_def_y: str = sp.latex(curve.definition[1])
@@ -63,6 +63,6 @@ class VectorCalculusQuestion(Question):
         curve_latex: str = self._format_curve_latex(self._curve)
         return NoEscape(rf"Let ${self.VECTOR_FIELD_SYMBOL_LATEX}$ be the vector field {vector_field_latex} and $C$ the curve given by {curve_latex}. "\
                         rf"Calculate $\displaystyle\int_C{self.VECTOR_FIELD_SYMBOL_LATEX}\cdot\mathbf{{dr}}$.")
-    
+
     def generate_answer(self):
         return super().generate_answer()
