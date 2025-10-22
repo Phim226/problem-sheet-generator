@@ -73,14 +73,11 @@ class ScalarField(Field):
 
 class VectorField(Field):
 
-    def __init__(self, dimension: int, C: CoordSys3D):
+    def __init__(self, dimension: int):
         super().__init__(dimension)
-        self._field = self._generate_random_vector_field(dimension, C)
-
-    def _generate_random_vector_field(self, dimension: int, C: CoordSys3D) -> Vector:
-        x_component: Expr = self._generate_random_field_component(dimension)
-        y_component: Expr = self._generate_random_field_component(dimension)
-        z_component: Expr = self._generate_random_field_component(dimension) if dimension == 3 else S.Zero
-        field: Vector = x_component*C.i + y_component*C.j + z_component*C.k
-        return field
+        self._x_component: Expr = self._generate_random_field_component(dimension)
+        self._y_component: Expr = self._generate_random_field_component(dimension)
+        self._z_component: Expr = self._generate_random_field_component(dimension) if dimension == 3 else S.Zero
+        C: CoordSys3D = CoordSys3D("C")
+        self._field: Vector = self._x_component*C.i + self._y_component*C.j + self._z_component*C.k
 
