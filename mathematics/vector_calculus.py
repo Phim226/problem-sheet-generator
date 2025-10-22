@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from random import choices
-from sympy import Expr, S, separatevars
+from sympy import Add, Expr, factor, latex
 from sympy.abc import x, y, z
 from sympy.vector import CoordSys3D, Vector
 
@@ -9,16 +9,23 @@ class Field():
 
     @abstractmethod
     def __init__(self, dimension: int):
+
         if dimension not in (2, 3):
-            raise ValueError(f"{dimension} is not a valid dimension. Fields should have dimension 2 or 3.")
+            raise ValueError((f"{dimension} is not a valid dimension. "
+                            "Fields should have dimension 2 or 3.")
+                    )
         self._dimension = dimension
 
     @property
-    def field(self):
+    def field(self) -> Expr | Vector:
         return self._field
 
+    @property
+    def field_latex(self) -> str:
+        return self._field_latex
 
-    def _generate_random_field_component(self, dimension: int) -> Expr:
+
+    def _generate_random_component(self, dimension: int) -> Expr:
         """
         Generate weighted random coefficients for a polynomial field component.
 
@@ -47,8 +54,8 @@ class Field():
         you might get a ValueError if the number of weights doesn't match.
         """
 
-        max_index = 3*dimension
-        coeffs: list[int] = [0] * max_index
+        max_index: int = 3*dimension
+        coeffs: list[int] = [0]*max_index
 
 
         number_of_coeffs: int = choices(
@@ -62,7 +69,7 @@ class Field():
         index_range: list[int] = list(range(max_index))
 
         for _ in range(number_of_coeffs):
-            index = choices(population=index_range)[0]
+            index: int = choices(population=index_range)[0]
             index_range.remove(index)
             coeffs[index] = choices(
                 population = coeff_range,
@@ -86,24 +93,82 @@ class Field():
             else z_coeffs[0]*z**2 + z_coeffs[1]*z + z_coeffs[2]
         )
 
-        return component_x_terms * component_y_terms * component_z_terms
+        return component_x_terms*component_y_terms*component_z_terms
 
 class ScalarField(Field):
 
 
     def __init__(self, dimension: int):
         super().__init__(dimension)
-        self._field = self._generate_random_field_component(dimension)
+        self._field: Expr = self._generate_random_component(dimension)
 
 
 class VectorField(Field):
 
 
+    I_HAT_LATEX = r"\mathbf{{\hat{{i}}}}"
+    J_HAT_LATEX = r"\mathbf{{\hat{{j}}}}"
+    K_HAT_LATEX = r"\mathbf{{\hat{{k}}}}"
+    VECTOR_FIELD_SYMBOL_LATEX = r"\mathbf{{F}}"
+
     def __init__(self, dimension: int):
         super().__init__(dimension)
-        self._x_component: Expr = separatevars(self._generate_random_field_component(dimension))
-        self._y_component: Expr = separatevars(self._generate_random_field_component(dimension))
-        self._z_component: Expr = separatevars(self._generate_random_field_component(dimension)) if dimension == 3 else S.Zero
-        C: CoordSys3D = CoordSys3D("C")
-        self._field: Vector = self._x_component*C.i + self._y_component*C.j + self._z_component*C.k
 
+        self._x_component: Expr = factor(
+            self._generate_random_component(dimension)
+        )
+        self._y_component: Expr = factor(
+            self._generate_random_component(dimension)
+        )
+
+        C: CoordSys3D = CoordSys3D("C")
+        self._field: Vector = self._x_component*C.i + self._y_component*C.j
+
+        x_component_latex = self._format_component_latex(self._x_component)
+        y_component_latex = self._format_component_latex(self._y_component)
+        z_component_latex = None
+
+        if dimension == 3:
+            self._z_component: Expr = factor(
+                self._generate_random_component(dimension)
+            )
+            self._field += self._z_component*C.k
+
+            z_component_latex = self._format_component_latex(
+                self._z_component
+            )
+
+        self._field_latex: str = self._format_vector_field_latex(x_component_latex,
+                                                                 y_component_latex,
+                                                                 z_component_latex)
+
+    def _format_component_latex(self, component: Expr) -> str:
+        if isinstance(component, Add):
+            return rf"\left({latex(component)}\right)"
+        return latex(component)
+
+    def _format_vector_field_latex(
+            self,
+            x_latex: str,
+            y_latex: str,
+            z_latex: str
+    ) -> str:
+        """Format the LaTeX for the vector field expression."""
+
+        field_latex: str = (
+            f"{x_latex}{self.I_HAT_LATEX}"
+            f"+{y_latex}{self.J_HAT_LATEX}"
+        )
+        if self._dimension == 3:
+            field_latex = f"{field_latex}+{z_latex}{self.K_HAT_LATEX}"
+
+        # Clean up any leading minus signs.
+        field_latex = field_latex.replace("+-", "-")
+
+        field_latex = (
+            f"{self.VECTOR_FIELD_SYMBOL_LATEX}"
+            f"{"(x, y, z)" if self._dimension == 3 else "(x, y)"}"
+            f"={field_latex}"
+        )
+
+        return f"${field_latex}$"
