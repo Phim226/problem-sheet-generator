@@ -147,7 +147,7 @@ class VectorField(Field):
         Format the latex for a component of the vector field.
 
         If the component is 1 or -1 then we return "" and "-" respectively,
-        otherwise we could end up with a string -1i + yj + 1k for example.
+        otherwise we would end up with a string -1i or 1i for example.
 
         If the component is an additive expression, such as x + 1, then
         we put brackets around it so that the final string is (x + 1)i.
