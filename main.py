@@ -1,7 +1,7 @@
 from pylatex import Document, Command, Enumerate
 from pylatex.utils import NoEscape
-from question_registry import create_question
-from questions import Question
+from question.question_registry import create_question
+from question.questions import Question
 from utils import configure_log
 import logging
 import subprocess
@@ -45,9 +45,9 @@ if __name__ == "__main__":
     with doc.create(Enumerate()) as enum:
         for i in range(n):
             enum.add_item(question.generate_question_latex())
-    
+
     try:
-        doc.generate_tex("output") 
+        doc.generate_tex("output")
         doc.generate_pdf("output", clean_tex=False)
     except subprocess.CalledProcessError as e:
         logging.error(f"{PURPLE}{type(e).__name__}{RESET}:{PROCESS_ERROR_STR}")
