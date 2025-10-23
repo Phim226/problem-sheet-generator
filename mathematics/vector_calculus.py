@@ -2,7 +2,7 @@ from abc import abstractmethod
 from random import choices
 from sympy import Add, Expr, S, factor, latex
 from sympy.abc import x, y, z
-from sympy.vector import CoordSys3D, Vector
+from sympy.vector import CoordSys3D, ParametricRegion, Vector, vector_integrate
 
 class Field():
 
@@ -15,6 +15,7 @@ class Field():
                             "Fields should have dimension 2 or 3.")
                     )
         self._dimension = dimension
+        self._C = CoordSys3D("C")
 
     @property
     def field(self) -> Expr | Vector:
@@ -25,7 +26,7 @@ class Field():
         return self._field_latex
 
 
-    def _generate_random_component(self, dimension: int) -> Expr:
+    def _generate_random_component(self, dimension: int, C: CoordSys3D) -> Expr:
         """
         Generate weighted random coefficients for a polynomial field component.
 
@@ -82,15 +83,15 @@ class Field():
 
         component_x_terms: Expr = (
             1 if all(c==0 for c in x_coeffs)
-            else x_coeffs[0]*x**2 + x_coeffs[1]*x + x_coeffs[2]
+            else x_coeffs[0]*C.x**2 + x_coeffs[1]*C.x + x_coeffs[2]
         )
         component_y_terms: Expr = (
             1 if all(c==0 for c in y_coeffs)
-            else y_coeffs[0]*y**2 + y_coeffs[1]*y + y_coeffs[2]
+            else y_coeffs[0]*C.y**2 + y_coeffs[1]*C.y + y_coeffs[2]
         )
         component_z_terms: Expr = (
             1 if not z_coeffs or all(c==0 for c in z_coeffs)
-            else z_coeffs[0]*z**2 + z_coeffs[1]*z + z_coeffs[2]
+            else z_coeffs[0]*C.z**2 + z_coeffs[1]*C.z + z_coeffs[2]
         )
 
         return component_x_terms*component_y_terms*component_z_terms
@@ -100,7 +101,7 @@ class ScalarField(Field):
 
     def __init__(self, dimension: int):
         super().__init__(dimension)
-        self._field: Expr = self._generate_random_component(dimension)
+        self._field: Expr = self._generate_random_component(dimension, self._C)
 
 
 class VectorField(Field):
@@ -115,14 +116,15 @@ class VectorField(Field):
         super().__init__(dimension)
 
         self._x_component: Expr = factor(
-            self._generate_random_component(dimension)
+            self._generate_random_component(dimension, self._C)
         )
         self._y_component: Expr = factor(
-            self._generate_random_component(dimension)
+            self._generate_random_component(dimension, self._C)
         )
 
         C: CoordSys3D = CoordSys3D("C")
         self._field: Vector = self._x_component*C.i + self._y_component*C.j
+        print(f"Type of field: {type(self.field)}")
 
         x_component_latex = self._format_component_latex(self._x_component)
         y_component_latex = self._format_component_latex(self._y_component)
@@ -130,8 +132,9 @@ class VectorField(Field):
 
         if dimension == 3:
             self._z_component: Expr = factor(
-                self._generate_random_component(dimension)
+                self._generate_random_component(dimension, self._C)
             )
+
             self._field += self._z_component*C.k
 
             z_component_latex = self._format_component_latex(
@@ -141,6 +144,18 @@ class VectorField(Field):
         self._field_latex: str = self._format_vector_field_latex(x_component_latex,
                                                                  y_component_latex,
                                                                  z_component_latex)
+
+    @staticmethod
+    def _normalise_component_latex(component_latex: str) -> str:
+        latex_replacements: dict[str, str] = {
+            "_{C}": "",
+            r"\mathbf{{x}}": "x",
+            r"\mathbf{{y}}": "y",
+            r"\mathbf{{z}}": "z"
+        }
+        for latex, replacement_latex in latex_replacements.items():
+            component_latex = component_latex.replace(latex, replacement_latex)
+        return component_latex
 
     def _format_component_latex(self, component: Expr) -> str:
         """
@@ -152,13 +167,14 @@ class VectorField(Field):
         If the component is an additive expression, such as x + 1, then
         we put brackets around it so that the final string is (x + 1)i.
         """
+
         if component is S.NegativeOne:
             return "-"
         if component is S.One:
             return ""
         if isinstance(component, Add):
-            return rf"\left({latex(component)}\right)"
-        return latex(component)
+            return rf"\left({self._normalise_component_latex(latex(component))}\right)"
+        return self._normalise_component_latex(latex(component))
 
     def _format_vector_field_latex(
             self,
@@ -195,3 +211,6 @@ class VectorField(Field):
         )
 
         return f"${field_latex}$"
+
+    def calculate_line_integral(self, curve: ParametricRegion):
+        return vector_integrate(self.field, curve)

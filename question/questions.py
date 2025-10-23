@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Dict
 import sympy as sp
 from sympy.abc import t
-from sympy.vector import CoordSys3D, ParametricRegion, vector_integrate
+from sympy.vector import CoordSys3D, ParametricRegion
 from pylatex.utils import NoEscape
 from question.question_registry import register_question_type
 from mathematics.vector_calculus import VectorField
@@ -41,9 +40,11 @@ class VectorCalculusQuestion(Question):
         super().__init__(topic)
         self._dimension = dimension
         C = CoordSys3D("C")
-        self._curve = ParametricRegion((2*t, t, 2*t**2), (t, 0, 1))
-        vector_field = VectorField(dimension)
-        self._field_latex: str = vector_field.field_latex
+        self._curve = ParametricRegion((t, t, 2*t**2), (t, 0, 1))
+        self._vector_field = VectorField(dimension)
+        self._vector_field_expression = self._vector_field.field
+        self._field_latex: str = self._vector_field.field_latex
+        print(f"Vector field expression: {self._vector_field_expression}")
 
     def _format_curve_latex(self, curve: ParametricRegion) -> str:
         curve_def_x: str = sp.latex(curve.definition[0])
@@ -61,4 +62,4 @@ class VectorCalculusQuestion(Question):
                         rf"Calculate $\displaystyle\int_C{self.VECTOR_FIELD_SYMBOL_LATEX}\cdot\mathbf{{dr}}$.")
 
     def generate_answer(self):
-        return super().generate_answer()
+        return self._vector_field.calculate_line_integral(self._curve)

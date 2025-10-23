@@ -45,7 +45,6 @@ def try_delete_file(file_name: str) -> None:
 if __name__ == "__main__":
     configure_log()
     doc = Document()
-    question: Question = create_question("vector_calculus", "line_integral")
     fill_preamble(doc, "Line Integral Questions")
     n = 1
     # TODO: Implement inputting desired number of questions
@@ -58,7 +57,9 @@ if __name__ == "__main__":
             print("That is not a valid input. Please try again.") """
     with doc.create(Enumerate()) as enum:
         for i in range(n):
+            question: Question = create_question("vector_calculus", "line_integral")
             enum.add_item(question.generate_question_latex())
+            print(f"Answer: {question.generate_answer()}")
 
     try:
         doc.generate_tex("output")
