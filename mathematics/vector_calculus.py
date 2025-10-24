@@ -25,7 +25,7 @@ class Field():
     def field_latex(self) -> str:
         return self._field_latex
 
-
+    # TODO: Make the random generation process more sophisticated
     def _generate_random_component(self, dimension: int, C: CoordSys3D) -> Expr:
         """
         Generate weighted random coefficients for a polynomial field component.
@@ -124,7 +124,6 @@ class VectorField(Field):
 
         C: CoordSys3D = CoordSys3D("C")
         self._field: Vector = self._x_component*C.i + self._y_component*C.j
-        print(f"Type of field: {type(self.field)}")
 
         x_component_latex = self._format_component_latex(self._x_component)
         y_component_latex = self._format_component_latex(self._y_component)
