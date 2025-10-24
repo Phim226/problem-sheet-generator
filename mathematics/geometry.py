@@ -2,6 +2,7 @@ from sympy import Symbol, latex
 from sympy.abc import t, theta
 from sympy.vector import ParametricRegion
 
+# TODO: Implement random curve generation
 # TODO: Allow for curves to be made piecewise
 # TODO: Implement wordy curve definitions
 # TODO: Implement implicit curve definitions
