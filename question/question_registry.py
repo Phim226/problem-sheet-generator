@@ -33,6 +33,8 @@ these optional parameters can be found in the questions.py file in the
 appropriate classes. The type hint "bool" refers to the optional parameter
 "nested" in the Question class."""
 
+# TODO: Figure out a way of passing appropriate kwargs into each class (kwargs registry?)
+
 Question = TypeVar("Question", bound=type)
 QUESTION_REGISTRY: dict[str, Type[Question]] = {}
 

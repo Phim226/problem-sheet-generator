@@ -27,6 +27,7 @@ class Question(ABC):
     def generate_answer(self):
         pass
 
+# TODO: Remove curve logic into its own class
 @register_question_type("vector_calculus")
 class VectorCalculusQuestion(Question):
 
