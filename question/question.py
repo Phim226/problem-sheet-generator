@@ -5,6 +5,7 @@ from sympy.vector import CoordSys3D, ParametricRegion, Vector
 from pylatex.utils import NoEscape
 from question.question_registry import register_question_type
 from mathematics.vector_calculus import VectorField
+from mathematics.geometry import Curve
 
 # TODO: Populate file with question classes
 
@@ -29,7 +30,6 @@ class Question(ABC):
     def generate_answer(self):
         pass
 
-# TODO: Remove curve logic into its own class
 @register_question_type("vector_calculus")
 class VectorCalculusQuestion(Question):
 
@@ -44,25 +44,15 @@ class VectorCalculusQuestion(Question):
         self._dimension = dimension
         C = CoordSys3D("C")
         self._curve = ParametricRegion((t, t, 2*t**2), (t, 0, 1))
+        self._curve = Curve(t)
         self._vector_field = VectorField(dimension)
         self._vector_field_expression: Vector = self._vector_field.field
         self._field_latex: str = self._vector_field.field_latex
         print(f"Vector field expression: {self._vector_field_expression}")
 
-    def _format_curve_latex(self, curve: ParametricRegion) -> str:
-        curve_def_x: str = sp.latex(curve.definition[0])
-        curve_def_y: str = sp.latex(curve.definition[1])
-        curve_def_z: str = sp.latex(curve.definition[2])
-        curve_lower_lim: int = curve.limits[t][0]
-        curve_upper_lim: int = curve.limits[t][1]
-        return rf"$\mathbf{{r}}(t)={curve_def_x}{self.I_HAT_LATEX}+{curve_def_y}{self.J_HAT_LATEX}+{curve_def_z}{self.K_HAT_LATEX}$ "\
-            rf"for ${curve_lower_lim}\le t\le {curve_upper_lim}$"
-
     def generate_question_latex(self) -> str:
-        vector_field_latex: str = self._field_latex
-        curve_latex: str = self._format_curve_latex(self._curve)
-        return NoEscape(rf"Let ${self.VECTOR_FIELD_SYMBOL_LATEX}$ be the vector field {vector_field_latex} and $C$ the curve given by {curve_latex}. "\
+        return NoEscape(rf"Let ${self.VECTOR_FIELD_SYMBOL_LATEX}$ be the vector field {self._field_latex} and $C$ the curve given by {self._curve.curve_latex}. "\
                         rf"Calculate $\displaystyle\int_C{self.VECTOR_FIELD_SYMBOL_LATEX}\cdot\mathbf{{dr}}$.")
 
     def generate_answer(self):
-        return self._vector_field.calculate_line_integral(self._curve)
+        return self._vector_field.calculate_line_integral(self._curve.curve)
