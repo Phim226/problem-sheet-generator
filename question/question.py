@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import sympy as sp
 from sympy.abc import t
-from sympy.vector import CoordSys3D, ParametricRegion
+from sympy.vector import CoordSys3D, ParametricRegion, Vector
 from pylatex.utils import NoEscape
 from question.question_registry import register_question_type
 from mathematics.vector_calculus import VectorField
@@ -43,7 +43,7 @@ class VectorCalculusQuestion(Question):
         C = CoordSys3D("C")
         self._curve = ParametricRegion((t, t, 2*t**2), (t, 0, 1))
         self._vector_field = VectorField(dimension)
-        self._vector_field_expression = self._vector_field.field
+        self._vector_field_expression: Vector = self._vector_field.field
         self._field_latex: str = self._vector_field.field_latex
         print(f"Vector field expression: {self._vector_field_expression}")
 
