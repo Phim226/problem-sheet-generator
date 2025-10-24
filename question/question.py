@@ -34,11 +34,9 @@ class Question(ABC):
 class VectorCalculusQuestion(Question):
 
 
-    I_HAT_LATEX = r"\mathbf{{\hat{{i}}}}"
-    J_HAT_LATEX = r"\mathbf{{\hat{{j}}}}"
-    K_HAT_LATEX = r"\mathbf{{\hat{{k}}}}"
     VECTOR_FIELD_SYMBOL_LATEX = r"\mathbf{{F}}"
 
+    # TODO: Improve question latex generation logic based on question subtopic etc
     def __init__(self, topic: str, subtopic: str = "", dimension: int = 3, curve_is_parametric: bool = True, curve_is_implicit: bool = False):
         super().__init__(topic)
         self._dimension = dimension
