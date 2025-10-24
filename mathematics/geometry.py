@@ -2,6 +2,8 @@ from sympy import Symbol, latex
 from sympy.abc import t, theta
 from sympy.vector import ParametricRegion
 
+# TODO: Allow for curves to be geometric objects, e.g. triangles, circles etc
+# TODO: Detect if curve is closed
 # TODO: Implement random curve generation
 # TODO: Allow for curves to be made piecewise
 # TODO: Implement wordy curve definitions
@@ -32,7 +34,11 @@ class Curve():
         curve_def_x: str = latex(curve.definition[0])
         curve_def_y: str = latex(curve.definition[1])
         curve_def_z: str = latex(curve.definition[2])
+
         curve_lower_lim: int = curve.limits[t][0]
         curve_upper_lim: int = curve.limits[t][1]
-        return rf"$\mathbf{{r}}(t)={curve_def_x}{self.I_HAT_LATEX}+{curve_def_y}{self.J_HAT_LATEX}+{curve_def_z}{self.K_HAT_LATEX}$ "\
-            rf"for ${curve_lower_lim}\le t\le {curve_upper_lim}$"
+
+        return (rf"$\mathbf{{r}}(t)={curve_def_x}{self.I_HAT_LATEX}"
+                rf"+{curve_def_y}{self.J_HAT_LATEX}"
+                rf"+{curve_def_z}{self.K_HAT_LATEX}$ "
+                rf"for ${curve_lower_lim}\le t\le {curve_upper_lim}$")
