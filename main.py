@@ -4,7 +4,7 @@ import os
 from pylatex import Document, Command, Enumerate
 from pylatex.utils import NoEscape
 from question.question_registry import create_question
-from question.questions import Question
+from question.question import Question
 from utils import configure_log
 
 

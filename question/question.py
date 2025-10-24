@@ -10,9 +10,9 @@ class Question(ABC):
 
 
     def __init__(self, topic: str, nested: bool = False, difficulty: str = "easy"):
-        self._topic = topic
-        self._nested = nested
-        self._difficulty = difficulty
+        self._topic: str = topic
+        self._nested: bool = nested
+        self._difficulty: str = difficulty
 
     @property
     def topic(self):
