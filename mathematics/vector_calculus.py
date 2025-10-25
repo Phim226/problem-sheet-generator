@@ -1,7 +1,6 @@
 from abc import abstractmethod
 from random import choices
 from sympy import Add, Expr, S, factor, latex
-from sympy.abc import x, y, z
 from sympy.vector import CoordSys3D, ParametricRegion, Vector, vector_integrate
 
 class Field():
