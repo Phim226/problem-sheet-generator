@@ -5,7 +5,7 @@ from pylatex import Document, Command, Enumerate
 from pylatex.utils import NoEscape
 from question.question_registry import create_question
 from question.question import Question
-from utilities.utils import configure_log
+from utilities.misc import configure_log
 
 
 RED = "\033[91m"
