@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from sympy.abc import t
-from sympy.vector import CoordSys3D, ParametricRegion, Vector
+from sympy.vector import CoordSys3D, Vector
 from pylatex.utils import NoEscape
 from question.question_registry import register_question_type
 from mathematics.vector_calculus import VectorField
@@ -40,7 +40,6 @@ class VectorCalculusQuestion(Question):
         super().__init__(topic)
         self._dimension = dimension
         C = CoordSys3D("C")
-        self._curve = ParametricRegion((t, t, 2*t**2), (t, 0, 1))
         self._curve = Curve(t)
         self._vector_field = VectorField(dimension)
         self._vector_field_expression: Vector = self._vector_field.field
