@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-import sympy as sp
 from sympy.abc import t
 from sympy.vector import CoordSys3D, ParametricRegion, Vector
 from pylatex.utils import NoEscape
