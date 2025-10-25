@@ -35,6 +35,7 @@ class Field():
         total degree 6, consisting of 26 possible combinations of the multivariate
         monomial (x^n)(y^m)(z^t) with 0<=n,m,t<=2, plus a possible constant
         term. If the dimension is 2, no values are generated for c_6, c_7 and c_8.
+        1% of the time the function will return 0.
 
         We first set all coefficients to be 0 and then randomly choose at most four
         to be non-zero. The selection of the number of coefficients is weighted.
@@ -54,12 +55,16 @@ class Field():
         you might get a ValueError if the number of weights doesn't match.
         """
 
+        return_zero: bool = choices(population = [True, False], weights = [0.1, 0.99])[0]
+        if return_zero:
+            return S.Zero
+
         max_index: int = 3*dimension
         coeffs: list[int] = [0]*max_index
 
 
         number_of_coeffs: int = choices(
-            population= range(1, 5),
+            population = range(1, 5),
             weights = [0.6, 0.3, 0.07, 0.03]
         )[0]
 
@@ -69,11 +74,11 @@ class Field():
         index_range: list[int] = list(range(max_index))
 
         for _ in range(number_of_coeffs):
-            index: int = choices(population=index_range)[0]
+            index: int = choices(population = index_range)[0]
             index_range.remove(index)
             coeffs[index] = choices(
                 population = coeff_range,
-                weights =[0.01, 0.05, 0.05, 0.1, 0.4, 0.2, 0.1, 0.09]
+                weights = [0.01, 0.05, 0.05, 0.1, 0.4, 0.2, 0.1, 0.09]
             )[0]
 
         x_coeffs: list[int] = coeffs[0:3]
@@ -81,15 +86,15 @@ class Field():
         z_coeffs: list[int] = coeffs[6:9] if dimension == 3 else None
 
         component_x_terms: Expr = (
-            1 if all(c==0 for c in x_coeffs)
+            1 if all(c == 0 for c in x_coeffs)
             else x_coeffs[0]*C.x**2 + x_coeffs[1]*C.x + x_coeffs[2]
         )
         component_y_terms: Expr = (
-            1 if all(c==0 for c in y_coeffs)
+            1 if all(c == 0 for c in y_coeffs)
             else y_coeffs[0]*C.y**2 + y_coeffs[1]*C.y + y_coeffs[2]
         )
         component_z_terms: Expr = (
-            1 if not z_coeffs or all(c==0 for c in z_coeffs)
+            1 if not z_coeffs or all(c == 0 for c in z_coeffs)
             else z_coeffs[0]*C.z**2 + z_coeffs[1]*C.z + z_coeffs[2]
         )
 
@@ -114,12 +119,27 @@ class VectorField(Field):
     def __init__(self, dimension: int):
         super().__init__(dimension)
 
-        self._x_component: Expr = factor(
-            self._generate_random_component(dimension, self._C)
-        )
-        self._y_component: Expr = factor(
-            self._generate_random_component(dimension, self._C)
-        )
+        all_components_zero = True
+        while all_components_zero:
+
+            self._x_component: Expr = factor(
+                self._generate_random_component(dimension, self._C)
+            )
+            self._y_component: Expr = factor(
+                self._generate_random_component(dimension, self._C)
+            )
+            self._z_component: Expr = factor(
+                self._generate_random_component(dimension, self._C)
+            )
+
+            all_components_zero = (
+                    (self._x_component is S.Zero)
+                    and (self._y_component is S.Zero)
+                    and (dimension == 2 or
+                        self._z_component is S.Zero)
+            )
+
+
 
         C: CoordSys3D = CoordSys3D("C")
         self._field: Vector = self._x_component*C.i + self._y_component*C.j
@@ -129,10 +149,6 @@ class VectorField(Field):
         z_component_latex = None
 
         if dimension == 3:
-            self._z_component: Expr = factor(
-                self._generate_random_component(dimension, self._C)
-            )
-
             self._field += self._z_component*C.k
 
             z_component_latex = self._format_component_latex(
@@ -189,14 +205,14 @@ class VectorField(Field):
         such as +-2xj. So we replace all these instances with a - sign.
 
         Finally F(x, y, z) or F(x, y) is attached to the start of the string
-        depending on the dimension.
+        depending on the dimension (z_latex will be None if dimension is 2).
         """
 
         field_latex: str = (
             f"{x_latex}{self.I_HAT_LATEX}"
             f"+{y_latex}{self.J_HAT_LATEX}"
         )
-        if self._dimension == 3:
+        if z_latex:
             field_latex = f"{field_latex}+{z_latex}{self.K_HAT_LATEX}"
 
         # Clean up any leading minus signs.
@@ -204,7 +220,7 @@ class VectorField(Field):
 
         field_latex = (
             f"{self.VECTOR_FIELD_SYMBOL_LATEX}"
-            f"{"(x, y, z)" if self._dimension == 3 else "(x, y)"}"
+            f"{"(x, y, z)" if z_latex else "(x, y)"}"
             f"={field_latex}"
         )
 
