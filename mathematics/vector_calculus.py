@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from random import choices
+from random import choices, random
 from sympy import Add, Expr, S, factor, latex
 from sympy.vector import CoordSys3D, ParametricRegion, Vector, vector_integrate
 
@@ -55,7 +55,7 @@ class Field():
         you might get a ValueError if the number of weights doesn't match.
         """
 
-        return_zero: bool = choices(population = [True, False], weights = [0.1, 0.99])[0]
+        return_zero: bool = random() < 0.1
         if return_zero:
             return S.Zero
 
