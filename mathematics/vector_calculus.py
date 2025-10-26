@@ -55,7 +55,7 @@ class Field():
         you might get a ValueError if the number of weights doesn't match.
         """
 
-        return_zero: bool = random() < 0.1
+        return_zero: bool = random() < 0.05
         if return_zero:
             return S.Zero
 
