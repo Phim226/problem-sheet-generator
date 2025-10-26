@@ -28,68 +28,10 @@ class Field():
     # TODO: Make the random generation process more sophisticated
     @staticmethod
     def _generate_random_component(dimension: int, C: CoordSys3D, allow_zero: bool = True) -> Expr:
-        """
-        Generate weighted random coefficients for a polynomial field component.
-
-        This function generates weighted random coefficients for the polynomial
-        (c_0x^2 + c_1x + c_2)(c_3y^2 + c_4y + c_5)(c_6z^2 + c_7z + c_8) and then
-        evaluates the product. This produces a polynomial in x, y and z of max
-        total degree 6, consisting of 26 possible combinations of the multivariate
-        monomial (x^n)(y^m)(z^t) with 0<=n,m,t<=2, plus a possible constant
-        term. If the dimension is 2, no values are generated for c_6, c_7 and c_8.
-        1% of the time the function will return 0.
-
-        We first set all coefficients to be 0 and then randomly choose at most four
-        to be non-zero. The selection of the number of coefficients is weighted.
-        For the weighting [0.6, 0.3, 0.07, 0.03] this produces one non-zero
-        coefficient 60% of the time, two 30% of the time and so on. This weighting
-        makes simpler expressions more likely to be generated.
-
-        The value of the coefficients is also weighted. A weighting
-        [0.01, 0.05, 0.05, 0.1, 0.4, 0.2, 0.1, 0.09] for the possible values
-        [-4, -3, -2, -1, 1, 2, 3, 4] produces -1 10% of the time, 1 40% of the time,
-        -2 5%, 2 20% and so on.
-
-        Note
-        ----
-        If the number of coefficients or the range of possible coefficient values is
-        changed then the weightings should be changed accordingly as well. Otherwise
-        you might get a ValueError if the number of weights doesn't match.
-        """
-
         if allow_zero:
             return_zero: bool = random() < 0.05
             if return_zero:
                 return S.Zero
-
-        """ max_index: int = 3*dimension
-        coeffs: list[int] = [0]*max_index
-
-        min_num_non_zero = 1
-        max_num_non_zero = 4
-        number_of_coeffs: int = choices(
-            population = range(min_num_non_zero, max_num_non_zero + 1),
-            weights = [0.6, 0.3, 0.07, 0.03]
-        )[0]
-
-        smallest_coeff_value = -4
-        highest_coeff_value = 4
-        coeff_range: list[int] = list(range(
-            smallest_coeff_value,
-            highest_coeff_value + 1
-            )
-        )
-        coeff_range.remove(0)
-
-        index_range: list[int] = list(range(max_index))
-
-        for _ in range(number_of_coeffs):
-            index: int = choices(population = index_range)[0]
-            index_range.remove(index)
-            coeffs[index] = choices(
-                population = coeff_range,
-                weights = [0.01, 0.05, 0.05, 0.1, 0.4, 0.2, 0.1, 0.09]
-            )[0] """
 
         coeffs: list[int] = generate_non_zero_weighted_coefficients(
             max_index = 3*dimension,
