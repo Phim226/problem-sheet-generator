@@ -63,13 +63,20 @@ class Field():
         max_index: int = 3*dimension
         coeffs: list[int] = [0]*max_index
 
-
+        min_num_non_zero = 1
+        max_num_non_zero = 4
         number_of_coeffs: int = choices(
-            population = range(1, 5),
+            population = range(min_num_non_zero, max_num_non_zero + 1),
             weights = [0.6, 0.3, 0.07, 0.03]
         )[0]
 
-        coeff_range: list[int] = list(range(-4, 5))
+        smallest_coeff_value = -4
+        highest_coeff_value = 4
+        coeff_range: list[int] = list(range(
+            smallest_coeff_value,
+            highest_coeff_value + 1
+            )
+        )
         coeff_range.remove(0)
 
         index_range: list[int] = list(range(max_index))
