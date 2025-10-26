@@ -40,7 +40,7 @@ class VectorCalculusQuestion(Question):
         super().__init__(topic)
         self._dimension = dimension
         C = CoordSys3D("C")
-        self._curve = Curve(t)
+        self._curve = Curve(t, dimension)
         self._vector_field = VectorField(dimension)
         self._vector_field_expression: Vector = self._vector_field.field
         self._field_latex: str = self._vector_field.field_latex
