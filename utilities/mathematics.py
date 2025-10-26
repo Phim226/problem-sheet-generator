@@ -14,42 +14,89 @@ def generate_non_zero_weighted_coefficients(
         non_zero_coeff_weights: list[float],
         coeff_value_range: tuple[int],
         coeff_value_weights: list[float]) -> list[int]:
+    """
+    Helper function to generate random weighted coefficients from a list
+    of zeros.
 
-    possible_num_non_zero_coeffs = (non_zero_coeffs_range[1]
-                                    - non_zero_coeffs_range[0] + 1)
-    if len(non_zero_coeff_weights) != possible_num_non_zero_coeffs:
-        raise ValueError(("The number of weights doesn't match the choice "
-                          "of numbers of non-zero coefficients. There are "
-                          f"{len(non_zero_coeff_weights)} weights and "
-                          f"{possible_num_non_zero_coeffs} possible values "
-                          "for the number of non-zero coefficients."))
+    A list of zeros is defined. Then a weighted random selection of them
+    will be re-assigned to be non-zero. This is done to guarantee that
+    some coefficients will be 0. That way, expressions built from them
+    will tend to be simple but still exhibit sufficiently random behaviour.
 
-    num_coeff_values = (coeff_value_range[1] -
-                        coeff_value_range[0])
-    if len(coeff_value_weights) != num_coeff_values:
-        raise ValueError(("The number of possible coefficient values "
-                          "doesn't match the number of weights. There are "
-                          f"{len(coeff_value_weights)} weights and "
-                          f"{num_coeff_values} possible values "
-                          "for the coefficients."))
+    Parameters
+    =========
 
+    max_index: int
+
+        The maximum possible index that can be non-zero. In practice
+        this determines the length of the initial list of zeros.
+
+    non_zero_coeffs_range: tuple[int]
+
+        A tuple defining the minimum and maximum number of coefficients
+        in the list of zeros that will be set to be non-zero. So for
+        a tuple (a, b) we must have a <= b, a >= 0 and b <= max_index.
+        Then the number of non-zero coefficients will be randomly
+        chosen, according to the relevant weights, from the list
+        [a, a + 1, a + 2, ..., b - 1, b].
+
+    non_zero_coeff_weights: list[float]
+
+        The list containing the weights for selecting the number of
+        non-zero coefficients. So the length of this list must be
+        equal to the length of [a, a + 1, a + 2, ..., b - 1, b] or
+        a ValueError will be thrown. For a list of possible non-zero
+        coefficients [1, 2, 3], if the weights are [0.7, 0.2, 0.1]
+        then 70% of the time only one coefficient will be non-zero,
+        20% of the time two coefficients will be non-zero and 10%
+        of the time 3 coefficients will be non-zero. The weights
+        are relative so don't need to sum to 1. If the weights
+        don't sum to 1 then you can calculate the actual probability
+        of each choice by
+
+                p = weight/sum of weights
+
+        So if the sum of weights = 1 then p = weight.
+
+    coeff_value_range: tuple[int]
+
+        A tuple defining the minimum and maximum possible value
+        of the non-zero coefficients. So for (a, b) we must have
+        a <= b. If 0 is in (a, b) then it will be removed. Then
+        the value of the coefficient is randomly chosen, according
+        to the relevant weights, from the list
+        [a, a + 1, a + 2, ..., b - 1, b].
+
+    coeff_value_weights: list[float]
+
+        The list of weights for the values of the non-zero
+        coefficients. The length of this list must be equal to the
+        length of the list of possible coefficient values. Care
+        should be taken here since the list of possible values may
+        be shorter than expected since 0 might have been removed if
+        a < 0 and b > 0. See above in the description of
+        non_zero_coeff_weights for more information on the impact
+        of the weights on probability.
+    """
     coeffs: list[int] = [0]*max_index
 
-    min_num_non_zero = non_zero_coeffs_range[0]
-    max_num_non_zero = non_zero_coeffs_range[1]
     number_of_coeffs: int = choices(
-        population = range(min_num_non_zero, max_num_non_zero + 1),
+        population = range(
+            non_zero_coeffs_range[0],
+            non_zero_coeffs_range[1] + 1
+        ),
         weights = non_zero_coeff_weights
     )[0]
 
-    smallest_coeff_value = coeff_value_range[0]
-    highest_coeff_value = coeff_value_range[1]
     coeff_range: list[int] = list(range(
-        smallest_coeff_value,
-        highest_coeff_value + 1
+        coeff_value_range[0],
+        coeff_value_range[1] + 1
         )
     )
-    coeff_range.remove(0)
+    try:
+        coeff_range.remove(0)
+    except ValueError:
+        pass
 
     index_range: list[int] = list(range(max_index))
 
