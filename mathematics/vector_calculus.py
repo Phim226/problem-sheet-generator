@@ -25,7 +25,7 @@ class Field():
         return self._field_latex
 
     # TODO: Make the random generation process more sophisticated
-    def _generate_random_component(self, dimension: int, C: CoordSys3D) -> Expr:
+    def _generate_random_component(self, dimension: int, C: CoordSys3D, allow_zero: bool = True) -> Expr:
         """
         Generate weighted random coefficients for a polynomial field component.
 
@@ -55,9 +55,10 @@ class Field():
         you might get a ValueError if the number of weights doesn't match.
         """
 
-        return_zero: bool = random() < 0.05
-        if return_zero:
-            return S.Zero
+        if allow_zero:
+            return_zero: bool = random() < 0.05
+            if return_zero:
+                return S.Zero
 
         max_index: int = 3*dimension
         coeffs: list[int] = [0]*max_index
@@ -105,7 +106,7 @@ class ScalarField(Field):
 
     def __init__(self, dimension: int):
         super().__init__(dimension)
-        self._field: Expr = self._generate_random_component(dimension, self._C)
+        self._field: Expr = self._generate_random_component(dimension, self._C, allow_zero = False)
 
 
 class VectorField(Field):
