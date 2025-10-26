@@ -2,6 +2,7 @@ from abc import abstractmethod
 from random import choices, random
 from sympy import Add, Expr, S, factor, latex
 from sympy.vector import CoordSys3D, ParametricRegion, Vector, vector_integrate
+from utilities.mathematics import build_polynomial_from_coeffs, generate_non_zero_weighted_coefficients
 
 class Field():
 
@@ -25,7 +26,8 @@ class Field():
         return self._field_latex
 
     # TODO: Make the random generation process more sophisticated
-    def _generate_random_component(self, dimension: int, C: CoordSys3D, allow_zero: bool = True) -> Expr:
+    @staticmethod
+    def _generate_random_component(dimension: int, C: CoordSys3D, allow_zero: bool = True) -> Expr:
         """
         Generate weighted random coefficients for a polynomial field component.
 
@@ -60,7 +62,7 @@ class Field():
             if return_zero:
                 return S.Zero
 
-        max_index: int = 3*dimension
+        """ max_index: int = 3*dimension
         coeffs: list[int] = [0]*max_index
 
         min_num_non_zero = 1
@@ -87,23 +89,30 @@ class Field():
             coeffs[index] = choices(
                 population = coeff_range,
                 weights = [0.01, 0.05, 0.05, 0.1, 0.4, 0.2, 0.1, 0.09]
-            )[0]
+            )[0] """
 
+        coeffs: list[int] = generate_non_zero_weighted_coefficients(
+            max_index = 3*dimension,
+            non_zero_coeffs_range = (1, 4),
+            non_zero_coeff_weights = [0.6, 0.3, 0.07, 0.03],
+            coeff_value_range = (-4, 4),
+            coeff_value_weights = [0.01, 0.05, 0.05, 0.1, 0.4, 0.2, 0.1, 0.09]
+        )
         x_coeffs: list[int] = coeffs[0:3]
         y_coeffs: list[int] = coeffs[3:6]
         z_coeffs: list[int] = coeffs[6:9] if dimension == 3 else None
 
         component_x_terms: Expr = (
             1 if all(c == 0 for c in x_coeffs)
-            else x_coeffs[0]*C.x**2 + x_coeffs[1]*C.x + x_coeffs[2]
+            else build_polynomial_from_coeffs(C.x, x_coeffs)
         )
         component_y_terms: Expr = (
             1 if all(c == 0 for c in y_coeffs)
-            else y_coeffs[0]*C.y**2 + y_coeffs[1]*C.y + y_coeffs[2]
+            else build_polynomial_from_coeffs(C.y, y_coeffs)
         )
         component_z_terms: Expr = (
             1 if not z_coeffs or all(c == 0 for c in z_coeffs)
-            else z_coeffs[0]*C.z**2 + z_coeffs[1]*C.z + z_coeffs[2]
+            else build_polynomial_from_coeffs(C.z, z_coeffs)
         )
 
         return component_x_terms*component_y_terms*component_z_terms
@@ -141,10 +150,9 @@ class VectorField(Field):
             )
 
             all_components_zero = (
-                    (self._x_component is S.Zero)
-                    and (self._y_component is S.Zero)
-                    and (dimension == 2 or
-                        self._z_component is S.Zero)
+                    (self._x_component is S.Zero) and
+                    (self._y_component is S.Zero) and
+                    (dimension == 2 or self._z_component is S.Zero)
             )
 
 
