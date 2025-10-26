@@ -25,6 +25,7 @@ class Curve():
 
         self._curve = ParametricRegion((p, p, 2*p**2), (p, 0, 1))
         self._curve_latex = self._format_curve_latex(self._curve)
+        print(self._generate_random_parametric_curve(p, dimension))
 
         if p is t:
             print(f"Symbol is {t}")
@@ -77,20 +78,17 @@ class Curve():
     def _generate_random_parametric_curve(
             self,
             p: Symbol,
-            dimension: int
-    ) -> ParametricRegion:
-
+            dimension: int) -> ParametricRegion:
         x_component: Expr = self._generate_random_polynomial(p)
         y_component: Expr = self._generate_random_polynomial(p)
         z_component: Expr = (
             self._generate_random_polynomial(p) if dimension == 3 else 0
             )
-        return ParametricRegion((
-            x_component,
-            y_component,
-            z_component),
-            (p, 0, 1)
-        )
+        return ParametricRegion((x_component,
+                                 y_component,
+                                 z_component),
+                                (p, 0, 1)
+                )
 
 
     def _format_curve_latex(self, curve: ParametricRegion) -> str:
