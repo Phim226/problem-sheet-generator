@@ -1,3 +1,4 @@
+import logging
 from abc import ABC, abstractmethod
 from sympy.abc import t
 from sympy.vector import CoordSys3D, Vector
@@ -44,7 +45,7 @@ class VectorCalculusQuestion(Question):
         self._vector_field = VectorField(dimension)
         self._vector_field_expression: Vector = self._vector_field.field
         self._field_latex: str = self._vector_field.field_latex
-        print(f"Vector field expression: {self._vector_field_expression}")
+        logging.info(f"Vector field expression: {self._vector_field_expression}")
 
     def generate_question_latex(self) -> str:
         return NoEscape(rf"Let ${self.VECTOR_FIELD_SYMBOL_LATEX}$ be the vector field {self._field_latex} and $C$ the curve given by {self._curve.curve_latex}. "\

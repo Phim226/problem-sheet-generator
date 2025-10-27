@@ -1,6 +1,6 @@
 import logging
-import subprocess
 import os
+from subprocess import CalledProcessError
 from pylatex import Document, Command, Enumerate
 from pylatex.utils import NoEscape
 from question.question_registry import create_question
@@ -60,12 +60,12 @@ if __name__ == "__main__":
         for i in range(n):
             question: Question = create_question("vector_calculus", "line_integral")
             enum.add_item(question.generate_question_latex())
-            print(f"Answer: {question.generate_answer()}")
+            logging.info(f"Answer: {question.generate_answer()}")
 
     try:
         doc.generate_tex("output")
         doc.generate_pdf("output", clean_tex=False)
-    except subprocess.CalledProcessError as e:
+    except CalledProcessError as e:
         logging.error(
             f"{PURPLE}{type(e).__name__}{RESET}:{PROCESS_ERROR_STR}"
         )
