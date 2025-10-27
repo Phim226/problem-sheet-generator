@@ -1,7 +1,7 @@
 import logging
 from abc import abstractmethod
 from random import random
-from sympy import Add, Expr, S, factor, latex
+from sympy import Expr, S, factor
 from sympy.vector import CoordSys3D, ParametricRegion, Vector, vector_integrate
 from utilities.latex_formatting import format_component_latex, format_vector_function_latex
 from utilities.mathematics import build_polynomial_from_coeffs, generate_non_zero_weighted_coefficients
