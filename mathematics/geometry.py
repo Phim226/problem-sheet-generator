@@ -2,6 +2,7 @@ from random import choices
 from sympy import Expr, Symbol, latex
 from sympy.abc import t, theta
 from sympy.vector import ParametricRegion
+from utilities.mathematics import build_polynomial_from_coeffs, generate_non_zero_weighted_coefficients
 
 # TODO: Allow for curves to be geometric objects, e.g. triangles, circles etc
 # TODO: Detect if curve is closed
@@ -42,38 +43,14 @@ class Curve():
 
     @staticmethod
     def _generate_random_polynomial(p: Symbol) -> Expr:
-        coeffs = [0, 0, 0, 0]
-
-        min_num_non_zero = 1
-        max_num_non_zero = 2
-        number_of_coeffs: int = choices(
-            population = range(
-                min_num_non_zero,
-                max_num_non_zero + 1
-            ),
-            weights = [0.6, 0.4]
-        )[0]
-
-        smallest_coeff_value = -4
-        highest_coeff_value = 4
-        coeff_range: list[int] = list(range(
-            smallest_coeff_value,
-            highest_coeff_value + 1
-            )
+        coeffs = generate_non_zero_weighted_coefficients(
+            max_index = 4,
+            non_zero_coeffs_range = (1, 2),
+            non_zero_coeff_weights = [0.6, 0.4],
+            coeff_value_range = (-4, 4),
+            coeff_value_weights = [0.01, 0.05, 0.05, 0.1, 0.4, 0.2, 0.1, 0.09]
         )
-        coeff_range.remove(0)
-
-        index_range: list[int] = list(range(len(coeffs)))
-
-        for _ in range(number_of_coeffs):
-            index: int = choices(population = index_range)[0]
-            index_range.remove(index)
-            coeffs[index] = choices(
-                population = coeff_range,
-                weights = [0.01, 0.05, 0.05, 0.1, 0.4, 0.2, 0.1, 0.09]
-            )[0]
-
-        return coeffs[0]*p**3 + coeffs[1]*p**2 + coeffs[2]*p + coeffs[3]
+        return build_polynomial_from_coeffs(p, coeffs)
 
     def _generate_random_parametric_curve(
             self,
