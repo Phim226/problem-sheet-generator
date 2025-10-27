@@ -3,6 +3,9 @@ from time import time
 from typing import Callable
 import logging
 
+BLUE = "\033[34m"
+RESET = "\033[0m"
+
 def timing(func: Callable) -> Callable:
     @wraps(func)
     def wrap(*args, **kwargs):
