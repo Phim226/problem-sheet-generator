@@ -45,18 +45,14 @@ def generate_non_zero_weighted_coefficients(
         The list containing the weights for selecting the number of
         non-zero coefficients. So the length of this list must be
         equal to the length of [a, a + 1, a + 2, ..., b - 1, b] or
-        a ValueError will be thrown. For a list of possible non-zero
+        a ValueError will be raised. For a list of possible non-zero
         coefficients [1, 2, 3], if the weights are [0.7, 0.2, 0.1]
         then 70% of the time only one coefficient will be non-zero,
         20% of the time two coefficients will be non-zero and 10%
         of the time 3 coefficients will be non-zero. The weights
         are relative so don't need to sum to 1. If the weights
         don't sum to 1 then you can calculate the actual probability
-        of each choice by
-
-                p = weight/sum of weights
-
-        So if the sum of weights = 1 then p = weight.
+        of each choice by p = weight/sum of weights.
 
     coeff_value_range: tuple[int]
 
