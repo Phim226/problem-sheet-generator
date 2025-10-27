@@ -24,9 +24,9 @@ class Curve():
                     )
         self._dimension = dimension
 
-        self._curve = ParametricRegion((p, p, 2*p**2), (p, 0, 1))
+        self._curve = self._generate_random_parametric_curve(p, dimension)
         self._curve_latex = self._format_curve_latex(self._curve)
-        print(self._generate_random_parametric_curve(p, dimension))
+        print(self._curve)
 
         if p is t:
             print(f"Symbol is {t}")
