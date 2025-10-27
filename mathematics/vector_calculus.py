@@ -1,7 +1,9 @@
+import logging
 from abc import abstractmethod
 from random import random
 from sympy import Add, Expr, S, factor, latex
 from sympy.vector import CoordSys3D, ParametricRegion, Vector, vector_integrate
+from utilities.latex_formatting import format_component_latex, format_vector_function_latex
 from utilities.mathematics import build_polynomial_from_coeffs, generate_non_zero_weighted_coefficients
 
 class Field():
@@ -69,10 +71,6 @@ class ScalarField(Field):
 
 class VectorField(Field):
 
-
-    I_HAT_LATEX = r"\mathbf{{\hat{{i}}}}"
-    J_HAT_LATEX = r"\mathbf{{\hat{{j}}}}"
-    K_HAT_LATEX = r"\mathbf{{\hat{{k}}}}"
     VECTOR_FIELD_SYMBOL_LATEX = r"\mathbf{{F}}"
 
     def __init__(self, dimension: int):
@@ -97,19 +95,31 @@ class VectorField(Field):
                     (self._z_component is S.Zero)
             )
 
-        C: CoordSys3D = CoordSys3D("C")
-        self._field: Vector = self._x_component*C.i + self._y_component*C.j
+        self._field: Vector = (self._x_component*self._C.i +
+                               self._y_component*self._C.j +
+                               self._z_component*self._C.k)
+        logging.info(f"Vector field expression: {self._field}")
 
-        x_component_latex = self._format_component_latex(self._x_component)
-        y_component_latex = self._format_component_latex(self._y_component)
-        z_component_latex = self._format_component_latex(self._z_component)
+        x_component_latex = self._remove_coordinate_latex(
+            format_component_latex(self._x_component, is_x_component = True)
+        )
+        y_component_latex = self._remove_coordinate_latex(
+            format_component_latex(self._y_component)
+        )
+        z_component_latex = self._remove_coordinate_latex(
+            format_component_latex(self._z_component)
+        )
 
-        self._field_latex: str = self._format_vector_field_latex(x_component_latex,
-                                                                 y_component_latex,
-                                                                 z_component_latex)
+        self._field_latex: str = self._format_vector_field_latex(
+            x_component_latex,
+            y_component_latex,
+            z_component_latex
+        )
 
     @staticmethod
-    def _normalise_component_latex(component_latex: str) -> str | None:
+    def _remove_coordinate_latex(component_latex: str) -> str | None:
+        if component_latex in ("-", "+", None):
+            return component_latex
         latex_replacements: dict[str, str] = {
             "_{C}": "",
             r"\mathbf{{x}}": "x",
@@ -120,55 +130,15 @@ class VectorField(Field):
             component_latex = component_latex.replace(latex, replacement_latex)
         return component_latex
 
-    def _format_component_latex(self, component: Expr) -> str:
-        """
-        Format the latex for a component of the vector field.
-
-        If the component is 1 or -1 then we return "" and "-" respectively,
-        otherwise we would end up with a string -1i or 1i for example.
-
-        If the component is an additive expression, such as x + 1, then
-        we put brackets around it so that the final string is (x + 1)i.
-        """
-
-        if component is S.NegativeOne:
-            return "-"
-        elif component is S.One:
-            return ""
-        elif component is S.Zero:
-            return None
-        elif isinstance(component, Add):
-            return rf"\left({self._normalise_component_latex(latex(component))}\right)"
-        return self._normalise_component_latex(latex(component))
-
     def _format_vector_field_latex(
             self,
             x_latex: str,
             y_latex: str,
             z_latex: str
     ) -> str:
-        """
-        Format the LaTeX for the vector field expression.
-
-        First the x and y component are built, then the z is appended if the
-        dimension is 3. Since each component is connected by a + sign and
-        occasionally components will be negative we could end up with a string
-        such as +-2xj. So we replace all these instances with a - sign.
-
-        Finally F(x, y, z) or F(x, y) is attached to the start of the string
-        depending on the dimension.
-        """
-
-        field_latex: str = (
-            f"{x_latex + self.I_HAT_LATEX if x_latex is not None else ""}"
-            f"{"+" + y_latex + self.J_HAT_LATEX if y_latex is not None else ""}"
-            f"{"+" + z_latex + self.K_HAT_LATEX if z_latex is not None else ""}"
-        )
-
-        # Clean up any leading minus and plus signs.
-        field_latex = field_latex.replace("+-", "-")
-        if field_latex[0] == "+":
-            field_latex = field_latex[1:]
+        field_latex = format_vector_function_latex(x_latex,
+                                                   y_latex,
+                                                   z_latex)
 
         field_latex = (
             f"{self.VECTOR_FIELD_SYMBOL_LATEX}"
