@@ -42,12 +42,14 @@ def try_delete_file(file_name: str) -> None:
             f"{PURPLE}{type(e).__name__}{RESET}: {file_name}{PERMISSION_ERROR_STR}"
         )
 
+# TODO: Have output files saved in a dedicated folder.
+# TODO: Change the names of the output files to include the creation date.
 if __name__ == "__main__":
     configure_log()
     doc = Document()
     fill_preamble(doc, "Line Integral Questions")
     n = 1
-    # TODO: Implement inputting desired number of questions
+    # TODO: Implement inputting desired number of questions.
     """ while True:
         n = input("Enter number of questions:")
         try:
@@ -55,7 +57,7 @@ if __name__ == "__main__":
             break
         except:
             print("That is not a valid input. Please try again.") """
-    # TODO: Create answer document
+    # TODO: Create answer document.
     with doc.create(Enumerate()) as enum:
         for i in range(n):
             question: Question = create_question("vector_calculus", "line_integral")
