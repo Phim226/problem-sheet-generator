@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from random import choices, random
+from random import random
 from sympy import Add, Expr, S, factor, latex
 from sympy.vector import CoordSys3D, ParametricRegion, Vector, vector_integrate
 from utilities.mathematics import build_polynomial_from_coeffs, generate_non_zero_weighted_coefficients
@@ -118,7 +118,7 @@ class VectorField(Field):
                                                                  z_component_latex)
 
     @staticmethod
-    def _normalise_component_latex(component_latex: str) -> str:
+    def _normalise_component_latex(component_latex: str) -> str | None:
         latex_replacements: dict[str, str] = {
             "_{C}": "",
             r"\mathbf{{x}}": "x",
@@ -142,9 +142,11 @@ class VectorField(Field):
 
         if component is S.NegativeOne:
             return "-"
-        if component is S.One:
+        elif component is S.One:
             return ""
-        if isinstance(component, Add):
+        elif component is S.Zero:
+            return None
+        elif isinstance(component, Add):
             return rf"\left({self._normalise_component_latex(latex(component))}\right)"
         return self._normalise_component_latex(latex(component))
 
@@ -167,14 +169,15 @@ class VectorField(Field):
         """
 
         field_latex: str = (
-            f"{x_latex}{self.I_HAT_LATEX}"
-            f"+{y_latex}{self.J_HAT_LATEX}"
+            f"{x_latex + self.I_HAT_LATEX if x_latex is not None else ""}"
+            f"{"+" + y_latex + self.J_HAT_LATEX if y_latex is not None else ""}"
+            f"{"+" + z_latex + self.K_HAT_LATEX if z_latex is not None else ""}"
         )
-        if z_latex:
-            field_latex = f"{field_latex}+{z_latex}{self.K_HAT_LATEX}"
 
-        # Clean up any leading minus signs.
+        # Clean up any leading minus and plus signs.
         field_latex = field_latex.replace("+-", "-")
+        if field_latex[0] == "+":
+            field_latex = field_latex[1:]
 
         field_latex = (
             f"{self.VECTOR_FIELD_SYMBOL_LATEX}"
