@@ -89,29 +89,20 @@ class VectorField(Field):
             )
             self._z_component: Expr = factor(
                 self._generate_random_component(dimension, self._C)
-            )
+            ) if dimension == 3 else S.Zero
 
             all_components_zero = (
                     (self._x_component is S.Zero) and
                     (self._y_component is S.Zero) and
-                    (dimension == 2 or self._z_component is S.Zero)
+                    (self._z_component is S.Zero)
             )
-
-
 
         C: CoordSys3D = CoordSys3D("C")
         self._field: Vector = self._x_component*C.i + self._y_component*C.j
 
         x_component_latex = self._format_component_latex(self._x_component)
         y_component_latex = self._format_component_latex(self._y_component)
-        z_component_latex = None
-
-        if dimension == 3:
-            self._field += self._z_component*C.k
-
-            z_component_latex = self._format_component_latex(
-                self._z_component
-            )
+        z_component_latex = self._format_component_latex(self._z_component)
 
         self._field_latex: str = self._format_vector_field_latex(x_component_latex,
                                                                  y_component_latex,
@@ -165,7 +156,7 @@ class VectorField(Field):
         such as +-2xj. So we replace all these instances with a - sign.
 
         Finally F(x, y, z) or F(x, y) is attached to the start of the string
-        depending on the dimension (z_latex will be None if dimension is 2).
+        depending on the dimension.
         """
 
         field_latex: str = (
@@ -181,7 +172,7 @@ class VectorField(Field):
 
         field_latex = (
             f"{self.VECTOR_FIELD_SYMBOL_LATEX}"
-            f"{"(x, y, z)" if z_latex else "(x, y)"}"
+            f"{"(x, y, z)" if self._dimension == 3 else "(x, y)"}"
             f"={field_latex}"
         )
 
