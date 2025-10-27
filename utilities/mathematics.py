@@ -67,7 +67,8 @@ def generate_non_zero_weighted_coefficients(
     non_zero_coeffs_min = non_zero_coeffs_range[0]
     non_zero_coeffs_max = non_zero_coeffs_range[1]
     if (non_zero_coeffs_min < 0 or  non_zero_coeffs_max > max_index):
-        msg = "Range of non-zero coefficients must be a subset of [0, max_index]"
+        msg = ("Range of non-zero coefficients must be a subset of "
+               "[0, max_index]")
         raise ValueError(msg)
     if non_zero_coeffs_max < non_zero_coeffs_min:
         msg = ("Maximum number of non-zero coefficients cannot smaller "
