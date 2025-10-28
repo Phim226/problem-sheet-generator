@@ -27,7 +27,6 @@ class Field():
     def field_latex(self) -> str:
         return self._field_latex
 
-    # TODO: Make the random generation process more sophisticated
     @staticmethod
     def _generate_random_component(dimension: int, C: CoordSys3D, allow_zero: bool = True) -> Expr:
         if allow_zero:
