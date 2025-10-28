@@ -38,7 +38,7 @@ class Field():
         # These index weights will favour smaller degree expressions
         index_weights = [0.5, 1, 1, 0.5, 1, 1, 0.5, 1, 1]
         if dimension == 2:
-            index_weights = index_weights[0:6]
+            index_weights = index_weights[0:3*dimension]
         coeffs: list[int] = generate_non_zero_weighted_coefficients(
             max_index = 3*dimension,
             non_zero_coeffs_range = (1, 4),
