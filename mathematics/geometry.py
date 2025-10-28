@@ -2,11 +2,12 @@ import logging
 from sympy import Expr, Symbol, latex
 from sympy.abc import t, theta
 from sympy.vector import ParametricRegion
+from utilities.latex_formatting import format_component_latex, format_vector_function_latex
 from utilities.mathematics import build_polynomial_from_coeffs, generate_non_zero_weighted_coefficients
 
 # TODO: Allow for curves to be geometric objects, e.g. triangles, circles etc
 # TODO: Detect if curve is closed
-# TODO: Implement random curve generation
+# TODO: Implement random curve limit generation
 # TODO: Allow for curves to be made piecewise
 # TODO: Implement wordy curve definitions
 # TODO: Implement implicit curve definitions
@@ -71,14 +72,18 @@ class Curve():
 
 
     def _format_curve_latex(self, curve: ParametricRegion) -> str:
-        curve_def_x: str = latex(curve.definition[0])
-        curve_def_y: str = latex(curve.definition[1])
-        curve_def_z: str = latex(curve.definition[2])
+        curve_def_x: str = format_component_latex(curve.definition[0], is_x_component = True)
+        curve_def_y: str = format_component_latex(curve.definition[1])
+        curve_def_z: str = format_component_latex(curve.definition[2])
+
+        curve_latex = format_vector_function_latex(
+            curve_def_x,
+            curve_def_y,
+            curve_def_z
+        )
 
         curve_lower_lim: int = curve.limits[t][0]
         curve_upper_lim: int = curve.limits[t][1]
 
-        return (rf"$\mathbf{{r}}(t)={curve_def_x}{self.I_HAT_LATEX}"
-                rf"+{curve_def_y}{self.J_HAT_LATEX}"
-                rf"+{curve_def_z}{self.K_HAT_LATEX}$ "
+        return (rf"$\mathbf{{r}}(t)={curve_latex}$ "
                 rf"for ${curve_lower_lim}\le t\le {curve_upper_lim}$")
