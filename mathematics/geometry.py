@@ -1,5 +1,5 @@
 import logging
-from sympy import Expr, Symbol, latex
+from sympy import Expr, Symbol, factor_terms, latex
 from sympy.abc import t, theta
 from sympy.vector import ParametricRegion
 from utilities.latex_formatting import format_component_latex, format_vector_function_latex
@@ -28,7 +28,7 @@ class Curve():
         self._curve = self._generate_random_parametric_curve(p, dimension)
         self._curve_latex = self._format_curve_latex(self._curve)
 
-        logging.info((f"Curve is {self.curve.definition}"
+        logging.info((f"Curve is {self.curve.definition} "
                       f"with limits {self.curve.limits[p]}"))
 
         """ if p is t:
@@ -60,11 +60,19 @@ class Curve():
             self,
             p: Symbol,
             dimension: int) -> ParametricRegion:
-        x_component: Expr = self._generate_random_polynomial(p)
-        y_component: Expr = self._generate_random_polynomial(p)
-        z_component: Expr = (
-            self._generate_random_polynomial(p) if dimension == 3 else 0
-            )
+        x_component: Expr = factor_terms(
+            self._generate_random_polynomial(p),
+            sign = True
+        )
+        y_component: Expr = factor_terms(
+            self._generate_random_polynomial(p),
+            sign = True
+        )
+        z_component: Expr = factor_terms(
+            self._generate_random_polynomial(p),
+            sign = True
+        ) if dimension == 3 else 0
+
         return ParametricRegion((x_component,
                                  y_component,
                                  z_component),

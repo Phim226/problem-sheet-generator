@@ -1,7 +1,7 @@
 import logging
 from abc import abstractmethod
 from random import random
-from sympy import Expr, S, factor
+from sympy import Expr, S, factor_terms
 from sympy.vector import CoordSys3D, ParametricRegion, Vector, vector_integrate
 from utilities.latex_formatting import format_component_latex, format_vector_function_latex
 from utilities.mathematics import build_polynomial_from_coeffs, generate_non_zero_weighted_coefficients
@@ -85,14 +85,18 @@ class VectorField(Field):
         all_components_zero = True
         while all_components_zero:
 
-            self._x_component: Expr = factor(
-                self._generate_random_component()
+            self._x_component: Expr = factor_terms(
+                self._generate_random_component(),
+                sign = True
             )
-            self._y_component: Expr = factor(
-                self._generate_random_component()
+            self._y_component: Expr = factor_terms(
+                self._generate_random_component(),
+                sign = True
+
             )
-            self._z_component: Expr = factor(
-                self._generate_random_component()
+            self._z_component: Expr = factor_terms(
+                self._generate_random_component(),
+                sign = True
             ) if dimension == 3 else S.Zero
 
             all_components_zero = (
