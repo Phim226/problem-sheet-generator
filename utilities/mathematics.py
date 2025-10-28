@@ -11,10 +11,10 @@ def build_polynomial_from_coeffs(p: Symbol, coeffs: list[int]) -> Expr:
 def generate_non_zero_weighted_coefficients(
         max_index: int,
         non_zero_coeffs_range: tuple[int],
-        non_zero_coeff_weights: list[float],
         coeff_value_range: tuple[int],
-        coeff_value_weights: list[float],
-        index_weights: list[float]) -> list[int]:
+        non_zero_coeff_weights: list[float] = None,
+        coeff_value_weights: list[float] = None,
+        index_weights: list[float] = None) -> list[int]:
     """
     Generate random weighted coefficients from a list of zeros.
 
@@ -32,22 +32,24 @@ def generate_non_zero_weighted_coefficients(
         A tuple (min, max) defining the minimum and maximum number of
         non-zero coefficients. Must satisfy 0 <= min <= max <= max_index.
 
-    non_zero_coeff_weights: list[float]
+    coeff_value_range: tuple[int]
+        A tuple (min, max) for the possible coefficient values. If
+        0 is in the range then it will be removed.
+
+    non_zero_coeff_weights: list[float], optional
         Weights for selecting the number of non-zero coefficients.
         For possible non-zero coefficients [1, 2, 3], with weights
         [0.7, 0.2, 0.1] then there will be one non-zero coefficient
         70% of the time, two 20% of the time and three 10% of the
         time. The weights are relative so don't need to sum to 1.
+        Default value is None.
 
-    coeff_value_range: tuple[int]
-        A tuple (min, max) for the possible coefficient values. If
-        0 is in the range then it will be removed.
+    coeff_value_weights: list[float], optional
+        Weights for the values of the non-zero coefficients. Default
+        value is None.
 
-    coeff_value_weights: list[float]
-        Weights for the values of the non-zero coefficients.
-
-    index_weights: list[float]
-        Weights for the choice of index.
+    index_weights: list[float], optional
+        Weights for the choice of index. Default value is None.
 
     Returns
     =======
@@ -83,9 +85,8 @@ def generate_non_zero_weighted_coefficients(
     coeff_value_max = coeff_value_range[1]
     if coeff_value_max < coeff_value_min:
         msg = ("The maximum coefficient value cannot be smaller than "
-               "the minimum value.")
+               "the minimum.")
         raise ValueError(msg)
-
 
     coeffs: list[int] = [0]*max_index
 
