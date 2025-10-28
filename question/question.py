@@ -37,7 +37,10 @@ class VectorCalculusQuestion(Question):
     VECTOR_FIELD_SYMBOL_LATEX = r"\mathbf{{F}}"
 
     # TODO: Improve question latex generation logic based on question subtopic etc
-    def __init__(self, topic: str, subtopic: str = "", dimension: int = 3, curve_is_parametric: bool = True, curve_is_implicit: bool = False):
+    def __init__(
+            self, topic: str, subtopic: str = "",
+            dimension: int = 3, curve_is_parametric: bool = True,
+            curve_is_implicit: bool = False):
         super().__init__(topic)
         self._dimension = dimension
         self._curve = Curve(t, dimension)
@@ -46,8 +49,13 @@ class VectorCalculusQuestion(Question):
         self._field_latex: str = self._vector_field.field_latex
 
     def generate_question_latex(self) -> str:
-        return NoEscape(rf"Let ${self.VECTOR_FIELD_SYMBOL_LATEX}$ be the vector field {self._field_latex} and $C$ the curve given by {self._curve.curve_latex}. "\
-                        rf"Calculate $\displaystyle\int_C{self.VECTOR_FIELD_SYMBOL_LATEX}\cdot\mathbf{{dr}}$.")
+        return NoEscape(
+            rf"Let ${self.VECTOR_FIELD_SYMBOL_LATEX}$ be the "
+            f"vector field {self._field_latex} and $C$ the "
+            f"curve given by {self._curve.curve_latex}. "
+            r"Calculate $\displaystyle\int_C"
+            rf"{self.VECTOR_FIELD_SYMBOL_LATEX}\cdot\mathbf{{dr}}$."
+        )
 
     def generate_answer(self):
         return self._vector_field.calculate_line_integral(self._curve.curve)

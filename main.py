@@ -11,14 +11,18 @@ from utilities.misc import configure_log
 RED = "\033[91m"
 PURPLE = "\033[35m"
 RESET = "\033[0m"
-PERMISSION_ERROR_STR = (" is being used by other processes and cannot be deleted. "
-    "Close it before attempting to rerun the problem sheet generation process.")
+PERMISSION_ERROR_STR = (
+    " is being used by other processes and cannot be "
+    "deleted. Close it before attempting to rerun the problem sheet "
+    "generation process."
+)
 PROCESS_ERROR_STR =(
-    " LaTeX failed to process. This is most likely due to a mistake in the LaTeX syntax, "
-    "the output files can't be overwritten or an issue with your LaTeX installation "
-    "(such as not having Perl installed). See the log file for more details.\n\n"
-    "An attempt will now be made to delete the output files to prevent issues when "
-    "rerunning the code.")
+    " LaTeX failed to process. This is most likely due to a mistake in the "
+    "LaTeX syntax, the output files can't be overwritten or an issue with "
+    "your LaTeX installation (such as not having Perl installed). See the "
+    "log file for more details.\n\nAn attempt will now be made to delete "
+    "the output files to prevent issues when rerunning the code."
+)
 
 
 def fill_preamble(doc: Document, title: str, author: str = "", date: str ="") -> None:
@@ -39,7 +43,8 @@ def try_delete_file(file_name: str) -> None:
         os.remove(file_name)
     except PermissionError as e:
         logging.error(
-            f"{PURPLE}{type(e).__name__}{RESET}: {file_name}{PERMISSION_ERROR_STR}"
+            (f"{PURPLE}{type(e).__name__}{RESET}: "
+             f"{file_name}{PERMISSION_ERROR_STR}")
         )
 
 # TODO: Have output files saved in a dedicated folder.
@@ -60,7 +65,10 @@ if __name__ == "__main__":
     # TODO: Create answer document.
     with doc.create(Enumerate()) as enum:
         for i in range(n):
-            question: Question = create_question("vector_calculus", "line_integral")
+            question: Question = create_question(
+                "vector_calculus",
+                "line_integral"
+            )
             enum.add_item(question.generate_question_latex())
             logging.info(f"Answer: {question.generate_answer()}")
 

@@ -28,7 +28,8 @@ class Curve():
         self._curve = self._generate_random_parametric_curve(p, dimension)
         self._curve_latex = self._format_curve_latex(self._curve)
 
-        logging.info(f"Curve is {self.curve.definition} with limits {self.curve.limits[p]}")
+        logging.info((f"Curve is {self.curve.definition}"
+                      f"with limits {self.curve.limits[p]}"))
 
         """ if p is t:
             print(f"Symbol is {t}")
@@ -72,7 +73,10 @@ class Curve():
 
 
     def _format_curve_latex(self, curve: ParametricRegion) -> str:
-        curve_def_x: str = format_component_latex(curve.definition[0], is_x_component = True)
+        curve_def_x: str = format_component_latex(
+            curve.definition[0],
+            is_x_component = True
+        )
         curve_def_y: str = format_component_latex(curve.definition[1])
         curve_def_z: str = format_component_latex(curve.definition[2])
 

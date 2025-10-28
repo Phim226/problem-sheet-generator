@@ -69,10 +69,13 @@ class ScalarField(Field):
 
     def __init__(self, dimension: int):
         super().__init__(dimension)
-        self._field: Expr = self._generate_random_component(allow_zero = False)
+        self._field: Expr = self._generate_random_component(
+            allow_zero = False
+        )
 
 
 class VectorField(Field):
+
 
     VECTOR_FIELD_SYMBOL_LATEX = r"\mathbf{{F}}"
 
@@ -116,7 +119,10 @@ class VectorField(Field):
             r"\mathbf{{z}}": "z"
         }
         for latex, replacement_latex in latex_replacements.items():
-            component_latex = component_latex.replace(latex, replacement_latex)
+            component_latex = component_latex.replace(
+                latex,
+                replacement_latex
+            )
         return component_latex
 
     def _format_vector_field_latex(self) -> str:
