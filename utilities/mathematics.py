@@ -1,4 +1,4 @@
-from random import choices
+from random import choices, randint
 from sympy import Expr, Symbol
 
 def build_polynomial_from_coeffs(p: Symbol, coeffs: list[int]) -> Expr:
@@ -14,7 +14,8 @@ def generate_non_zero_weighted_coefficients(
         coeff_value_range: tuple[int],
         non_zero_coeff_weights: list[float] = None,
         coeff_value_weights: list[float] = None,
-        index_weights: list[float] = None) -> list[int]:
+        index_weights: list[float] = None
+    ) -> list[int]:
     """
     Generate random weighted coefficients from a list of zeros.
 
@@ -123,3 +124,16 @@ def generate_non_zero_weighted_coefficients(
         )[0]
 
     return coeffs
+
+def generate_random_curve_limits(min_limit: int, max_limit: int):
+    if min_limit > max_limit:
+        msg = "Minimum limit cannot be greater than the maximum limit."
+        raise ValueError(msg)
+    if min_limit == max_limit:
+        msg = "Minimum and maximum limits cannot be equal."
+        raise ValueError(msg)
+
+    lower_limit = randint(min_limit, max_limit - 1)
+    upper_limit = randint(lower_limit + 1, max_limit)
+    return lower_limit, upper_limit
+

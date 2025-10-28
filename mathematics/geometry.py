@@ -2,12 +2,14 @@ import logging
 from sympy import Expr, Symbol, factor_terms, latex
 from sympy.abc import t, theta
 from sympy.vector import ParametricRegion
-from utilities.latex_formatting import format_component_latex, format_vector_function_latex
-from utilities.mathematics import build_polynomial_from_coeffs, generate_non_zero_weighted_coefficients
+from utilities.latex_formatting import (format_component_latex,
+                                        format_vector_function_latex)
+from utilities.mathematics import (build_polynomial_from_coeffs,
+                                   generate_random_curve_limits,
+                                   generate_non_zero_weighted_coefficients)
 
 # TODO: Allow for curves to be geometric objects, e.g. triangles, circles etc
 # TODO: Detect if curve is closed
-# TODO: Implement random curve limit generation
 # TODO: Allow for curves to be made piecewise
 # TODO: Implement wordy curve definitions
 # TODO: Implement implicit curve definitions
@@ -76,7 +78,7 @@ class Curve():
         return ParametricRegion((x_component,
                                  y_component,
                                  z_component),
-                                (p, 0, 1)
+                                (p,) + generate_random_curve_limits(-3, 3)
                 )
 
 
