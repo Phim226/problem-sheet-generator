@@ -115,8 +115,8 @@ def generate_non_zero_weighted_coefficients(
             population = index_range,
             weights = index_weights
         )[0]
+        index_weights.pop(index_range.index(index))
         index_range.remove(index)
-        index_weights.pop(index)
         coeffs[index] = choices(
             population = coeff_range,
             weights = coeff_value_weights
