@@ -1,4 +1,4 @@
-from random import choice, choices
+from random import choices
 from sympy import Expr, Symbol
 
 def build_polynomial_from_coeffs(p: Symbol, coeffs: list[int]) -> Expr:
