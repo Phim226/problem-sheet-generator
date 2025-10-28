@@ -75,15 +75,8 @@ def generate_non_zero_weighted_coefficients(
                "[0, max_index]")
         raise ValueError(msg)
     if non_zero_coeffs_max < non_zero_coeffs_min:
-        msg = ("Maximum number of non-zero coefficients cannot smaller "
-               "than the minimum.")
-        raise ValueError(msg)
-
-    non_zero_weights_len = len(non_zero_coeff_weights)
-    non_zero_coeffs_len = non_zero_coeffs_max - non_zero_coeffs_min + 1
-    if non_zero_weights_len != non_zero_coeffs_len:
-        msg = ("The range of possible numbers of non-zero coefficients "
-               "doesn't match the number of corresponding weights.")
+        msg = ("Maximum number of non-zero coefficients cannot be "
+               "smaller than the minimum.")
         raise ValueError(msg)
 
     coeff_value_min = coeff_value_range[0]
@@ -93,20 +86,6 @@ def generate_non_zero_weighted_coefficients(
                "the minimum value.")
         raise ValueError(msg)
 
-    coeff_value_weights_len = len(coeff_value_weights)
-    if coeff_value_min <= 0 <= coeff_value_max:
-        coeff_value_len = coeff_value_max - coeff_value_min
-    else:
-        coeff_value_len = coeff_value_max - coeff_value_min + 1
-    if coeff_value_weights_len != coeff_value_len:
-        msg = ("The range of possible coefficient values "
-               "doesn't match the number of corresponding weights.")
-        raise ValueError(msg)
-
-    if len(index_weights) != max_index:
-        msg = ("The range of indices doesn't match the number of "
-               "corresponding weights.")
-        raise ValueError(msg)
 
     coeffs: list[int] = [0]*max_index
 
