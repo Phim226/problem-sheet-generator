@@ -47,8 +47,8 @@ class Curve():
         coeffs = generate_non_zero_weighted_coefficients(
             max_index = 4,
             non_zero_coeffs_range = (1, 2),
-            non_zero_coeff_weights = [0.6, 0.4],
             coeff_value_range = (-4, 4),
+            non_zero_coeff_weights = [0.6, 0.4],
             coeff_value_weights = [0.01, 0.05, 0.05, 0.1, 0.4, 0.2, 0.1, 0.09],
             index_weights = [0.5, 0.5, 1, 1]
         )
