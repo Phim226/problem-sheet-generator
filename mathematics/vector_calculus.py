@@ -27,19 +27,18 @@ class Field():
     def field_latex(self) -> str:
         return self._field_latex
 
-    @staticmethod
-    def _generate_random_component(dimension: int, C: CoordSys3D, allow_zero: bool = True) -> Expr:
+    def _generate_random_component(self, allow_zero: bool = True) -> Expr:
         if allow_zero:
             return_zero: bool = random() < 0.05
             if return_zero:
                 return S.Zero
 
         # These index weights will favour smaller degree expressions
-        index_weights = [0.5, 1, 1, 0.5, 1, 1, 0.5, 1, 1]
-        if dimension == 2:
-            index_weights = index_weights[0:3*dimension]
+        index_weights = [0.5, 1, 1, 0.5, 1, 1]
+        if self._dimension == 3:
+            index_weights += [0.5, 1, 1] # The weights for the z coefficient indices
         coeffs: list[int] = generate_non_zero_weighted_coefficients(
-            max_index = 3*dimension,
+            max_index = 3*self._dimension,
             non_zero_coeffs_range = (1, 4),
             coeff_value_range = (-4, 4),
             non_zero_coeff_weights = [0.6, 0.3, 0.07, 0.03],
@@ -48,19 +47,19 @@ class Field():
         )
         x_coeffs: list[int] = coeffs[0:3]
         y_coeffs: list[int] = coeffs[3:6]
-        z_coeffs: list[int] = coeffs[6:9] if dimension == 3 else None
+        z_coeffs: list[int] = coeffs[6:9] if self._dimension == 3 else None
 
         component_x_terms: Expr = (
             1 if all(c == 0 for c in x_coeffs)
-            else build_polynomial_from_coeffs(C.x, x_coeffs)
+            else build_polynomial_from_coeffs(self._C.x, x_coeffs)
         )
         component_y_terms: Expr = (
             1 if all(c == 0 for c in y_coeffs)
-            else build_polynomial_from_coeffs(C.y, y_coeffs)
+            else build_polynomial_from_coeffs(self._C.y, y_coeffs)
         )
         component_z_terms: Expr = (
             1 if not z_coeffs or all(c == 0 for c in z_coeffs)
-            else build_polynomial_from_coeffs(C.z, z_coeffs)
+            else build_polynomial_from_coeffs(self._C.z, z_coeffs)
         )
 
         return component_x_terms*component_y_terms*component_z_terms
@@ -70,7 +69,7 @@ class ScalarField(Field):
 
     def __init__(self, dimension: int):
         super().__init__(dimension)
-        self._field: Expr = self._generate_random_component(dimension, self._C, allow_zero = False)
+        self._field: Expr = self._generate_random_component(allow_zero = False)
 
 
 class VectorField(Field):
@@ -84,13 +83,13 @@ class VectorField(Field):
         while all_components_zero:
 
             self._x_component: Expr = factor(
-                self._generate_random_component(dimension, self._C)
+                self._generate_random_component()
             )
             self._y_component: Expr = factor(
-                self._generate_random_component(dimension, self._C)
+                self._generate_random_component()
             )
             self._z_component: Expr = factor(
-                self._generate_random_component(dimension, self._C)
+                self._generate_random_component()
             ) if dimension == 3 else S.Zero
 
             all_components_zero = (
@@ -104,21 +103,7 @@ class VectorField(Field):
                                self._z_component*self._C.k)
         logging.info(f"Vector field expression: {self._field}")
 
-        x_component_latex = self._remove_coordinate_latex(
-            format_component_latex(self._x_component, is_x_component = True)
-        )
-        y_component_latex = self._remove_coordinate_latex(
-            format_component_latex(self._y_component)
-        )
-        z_component_latex = self._remove_coordinate_latex(
-            format_component_latex(self._z_component)
-        )
-
-        self._field_latex: str = self._format_vector_field_latex(
-            x_component_latex,
-            y_component_latex,
-            z_component_latex
-        )
+        self._field_latex: str = self._format_vector_field_latex()
 
     @staticmethod
     def _remove_coordinate_latex(component_latex: str) -> str | None:
@@ -134,15 +119,19 @@ class VectorField(Field):
             component_latex = component_latex.replace(latex, replacement_latex)
         return component_latex
 
-    def _format_vector_field_latex(
-            self,
-            x_latex: str,
-            y_latex: str,
-            z_latex: str
-    ) -> str:
-        field_latex = format_vector_function_latex(x_latex,
-                                                   y_latex,
-                                                   z_latex)
+    def _format_vector_field_latex(self) -> str:
+        x_component_latex = self._remove_coordinate_latex(
+            format_component_latex(self._x_component, is_x_component = True)
+        )
+        y_component_latex = self._remove_coordinate_latex(
+            format_component_latex(self._y_component)
+        )
+        z_component_latex = self._remove_coordinate_latex(
+            format_component_latex(self._z_component)
+        )
+        field_latex = format_vector_function_latex(x_component_latex,
+                                                   y_component_latex,
+                                                   z_component_latex)
 
         field_latex = (
             f"{self.VECTOR_FIELD_SYMBOL_LATEX}"
