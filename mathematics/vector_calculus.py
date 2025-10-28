@@ -35,12 +35,17 @@ class Field():
             if return_zero:
                 return S.Zero
 
+        # These index weights will favour smaller degree expressions
+        index_weights = [0.5, 1, 1, 0.5, 1, 1, 0.5, 1, 1]
+        if dimension == 2:
+            index_weights = index_weights[0:6]
         coeffs: list[int] = generate_non_zero_weighted_coefficients(
             max_index = 3*dimension,
             non_zero_coeffs_range = (1, 4),
             non_zero_coeff_weights = [0.6, 0.3, 0.07, 0.03],
             coeff_value_range = (-4, 4),
-            coeff_value_weights = [0.01, 0.05, 0.05, 0.1, 0.4, 0.2, 0.1, 0.09]
+            coeff_value_weights = [0.01, 0.05, 0.05, 0.1, 0.4, 0.2, 0.1, 0.09],
+            index_weights = index_weights
         )
         x_coeffs: list[int] = coeffs[0:3]
         y_coeffs: list[int] = coeffs[3:6]

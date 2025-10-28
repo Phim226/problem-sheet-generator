@@ -13,7 +13,8 @@ def generate_non_zero_weighted_coefficients(
         non_zero_coeffs_range: tuple[int],
         non_zero_coeff_weights: list[float],
         coeff_value_range: tuple[int],
-        coeff_value_weights: list[float]) -> list[int]:
+        coeff_value_weights: list[float],
+        index_weights: list[float]) -> list[int]:
     """
     Generate random weighted coefficients from a list of zeros.
 
@@ -44,6 +45,9 @@ def generate_non_zero_weighted_coefficients(
 
     coeff_value_weights: list[float]
         Weights for the values of the non-zero coefficients.
+
+    index_weights: list[float]
+        Weights for the choice of index.
 
     Returns
     =======
@@ -99,6 +103,11 @@ def generate_non_zero_weighted_coefficients(
                "doesn't match the number of corresponding weights.")
         raise ValueError(msg)
 
+    if len(index_weights) != max_index:
+        msg = ("The range of indices doesn't match the number of "
+               "corresponding weights.")
+        raise ValueError(msg)
+
     coeffs: list[int] = [0]*max_index
 
     number_of_coeffs: int = choices(
@@ -122,8 +131,12 @@ def generate_non_zero_weighted_coefficients(
     index_range: list[int] = list(range(max_index))
 
     for _ in range(number_of_coeffs):
-        index: int = choice(index_range)
+        index: int = choices(
+            population = index_range,
+            weights = index_weights
+        )[0]
         index_range.remove(index)
+        index_weights.pop(index)
         coeffs[index] = choices(
             population = coeff_range,
             weights = coeff_value_weights
