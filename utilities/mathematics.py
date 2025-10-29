@@ -1,14 +1,14 @@
 from random import choices, randint
 from sympy import Expr, Symbol
 
-def build_polynomial_from_coeffs(p: Symbol, coeffs: list[int]) -> Expr:
+def polynomial_from_coeffs(p: Symbol, coeffs: list[int]) -> Expr:
     poly: Expr = 0
     degree: int = len(coeffs) - 1
     for index, coeff in enumerate(coeffs):
         poly += coeff*p**(degree - index)
     return poly
 
-def generate_non_zero_weighted_coefficients(
+def random_weighted_coefficients(
         max_index: int,
         non_zero_coeffs_range: tuple[int],
         coeff_value_range: tuple[int],
@@ -125,7 +125,10 @@ def generate_non_zero_weighted_coefficients(
 
     return coeffs
 
-def generate_random_curve_limits(min_limit: int, max_limit: int):
+def random_curve_limits(
+        min_limit: int,
+        max_limit: int
+) -> tuple[int, int]:
     if min_limit > max_limit:
         msg = "Minimum limit cannot be greater than the maximum limit."
         raise ValueError(msg)

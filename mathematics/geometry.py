@@ -4,9 +4,9 @@ from sympy.abc import t, theta
 from sympy.vector import ParametricRegion
 from utilities.latex_formatting import (format_component_latex,
                                         format_vector_function_latex)
-from utilities.mathematics import (build_polynomial_from_coeffs,
-                                   generate_random_curve_limits,
-                                   generate_non_zero_weighted_coefficients)
+from utilities.mathematics import (polynomial_from_coeffs,
+                                   random_curve_limits,
+                                   random_weighted_coefficients)
 
 # TODO: Allow for curves to be geometric objects, e.g. triangles, circles etc
 # TODO: Detect if curve is closed
@@ -19,19 +19,19 @@ class Curve():
     J_HAT_LATEX = r"\mathbf{{\hat{{j}}}}"
     K_HAT_LATEX = r"\mathbf{{\hat{{k}}}}"
 
-    def __init__(self, p: Symbol, dimension: int):
-
+    def __init__(self, param: Symbol, dimension: int):
+        self._param = param
         if dimension not in (2, 3):
             raise ValueError((f"{dimension} is not a valid dimension. "
                             "It should be 2 or 3.")
                     )
         self._dimension = dimension
 
-        self._curve = self._generate_random_parametric_curve(p, dimension)
+        self._curve = self._generate_random_parametric_curve(param, dimension)
         self._curve_latex = self._format_curve_latex(self._curve)
 
         logging.info((f"Curve is {self.curve.definition} "
-                      f"with limits {self.curve.limits[p]}"))
+                      f"with limits {self.curve.limits[param]}"))
 
         """ if p is t:
             print(f"Symbol is {t}")
@@ -47,8 +47,8 @@ class Curve():
         return self._curve
 
     @staticmethod
-    def _generate_random_polynomial(p: Symbol) -> Expr:
-        coeffs = generate_non_zero_weighted_coefficients(
+    def _generate_random_polynomial(param: Symbol) -> Expr:
+        coeffs = random_weighted_coefficients(
             max_index = 4,
             non_zero_coeffs_range = (1, 2),
             coeff_value_range = (-4, 4),
@@ -56,29 +56,29 @@ class Curve():
             coeff_value_weights = [0.01, 0.05, 0.05, 0.1, 0.4, 0.2, 0.1, 0.09],
             index_weights = [0.5, 0.5, 1, 1]
         )
-        return build_polynomial_from_coeffs(p, coeffs)
+        return polynomial_from_coeffs(param, coeffs)
 
     def _generate_random_parametric_curve(
             self,
-            p: Symbol,
+            param: Symbol,
             dimension: int) -> ParametricRegion:
         x_component: Expr = factor_terms(
-            self._generate_random_polynomial(p),
+            self._generate_random_polynomial(param),
             sign = True
         )
         y_component: Expr = factor_terms(
-            self._generate_random_polynomial(p),
+            self._generate_random_polynomial(param),
             sign = True
         )
         z_component: Expr = factor_terms(
-            self._generate_random_polynomial(p),
+            self._generate_random_polynomial(param),
             sign = True
         ) if dimension == 3 else 0
 
         return ParametricRegion((x_component,
                                  y_component,
                                  z_component),
-                                (p,) + generate_random_curve_limits(-3, 3)
+                                (param,) + random_curve_limits(-3, 3)
                 )
 
 
@@ -96,8 +96,8 @@ class Curve():
             curve_def_z
         )
 
-        curve_lower_lim: int = curve.limits[t][0]
-        curve_upper_lim: int = curve.limits[t][1]
+        lower_lim: int = curve.limits[self._param][0]
+        upper_lim: int = curve.limits[self._param][1]
 
-        return (rf"$\mathbf{{r}}(t)={curve_latex}$ "
-                rf"for ${curve_lower_lim}\le t\le {curve_upper_lim}$")
+        return (rf"$\mathbf{{r}}({self._param})={curve_latex}$ "
+                rf"for ${lower_lim}\le {self._param}\le {upper_lim}$")

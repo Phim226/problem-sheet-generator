@@ -4,7 +4,7 @@ from random import random
 from sympy import Expr, S, factor_terms
 from sympy.vector import CoordSys3D, ParametricRegion, Vector, vector_integrate
 from utilities.latex_formatting import format_component_latex, format_vector_function_latex
-from utilities.mathematics import build_polynomial_from_coeffs, generate_non_zero_weighted_coefficients
+from utilities.mathematics import polynomial_from_coeffs, random_weighted_coefficients
 
 class Field():
 
@@ -37,7 +37,7 @@ class Field():
         index_weights = [0.5, 1, 1, 0.5, 1, 1]
         if self._dimension == 3:
             index_weights += [0.5, 1, 1] # The weights for the z coefficient indices
-        coeffs: list[int] = generate_non_zero_weighted_coefficients(
+        coeffs: list[int] = random_weighted_coefficients(
             max_index = 3*self._dimension,
             non_zero_coeffs_range = (1, 4),
             coeff_value_range = (-4, 4),
@@ -51,15 +51,15 @@ class Field():
 
         component_x_terms: Expr = (
             1 if all(c == 0 for c in x_coeffs)
-            else build_polynomial_from_coeffs(self._C.x, x_coeffs)
+            else polynomial_from_coeffs(self._C.x, x_coeffs)
         )
         component_y_terms: Expr = (
             1 if all(c == 0 for c in y_coeffs)
-            else build_polynomial_from_coeffs(self._C.y, y_coeffs)
+            else polynomial_from_coeffs(self._C.y, y_coeffs)
         )
         component_z_terms: Expr = (
             1 if not z_coeffs or all(c == 0 for c in z_coeffs)
-            else build_polynomial_from_coeffs(self._C.z, z_coeffs)
+            else polynomial_from_coeffs(self._C.z, z_coeffs)
         )
 
         return component_x_terms*component_y_terms*component_z_terms
@@ -92,7 +92,6 @@ class VectorField(Field):
             self._y_component: Expr = factor_terms(
                 self._generate_random_component(),
                 sign = True
-
             )
             self._z_component: Expr = factor_terms(
                 self._generate_random_component(),
