@@ -4,7 +4,10 @@ I_HAT_LATEX = r"\mathbf{{\hat{{i}}}}"
 J_HAT_LATEX = r"\mathbf{{\hat{{j}}}}"
 K_HAT_LATEX = r"\mathbf{{\hat{{k}}}}"
 
-def format_component_latex(component: Expr, is_x_component: bool = False) -> str:
+def format_component_latex(
+          component: Expr,
+          is_x_component: bool = False
+) -> str:
     """
     Format the latex for a component of the vector function.
 
