@@ -1,9 +1,9 @@
 from logging import error, info
 from os import remove
 from subprocess import CalledProcessError
-from pylatex import Document, Command, Enumerate
+from pylatex import Command, Document, Enumerate
 from pylatex.utils import NoEscape
-from question.question_registry import (QUESTION_REGISTRY, KEYWORD_REGISTRY,
+from question.question_registry import (KEYWORD_REGISTRY, QUESTION_REGISTRY,
                                         create_question)
 from question.question import Question
 from utilities.misc import configure_log
@@ -54,15 +54,6 @@ def try_delete_file(file_name: str) -> None:
         )
 
 def create_document():
-    pass
-
-# TODO: Change the names of the output files to include the creation date.
-if __name__ == "__main__":
-    """ print(f"Question registry: {QUESTION_REGISTRY}")
-    print(f"Keyword registry: {KEYWORD_REGISTRY}") """
-
-    configure_log()
-
     questions = Document()
     fill_preamble(questions, "Questions")
 
@@ -111,3 +102,12 @@ if __name__ == "__main__":
         try_delete_file("output/answers.fdb_latexmk")
         try_delete_file("output/answers.pdf")
         try_delete_file("output/answers.tex")
+
+# TODO: Change the names of the output files to include the creation date.
+if __name__ == "__main__":
+    configure_log()
+
+    info(f"Question registry: {QUESTION_REGISTRY}")
+    info(f"Keyword registry: {KEYWORD_REGISTRY}")
+
+    create_document()
