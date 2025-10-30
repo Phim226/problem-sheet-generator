@@ -1,9 +1,9 @@
 from functools import wraps
 from inspect import getfullargspec
-from logging import basicConfig, DEBUG
+from logging import (DEBUG,
+                     basicConfig)
 from time import time
 from typing import Callable
-
 
 
 BLUE = "\033[34m"

@@ -1,4 +1,6 @@
-from sympy import Add, Expr, S, latex
+from sympy import (Add, Expr,
+                   S,
+                   latex)
 
 I_HAT_LATEX = r"\mathbf{{\hat{{i}}}}"
 J_HAT_LATEX = r"\mathbf{{\hat{{j}}}}"

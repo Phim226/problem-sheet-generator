@@ -3,7 +3,8 @@ from os import remove
 from subprocess import CalledProcessError
 from pylatex import Document, Command, Enumerate
 from pylatex.utils import NoEscape
-from question.question_registry import create_question, QUESTION_REGISTRY, KEYWORD_REGISTRY
+from question.question_registry import (QUESTION_REGISTRY, KEYWORD_REGISTRY,
+                                        create_question)
 from question.question import Question
 from utilities.misc import configure_log
 
