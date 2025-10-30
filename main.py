@@ -8,6 +8,7 @@ from question.question_registry import (KEYWORD_REGISTRY, QUESTION_REGISTRY,
 from question.question import Question
 from utilities.misc import configure_log
 
+# TODO: Include docstrings
 
 RED = "\033[91m"
 PURPLE = "\033[35m"
@@ -53,6 +54,7 @@ def try_delete_file(file_name: str) -> None:
              f"{file_name}{PERMISSION_ERROR_STR}")
         )
 
+# TODO: Change the names of the output files to include the creation date.
 def create_document():
     questions = Document()
     fill_preamble(questions, "Questions")
@@ -103,7 +105,6 @@ def create_document():
         try_delete_file("output/answers.pdf")
         try_delete_file("output/answers.tex")
 
-# TODO: Change the names of the output files to include the creation date.
 if __name__ == "__main__":
     configure_log()
 
