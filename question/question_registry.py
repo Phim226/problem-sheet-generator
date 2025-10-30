@@ -1,5 +1,6 @@
+from inspect import getfullargspec
 from typing import Any, Callable, Type, TypeVar
-from utilities.misc import get_kwargs
+
 
 
 """
@@ -38,7 +39,16 @@ appropriate classes. The type hint "bool" refers to the optional parameter
 
 Question = TypeVar("Question", bound=type)
 QUESTION_REGISTRY: dict[str, Type[Question]] = {}
-KEYWORD_REGISTRY: dict[Any, Any] = {}
+KEYWORD_REGISTRY: dict[str, Any] = {}
+
+def get_kwargs(func: Callable) -> dict[str, Any]:
+    spec = getfullargspec(func)
+    kwargs = {key: value for key, value in zip(
+        reversed(spec.args),
+        reversed(spec.defaults)
+        )
+    }
+    return dict(list(reversed(kwargs.items())))
 
 def register_question_type(name: str) -> Callable[[Type[Question]], Type[Question]]:
     def wrapper(cls: Type[Question]) -> Type[Question]:

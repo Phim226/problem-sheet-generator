@@ -1,5 +1,4 @@
 from functools import wraps
-from inspect import getfullargspec
 from logging import (DEBUG,
                      basicConfig)
 from time import time
@@ -24,11 +23,3 @@ def configure_log() -> None:
     format = "[%(levelname)s] - %(message)s"
     basicConfig(level = level, format = format)
 
-def get_kwargs(func: Callable):
-    spec = getfullargspec(func)
-    kwargs = {key: value for key, value in zip(
-        reversed(spec.args),
-        reversed(spec.defaults)
-        )
-    }
-    return dict(list(reversed(kwargs.items())))
