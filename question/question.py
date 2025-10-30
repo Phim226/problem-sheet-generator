@@ -8,7 +8,7 @@ from mathematics.vector_calculus import VectorField
 from mathematics.geometry import Curve
 
 # TODO: Populate file with question classes
-
+@register_question_type("question")
 class Question(ABC):
 
 
@@ -37,10 +37,11 @@ class VectorCalculusQuestion(Question):
     VECTOR_FIELD_SYMBOL_LATEX = r"\mathbf{{F}}"
 
     # TODO: Improve question latex generation logic based on question subtopic etc
+    # TODO: Restrict questions to simple answers (not something like 1234045/3304 but 11/9)
     def __init__(
             self, topic: str, subtopic: str = "",
             dimension: int = 3, curve_is_parametric: bool = True,
-            curve_is_implicit: bool = False):
+            curve_is_implicit: bool = False, **kwargs: bool):
         super().__init__(topic)
         self._dimension = dimension
         self._curve = Curve(t, dimension)
