@@ -1,8 +1,17 @@
+#unused database
 /latex_script_database.db
+
+# pycache
 /__pycache__
 /mathematics/__pycache__
 /question/__pycache__
 /utilities/__pycache__
+
+# outputs
 /output/questions.pdf
 /output/questions.tex
+/output/answers.pdf
+/output/answers.tex
+
+# local script
 /mess_about_script.py

@@ -56,16 +56,15 @@ def try_delete_file(file_name: str) -> None:
 def create_document():
     pass
 
-# TODO: Have output files saved in a dedicated folder.
 # TODO: Change the names of the output files to include the creation date.
 if __name__ == "__main__":
-    print(f"Question registry: {QUESTION_REGISTRY}")
-    print(f"Keyword registry: {KEYWORD_REGISTRY}")
+    """ print(f"Question registry: {QUESTION_REGISTRY}")
+    print(f"Keyword registry: {KEYWORD_REGISTRY}") """
 
     configure_log()
 
     questions = Document()
-    fill_preamble(questions, "Line Integral Questions")
+    fill_preamble(questions, "Questions")
 
     n = 1
     # TODO: Implement inputting desired number of questions.
@@ -78,7 +77,6 @@ if __name__ == "__main__":
             print("That is not a valid input. Please try again.") """
 
     answers_list = []
-    # TODO: Create answer document.
     with questions.create(Enumerate()) as enum:
         for i in range(n):
             question: Question = create_question(
@@ -89,9 +87,19 @@ if __name__ == "__main__":
             answers_list.append(question.generate_answer())
             info(f"Answer: {question.generate_answer()}")
 
+    answers = Document()
+    fill_preamble(answers, "Answers")
+
+    with answers.create(Enumerate()) as enum:
+        for i in range(n):
+            enum.add_item(answers_list[i])
+
     try:
         questions.generate_tex("output/questions")
-        questions.generate_pdf("output/questions", clean_tex=False)
+        questions.generate_pdf("output/questions", clean_tex = False)
+
+        answers.generate_tex("output/answers")
+        answers.generate_pdf("output/answers", clean_tex = False)
     except CalledProcessError as e:
         error(
             f"{PURPLE}{type(e).__name__}{RESET}:{PROCESS_ERROR_STR}"
@@ -99,3 +107,7 @@ if __name__ == "__main__":
         try_delete_file("output/questions.fdb_latexmk")
         try_delete_file("output/questions.pdf")
         try_delete_file("output/questions.tex")
+
+        try_delete_file("output/answers.fdb_latexmk")
+        try_delete_file("output/answers.pdf")
+        try_delete_file("output/answers.tex")
