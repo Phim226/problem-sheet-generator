@@ -1,5 +1,5 @@
 from random import choices, randint
-from sympy import Expr, Symbol
+from sympy import Expr, Rational, Symbol
 
 def polynomial_from_coeffs(p: Symbol, coeffs: list[int]) -> Expr:
     poly: Expr = 0
@@ -133,4 +133,14 @@ def random_limits(
 ) -> tuple[int, int]:
     lower_limit = randint(min_limit, max_limit - 1)
     return lower_limit, randint(lower_limit + 1, max_limit)
+
+def clumsy_rational(rat: Rational) -> bool:
+    num_str = str(rat.p)
+    den_str = str(rat.q)
+    num_str.replace("-", "")
+    if len(num_str) > 3:
+        return True
+    if len(den_str) > 3:
+        return True
+    return False
 
