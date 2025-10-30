@@ -1,5 +1,5 @@
 import logging
-from sympy import Expr, Symbol, factor_terms, latex
+from sympy import Expr, Symbol, factor_terms
 from sympy.abc import t, theta
 from sympy.vector import ParametricRegion
 from utilities.latex_formatting import (format_component_latex,
