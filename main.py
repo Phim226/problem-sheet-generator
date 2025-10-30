@@ -74,9 +74,10 @@ def create_document():
         for i in range(n):
             question: Question = create_question(
                 "vector_calculus",
-                "line_integral"
+                "line_integral",
+                **{"subtopic": "vector_field"}
             )
-            enum.add_item(question.question_latex)
+            enum.add_item(question.question)
             answers_list.append(question.answer)
             info(f"Answer: {question.answer}")
 
