@@ -125,18 +125,12 @@ def random_weighted_coefficients(
 
     return coeffs
 
-def random_curve_limits(
+# TODO: Add weighting to small limit range
+# TODO: Make generation of larger limit range correspond to weight increase toward simpler expressions (or vice versa)
+def random_limits(
         min_limit: int,
         max_limit: int
 ) -> tuple[int, int]:
-    if min_limit > max_limit:
-        msg = "Minimum limit cannot be greater than the maximum limit."
-        raise ValueError(msg)
-    if min_limit == max_limit:
-        msg = "Minimum and maximum limits cannot be equal."
-        raise ValueError(msg)
-
     lower_limit = randint(min_limit, max_limit - 1)
-    upper_limit = randint(lower_limit + 1, max_limit)
-    return lower_limit, upper_limit
+    return lower_limit, randint(lower_limit + 1, max_limit)
 

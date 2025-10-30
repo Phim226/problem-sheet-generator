@@ -5,7 +5,7 @@ from sympy.vector import ParametricRegion
 from utilities.latex_formatting import (format_component_latex,
                                         format_vector_function_latex)
 from utilities.mathematics import (polynomial_from_coeffs,
-                                   random_curve_limits,
+                                   random_limits,
                                    random_weighted_coefficients)
 
 # TODO: Allow for curves to be geometric objects, e.g. triangles, circles etc
@@ -78,7 +78,7 @@ class Curve():
         return ParametricRegion((x_component,
                                  y_component,
                                  z_component),
-                                (param,) + random_curve_limits(-3, 3)
+                                (param,) + random_limits(-3, 3)
                 )
 
 
