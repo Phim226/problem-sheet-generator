@@ -68,7 +68,7 @@ def random_weighted_coefficients(
         If the lengths of the weights lists don't correspond to the
         number of possible values in their respective ranges. For the
         non-zero coefficients this is simply the difference in limits
-        + 1. But for the coefficient values there may be 1 less value
+        plus 1. But for the coefficient values there may be 1 less value
         if 0 has been removed from the range.
     """
     non_zero_coeffs_min = non_zero_coeffs_range[0]
