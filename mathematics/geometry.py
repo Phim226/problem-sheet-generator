@@ -20,15 +20,18 @@ class Curve():
     K_HAT_LATEX = r"\mathbf{{\hat{{k}}}}"
 
     def __init__(self, param: Symbol, dimension: int):
-        self._param = param
+        self._param: Symbol = param
         if dimension not in (2, 3):
             raise ValueError((f"{dimension} is not a valid dimension. "
                             "It should be 2 or 3.")
                     )
-        self._dimension = dimension
+        self._dimension: int = dimension
 
-        self._curve = self._generate_random_parametric_curve(param, dimension)
-        self._curve_latex = self._format_curve_latex(self._curve)
+        self._curve: ParametricRegion = self._generate_random_parametric_curve(
+            param,
+            dimension
+        )
+        self._curve_latex: str = self._format_curve_latex(self.curve)
 
         logging.info((f"Curve is {self.curve.definition} "
                       f"with limits {self.curve.limits[param]}"))
@@ -39,11 +42,11 @@ class Curve():
             print(f"Symbol is {theta}") """
 
     @property
-    def curve_latex(self):
+    def curve_latex(self) -> str:
         return self._curve_latex
 
     @property
-    def curve(self):
+    def curve(self) -> ParametricRegion:
         return self._curve
 
     @staticmethod
@@ -61,7 +64,8 @@ class Curve():
     def _generate_random_parametric_curve(
             self,
             param: Symbol,
-            dimension: int) -> ParametricRegion:
+            dimension: int
+    ) -> ParametricRegion:
         x_component: Expr = factor_terms(
             self._generate_random_polynomial(param),
             sign = True
