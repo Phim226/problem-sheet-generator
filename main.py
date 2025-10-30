@@ -1,9 +1,9 @@
-import logging
-import os
+from logging import error, info
+from os import remove
 from subprocess import CalledProcessError
 from pylatex import Document, Command, Enumerate
 from pylatex.utils import NoEscape
-from question.question_registry import create_question
+from question.question_registry import create_question, QUESTION_REGISTRY, KEYWORD_REGISTRY
 from question.question import Question
 from utilities.misc import configure_log
 
@@ -25,7 +25,12 @@ PROCESS_ERROR_STR =(
 )
 
 
-def fill_preamble(doc: Document, title: str, author: str = "", date: str ="") -> None:
+def fill_preamble(
+        doc: Document,
+        title: str,
+        author: str = "",
+        date: str = ""
+) -> None:
     doc.preamble.append(
         Command(
             "usepackage",
@@ -40,19 +45,27 @@ def fill_preamble(doc: Document, title: str, author: str = "", date: str ="") ->
 
 def try_delete_file(file_name: str) -> None:
     try:
-        os.remove(file_name)
+        remove(file_name)
     except PermissionError as e:
-        logging.error(
+        error(
             (f"{PURPLE}{type(e).__name__}{RESET}: "
              f"{file_name}{PERMISSION_ERROR_STR}")
         )
 
+def create_document():
+    pass
+
 # TODO: Have output files saved in a dedicated folder.
 # TODO: Change the names of the output files to include the creation date.
 if __name__ == "__main__":
+    print(f"Question registry: {QUESTION_REGISTRY}")
+    print(f"Keyword registry: {KEYWORD_REGISTRY}")
+
     configure_log()
-    doc = Document()
-    fill_preamble(doc, "Line Integral Questions")
+
+    questions = Document()
+    fill_preamble(questions, "Line Integral Questions")
+
     n = 1
     # TODO: Implement inputting desired number of questions.
     """ while True:
@@ -62,23 +75,26 @@ if __name__ == "__main__":
             break
         except:
             print("That is not a valid input. Please try again.") """
+
+    answers_list = []
     # TODO: Create answer document.
-    with doc.create(Enumerate()) as enum:
+    with questions.create(Enumerate()) as enum:
         for i in range(n):
             question: Question = create_question(
                 "vector_calculus",
                 "line_integral"
             )
             enum.add_item(question.generate_question_latex())
-            logging.info(f"Answer: {question.generate_answer()}")
+            answers_list.append(question.generate_answer())
+            info(f"Answer: {question.generate_answer()}")
 
     try:
-        doc.generate_tex("output")
-        doc.generate_pdf("output", clean_tex=False)
+        questions.generate_tex("output/questions")
+        questions.generate_pdf("output/questions", clean_tex=False)
     except CalledProcessError as e:
-        logging.error(
+        error(
             f"{PURPLE}{type(e).__name__}{RESET}:{PROCESS_ERROR_STR}"
         )
-        try_delete_file("output.fdb_latexmk")
-        try_delete_file("output.pdf")
-        try_delete_file("output.tex")
+        try_delete_file("output/questions.fdb_latexmk")
+        try_delete_file("output/questions.pdf")
+        try_delete_file("output/questions.tex")
