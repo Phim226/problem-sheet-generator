@@ -1,7 +1,7 @@
 from logging import info
 from abc import abstractmethod
 from random import random
-from sympy import (Expr, Rational,
+from sympy import (Expr,
                    S,
                    factor_terms)
 from sympy.vector import (CoordSys3D, ParametricRegion, Vector,
@@ -77,7 +77,6 @@ class ScalarField(Field):
         self._field: Expr = self._generate_random_component(
             allow_zero = False
         )
-
 
 class VectorField(Field):
 
@@ -155,10 +154,4 @@ class VectorField(Field):
         return f"${field_latex}$"
 
     def calculate_line_integral(self, curve: ParametricRegion):
-        integral: Rational = vector_integrate(self.field, curve)
-        print(str(integral))
-        info(f"Type of answer {integral} is {type(integral)}")
-        if isinstance(integral, Rational):
-            print(integral.p)
-            print(integral.q)
-        return integral
+        return vector_integrate(self.field, curve)
