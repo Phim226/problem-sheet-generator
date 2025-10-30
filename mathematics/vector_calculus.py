@@ -110,7 +110,7 @@ class VectorField(Field):
         self._field: Vector = (self._x_component*self._C.i +
                                self._y_component*self._C.j +
                                self._z_component*self._C.k)
-        info(f"Vector field expression: {self._field}")
+        info(f"Vector field expression: {self.field}")
 
         self._field_latex: str = self._format_vector_field_latex()
 
