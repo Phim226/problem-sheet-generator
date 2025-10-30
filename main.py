@@ -78,7 +78,7 @@ def create_document():
             )
             enum.add_item(question.generate_question_latex())
             answers_list.append(question.generate_answer())
-            info(f"Answer: {question.generate_answer()}")
+            #info(f"Answer: {question.generate_answer()}")
 
     answers = Document()
     fill_preamble(answers, "Answers")
