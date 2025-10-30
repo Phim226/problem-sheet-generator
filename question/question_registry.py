@@ -1,4 +1,5 @@
-from typing import Callable, Type, TypeVar
+from typing import Any, Callable, Type, TypeVar
+from utilities.misc import get_kwargs
 
 
 """
@@ -37,15 +38,20 @@ appropriate classes. The type hint "bool" refers to the optional parameter
 
 Question = TypeVar("Question", bound=type)
 QUESTION_REGISTRY: dict[str, Type[Question]] = {}
+KEYWORD_REGISTRY: dict[Any, Any] = {}
 
 def register_question_type(name: str) -> Callable[[Type[Question]], Type[Question]]:
     def wrapper(cls: Type[Question]) -> Type[Question]:
         QUESTION_REGISTRY[name] = cls
+        KEYWORD_REGISTRY[name] = get_kwargs(cls.__init__)
         return cls
     return wrapper
 
 def create_question(name: str, topic: str, **kwargs: bool) -> Question:
+    if name == "question":
+        raise ValueError(f"{name} is not a valid question type")
+
     cls = QUESTION_REGISTRY.get(name)
     if cls is None:
-        raise ValueError(f"Unkown question type: {name}")
+        raise ValueError(f"Unknown question type: {name}")
     return cls(topic, **kwargs)

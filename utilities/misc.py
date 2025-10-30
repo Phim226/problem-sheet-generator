@@ -1,7 +1,10 @@
 from functools import wraps
+from inspect import getfullargspec
+from logging import basicConfig, DEBUG
 from time import time
 from typing import Callable
-import logging
+
+
 
 BLUE = "\033[34m"
 RESET = "\033[0m"
@@ -17,6 +20,15 @@ def timing(func: Callable) -> Callable:
     return wrap
 
 def configure_log() -> None:
-    level = logging.DEBUG
+    level = DEBUG
     format = "[%(levelname)s] - %(message)s"
-    logging.basicConfig(level = level, format = format)
+    basicConfig(level = level, format = format)
+
+def get_kwargs(func: Callable):
+    spec = getfullargspec(func)
+    kwargs = {key: value for key, value in zip(
+        reversed(spec.args),
+        reversed(spec.defaults)
+        )
+    }
+    return dict(list(reversed(kwargs.items())))
