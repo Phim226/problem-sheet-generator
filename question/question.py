@@ -8,7 +8,8 @@ from mathematics.vector_calculus import ScalarField, VectorField
 from mathematics.geometry import Curve
 from utilities.mathematics import clumsy_rational
 
-# TODO: Populate file with question classes
+# TODO: Populate file with question classes.
+# TODO: Give option for answer to be worked.
 @register_question_type("question")
 class Question(ABC):
 
