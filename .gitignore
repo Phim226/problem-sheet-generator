@@ -3,6 +3,6 @@
 /mathematics/__pycache__
 /question/__pycache__
 /utilities/__pycache__
-/output.pdf
-/output.tex
+/output/questions.pdf
+/output/questions.tex
 /mess_about_script.py
