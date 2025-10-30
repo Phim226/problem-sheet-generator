@@ -76,9 +76,9 @@ def create_document():
                 "vector_calculus",
                 "line_integral"
             )
-            enum.add_item(question.generate_question_latex())
-            answers_list.append(question.generate_answer())
-            #info(f"Answer: {question.generate_answer()}")
+            enum.add_item(question.question_latex)
+            answers_list.append(question.answer)
+            info(f"Answer: {question.answer}")
 
     answers = Document()
     fill_preamble(answers, "Answers")
