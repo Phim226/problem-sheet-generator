@@ -107,6 +107,8 @@ def create_document():
         _try_delete_file("output/answers.pdf")
         _try_delete_file("output/answers.tex")
 
+
+# Use this code to bypass GUI.
 if __name__ == "__main__":
     configure_log()
 
