@@ -1,4 +1,4 @@
-import logging
+from logging import info
 from sympy import Expr, Symbol, factor_terms
 from sympy.abc import t, theta
 from sympy.vector import ParametricRegion
@@ -31,10 +31,11 @@ class Curve():
             param,
             dimension
         )
+
         self._curve_latex: str = self._format_curve_latex(self.curve)
 
-        logging.info((f"Curve is {self.curve.definition} "
-                      f"with limits {self.curve.limits[param]}"))
+        info((f"Curve is {self.curve.definition} "
+              f"with limits {self.curve.limits[param]}"))
 
         """ if p is t:
             print(f"Symbol is {t}")
