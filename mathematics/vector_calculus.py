@@ -6,7 +6,7 @@ from sympy import (Expr,
                    factor_terms)
 from sympy.vector import (CoordSys3D, ParametricRegion, Vector,
                           vector_integrate)
-from utilities.latex_formatting import (format_component_latex,
+from utilities.latex_formatting import (format_vector_component_latex,
                                         format_vector_function_latex)
 from utilities.mathematics import (polynomial_from_coeffs,
                                    random_weighted_coefficients)
@@ -133,13 +133,13 @@ class VectorField(Field):
 
     def _format_vector_field_latex(self) -> str:
         x_component_latex = self._remove_coordinate_latex(
-            format_component_latex(self._x_component, is_x_component = True)
+            format_vector_component_latex(self._x_component, is_x_component = True)
         )
         y_component_latex = self._remove_coordinate_latex(
-            format_component_latex(self._y_component)
+            format_vector_component_latex(self._y_component)
         )
         z_component_latex = self._remove_coordinate_latex(
-            format_component_latex(self._z_component)
+            format_vector_component_latex(self._z_component)
         )
         field_latex = format_vector_function_latex(x_component_latex,
                                                    y_component_latex,

@@ -6,7 +6,7 @@ I_HAT_LATEX = r"\mathbf{{\hat{{i}}}}"
 J_HAT_LATEX = r"\mathbf{{\hat{{j}}}}"
 K_HAT_LATEX = r"\mathbf{{\hat{{k}}}}"
 
-def format_component_latex(
+def format_vector_component_latex(
           component: Expr,
           is_x_component: bool = False
 ) -> str:
