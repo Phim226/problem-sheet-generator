@@ -27,7 +27,7 @@ PROCESS_ERROR_STR =(
 )
 
 
-def fill_preamble(
+def _fill_preamble(
         doc: Document,
         title: str,
         author: str = "",
@@ -45,7 +45,7 @@ def fill_preamble(
     doc.preamble.append(Command("date", date))
     doc.append(NoEscape(r"\maketitle"))
 
-def try_delete_file(file_name: str) -> None:
+def _try_delete_file(file_name: str) -> None:
     try:
         remove(file_name)
     except PermissionError as e:
@@ -54,10 +54,14 @@ def try_delete_file(file_name: str) -> None:
              f"{file_name}{PERMISSION_ERROR_STR}")
         )
 
+def _generate_output_files(document: Document, name: str):
+    document.generate_tex(f"output/{name}")
+    document.generate_pdf(f"output/{name}", clean_tex = False)
+
 # TODO: Change the names of the output files to include the creation date.
 def create_document():
     questions = Document()
-    fill_preamble(questions, "Questions")
+    _fill_preamble(questions, "Questions")
 
     n = 1
     # TODO: Implement inputting desired number of questions.
@@ -82,29 +86,26 @@ def create_document():
             info(f"Answer: {question.answer}")
 
     answers = Document()
-    fill_preamble(answers, "Answers")
+    _fill_preamble(answers, "Answers")
 
     with answers.create(Enumerate()) as enum:
         for i in range(n):
             enum.add_item(answers_list[i])
 
     try:
-        questions.generate_tex("output/questions")
-        questions.generate_pdf("output/questions", clean_tex = False)
-
-        answers.generate_tex("output/answers")
-        answers.generate_pdf("output/answers", clean_tex = False)
+        _generate_output_files(questions, "questions")
+        _generate_output_files(answers, "answers")
     except CalledProcessError as e:
         error(
             f"{PURPLE}{type(e).__name__}{RESET}:{PROCESS_ERROR_STR}"
         )
-        try_delete_file("output/questions.fdb_latexmk")
-        try_delete_file("output/questions.pdf")
-        try_delete_file("output/questions.tex")
+        _try_delete_file("output/questions.fdb_latexmk")
+        _try_delete_file("output/questions.pdf")
+        _try_delete_file("output/questions.tex")
 
-        try_delete_file("output/answers.fdb_latexmk")
-        try_delete_file("output/answers.pdf")
-        try_delete_file("output/answers.tex")
+        _try_delete_file("output/answers.fdb_latexmk")
+        _try_delete_file("output/answers.pdf")
+        _try_delete_file("output/answers.tex")
 
 if __name__ == "__main__":
     configure_log()
