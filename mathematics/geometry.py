@@ -2,7 +2,7 @@ from logging import info
 from sympy import Expr, Symbol, factor_terms
 from sympy.abc import t, theta
 from sympy.vector import ParametricRegion
-from utilities.latex_formatting import (format_vector_component_latex,
+from utilities.latex_formatting import (ParametricRegionLatexPrinter, format_vector_component_latex,
                                         format_vector_function_latex)
 from utilities.mathematics import (polynomial_from_coeffs,
                                    random_limits,
@@ -32,6 +32,8 @@ class Curve():
             dimension
         )
 
+        printer: ParametricRegionLatexPrinter = ParametricRegionLatexPrinter()
+        print(printer.doprint(self.curve))
         self._curve_latex: str = self._format_curve_latex(self.curve)
 
         info((f"Curve is {self.curve.definition} "
