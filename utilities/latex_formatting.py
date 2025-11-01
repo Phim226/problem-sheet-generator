@@ -1,6 +1,10 @@
-from sympy import (Add, Expr,
+from logging import info
+from sympy import (Add, Expr, Mul, Number, Pow, Symbol,
                    S,
-                   latex)
+                   expand, factor_terms, latex)
+from sympy.printing.latex import LatexPrinter
+from sympy.vector import BaseScalar, BaseVector, Vector, ParametricRegion
+from sympy.vector.basisdependent import BasisDependent
 
 I_HAT_LATEX = r"\mathbf{{\hat{{i}}}}"
 J_HAT_LATEX = r"\mathbf{{\hat{{j}}}}"
@@ -25,7 +29,7 @@ def format_vector_component_latex(
     Returns
     ======
     str
-        The formated LaTeX string for the vector function component.
+        The LaTeX string for the vector function component.
     """
     if component is S.NegativeOne:
         return "-"
@@ -75,3 +79,96 @@ def format_vector_function_latex(
             vector_latex = vector_latex[1:]
 
         return vector_latex
+
+class ParametricRegionLatexPrinter(LatexPrinter):
+
+    def _print_ParametricRegion(self, region: ParametricRegion):
+        print("Code reached")
+
+class CleanVectorLatexPrinter(LatexPrinter):
+
+    def vector_field_print(self, field):
+        return (rf"$\mathbf{{{field.name}}}"
+                f"(x, y{", z" if field.dimension == 3 else ""})="
+                f"{self.doprint(field.field)}$")
+
+    def scalar_field_print(self, field):
+        return f"${self._symbol_from_coord_scalar(field.field)}$"
+
+    @staticmethod
+    def _symbol_from_Mul(expr: Mul) -> Expr:
+        if isinstance(expr, Number):
+            return expr
+
+        args = expr.args
+        if isinstance(expr, Pow):
+            return Symbol(str(args[0])[-1])**args[1]
+
+        expr_has_coeff = isinstance(args[0], Number)
+        variables = args[1:] if expr_has_coeff else args
+        new_expr = args[0] if expr_has_coeff else 1
+        for var in variables:
+            if isinstance(var, Pow):
+                new_expr *= Symbol(str(var.args[0])[-1])**var.args[1]
+            else:
+                new_expr *= Symbol(str(var)[-1])
+        return new_expr
+
+    def _symbol_from_coord_scalar(self, expr: Expr) -> Expr:
+        expr = expand(expr)
+        if isinstance(expr, BaseScalar):
+            return Symbol(str(expr)[-1])
+
+        elif isinstance(expr, (Mul, Pow)):
+            return self._symbol_from_Mul(expr)
+
+        elif isinstance(expr, Add):
+            new_expr = 0
+            for arg in expr.args:
+                if isinstance(arg, BaseScalar):
+                    new_expr += Symbol(str(arg)[-1])
+                else:
+                    new_expr += self._symbol_from_Mul(arg)
+            return factor_terms(new_expr, sign = True)
+
+        else:
+            return expr
+
+    @staticmethod
+    def _clean_base_vector_latex(vect: BaseVector) -> str:
+        return latex(vect).replace(f"_{{{str(vect.system)}}}", "")
+
+    def _print_BasisDependent(self, expr: BasisDependent) -> str:
+        o1: list[str] = []
+        if expr == expr.zero:
+            return expr.zero._latex_form
+        if isinstance(expr, Vector):
+            items = expr.separate().items()
+        else:
+            items = [(0, expr)]
+
+        for system, vect in items:
+            inneritems = list(vect.components.items())
+            inneritems.sort(key=lambda x: x[0].__str__())
+            for base_vect, comp in inneritems:
+                if comp == 1:
+                    o1.append(f"+{self._clean_base_vector_latex(base_vect)}")
+                elif comp == -1:
+                    o1.append(f"-{self._clean_base_vector_latex(base_vect)}")
+                else:
+                    scalar_symbols = self._symbol_from_coord_scalar(comp)
+                    arg_str = (
+                        rf"\left({self._print(scalar_symbols)}\right)"
+                        if isinstance(scalar_symbols, Add)
+                        else self._print(scalar_symbols)
+                    )
+                    o1.append(
+                        (f"{"" if arg_str[0] == "-" else "+"}"
+                         f"{arg_str}"
+                         f"{self._clean_base_vector_latex(base_vect)}")
+                    )
+
+        outstr = ("".join(o1))
+        if outstr[0] == "+":
+            outstr = outstr[1:]
+        return outstr

@@ -6,7 +6,7 @@ from sympy import (Expr,
                    factor_terms)
 from sympy.vector import (CoordSys3D, ParametricRegion, Vector,
                           vector_integrate)
-from utilities.latex_formatting import (format_vector_component_latex,
+from utilities.latex_formatting import (CleanVectorLatexPrinter, format_vector_component_latex,
                                         format_vector_function_latex)
 from utilities.mathematics import (polynomial_from_coeffs,
                                    random_weighted_coefficients)
@@ -15,7 +15,9 @@ class Field():
 
 
     @abstractmethod
-    def __init__(self, dimension: int):
+    def __init__(self, name: str, dimension: int):
+
+        self._name = name
 
         if dimension not in (2, 3):
             raise ValueError((f"{dimension} is not a valid dimension. "
@@ -25,6 +27,14 @@ class Field():
         self._C = CoordSys3D("C")
 
     @property
+    def name(self) -> str:
+        return self._name
+
+    @property
+    def dimension(self) -> int:
+        return self._dimension
+
+    @property
     def field(self) -> Expr | Vector:
         return self._field
 
@@ -32,6 +42,7 @@ class Field():
     def field_latex(self) -> str:
         return self._field_latex
 
+    # TODO: Change weights depending on whether field is vector or scalar
     def _generate_random_component(self, allow_zero: bool = True) -> Expr:
         if allow_zero:
             return_zero: bool = random() < 0.05
@@ -71,9 +82,9 @@ class Field():
 
 class ScalarField(Field):
 
-
-    def __init__(self, dimension: int):
-        super().__init__(dimension)
+    # TODO: Attempt to parse name string as greek letter for latex (phi being the main one) otherwise name is verbatim
+    def __init__(self, name: str, dimension: int):
+        super().__init__(name, dimension)
         self._field: Expr = self._generate_random_component(
             allow_zero = False
         )
@@ -83,8 +94,8 @@ class VectorField(Field):
 
     VECTOR_FIELD_SYMBOL_LATEX = r"\mathbf{{F}}"
 
-    def __init__(self, dimension: int):
-        super().__init__(dimension)
+    def __init__(self, name: str, dimension: int):
+        super().__init__(name, dimension)
 
         all_components_zero = True
         while all_components_zero:
@@ -112,46 +123,9 @@ class VectorField(Field):
                                self._z_component*self._C.k)
         info(f"Vector field expression: {self.field}")
 
-        self._field_latex: str = self._format_vector_field_latex()
+        printer: CleanVectorLatexPrinter = CleanVectorLatexPrinter()
+        self._field_latex: str = printer.vector_field_print(self)
 
-    @staticmethod
-    def _remove_coordinate_latex(component_latex: str) -> str | None:
-        if component_latex in ("-", "+", None):
-            return component_latex
-        latex_replacements: dict[str, str] = {
-            "_{C}": "",
-            r"\mathbf{{x}}": "x",
-            r"\mathbf{{y}}": "y",
-            r"\mathbf{{z}}": "z"
-        }
-        for latex, replacement_latex in latex_replacements.items():
-            component_latex = component_latex.replace(
-                latex,
-                replacement_latex
-            )
-        return component_latex
-
-    def _format_vector_field_latex(self) -> str:
-        x_component_latex = self._remove_coordinate_latex(
-            format_vector_component_latex(self._x_component, is_x_component = True)
-        )
-        y_component_latex = self._remove_coordinate_latex(
-            format_vector_component_latex(self._y_component)
-        )
-        z_component_latex = self._remove_coordinate_latex(
-            format_vector_component_latex(self._z_component)
-        )
-        field_latex = format_vector_function_latex(x_component_latex,
-                                                   y_component_latex,
-                                                   z_component_latex)
-
-        field_latex = (
-            f"{self.VECTOR_FIELD_SYMBOL_LATEX}"
-            f"{"(x, y, z)" if self._dimension == 3 else "(x, y)"}"
-            f"={field_latex}"
-        )
-
-        return f"${field_latex}$"
 
     def calculate_line_integral(self, curve: ParametricRegion):
         return vector_integrate(self.field, curve)
