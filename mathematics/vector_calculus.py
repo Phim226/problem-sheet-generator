@@ -6,8 +6,7 @@ from sympy import (Expr,
                    factor_terms)
 from sympy.vector import (CoordSys3D, ParametricRegion, Vector,
                           vector_integrate)
-from utilities.latex_formatting import (CleanVectorLatexPrinter, format_vector_component_latex,
-                                        format_vector_function_latex)
+from utilities.latex_formatting import CleanVectorLatexPrinter
 from utilities.mathematics import (polynomial_from_coeffs,
                                    random_weighted_coefficients)
 
