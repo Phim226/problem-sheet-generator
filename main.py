@@ -45,6 +45,7 @@ def _fill_preamble(
     doc.preamble.append(Command("date", date))
     doc.append(NoEscape(r"\maketitle"))
 
+# TODO: Handle FileNotFoundError
 def _try_delete_file(file_name: str) -> None:
     try:
         remove(file_name)
