@@ -72,8 +72,8 @@ class VectorCalculusQuestion(Question):
             while answer_is_clumsy:
                 curve: Curve = Curve(t, dimension)
                 field: VectorField | ScalarField = (
-                    VectorField(dimension) if subtopic == "vector_field"
-                    else ScalarField(dimension)
+                    VectorField("F", dimension) if subtopic == "vector_field"
+                    else ScalarField("phi", dimension)
                 )
 
                 answer: Rational = field.calculate_line_integral(curve.curve)
