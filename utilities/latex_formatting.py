@@ -1,3 +1,8 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from mathematics.vector_calculus import VectorField, ScalarField
+    from mathematics.geometry import Curve
 from logging import info
 from sympy import (Add, Expr, Mul, Number, Pow, Symbol,
                    S,
@@ -86,18 +91,21 @@ def format_vector_function_latex(
 # TODO: Maybe expand scope of class to ImplicitRegion and other geometric objects as well.
 class ParametricRegionLatexPrinter(LatexPrinter):
 
+    def parametric_curve_print(self, curve: Curve, with_limits = True):
+        pass
+
     def _print_ParametricRegion(self, region: ParametricRegion):
-        print("Code reached")
+        print(region.definition)
 
 # TODO: Write docstrings
 class CleanVectorLatexPrinter(LatexPrinter):
 
-    def vector_field_print(self, field):
-        return (rf"$\mathbf{{{field.name}}}"
+    def vector_field_print(self, field: VectorField):
+        return (rf"${field.name_latex}"
                 f"(x, y{", z" if field.dimension == 3 else ""})="
                 f"{self.doprint(field.field)}$")
 
-    def scalar_field_print(self, field):
+    def scalar_field_print(self, field: ScalarField):
         return (f"${field.name}"
                 f"(x, y{", z" if field.dimension == 3 else ""})="
                 f"{self._symbol_from_coord_scalar(field.field)}$")
