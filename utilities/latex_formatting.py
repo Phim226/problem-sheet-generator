@@ -89,6 +89,7 @@ class ParametricRegionLatexPrinter(LatexPrinter):
     def _print_ParametricRegion(self, region: ParametricRegion):
         print("Code reached")
 
+# TODO: Write docstrings
 class CleanVectorLatexPrinter(LatexPrinter):
 
     def vector_field_print(self, field):
