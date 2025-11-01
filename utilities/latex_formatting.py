@@ -80,6 +80,10 @@ def format_vector_function_latex(
 
         return vector_latex
 
+
+# TODO: Write _print_ParametricRegion function.
+# TODO: Integrate _print_ParametricRegion function into generation of curve latex.
+# TODO: Maybe expand scope of class to ImplicitRegion and other geometric objects as well.
 class ParametricRegionLatexPrinter(LatexPrinter):
 
     def _print_ParametricRegion(self, region: ParametricRegion):
@@ -93,7 +97,9 @@ class CleanVectorLatexPrinter(LatexPrinter):
                 f"{self.doprint(field.field)}$")
 
     def scalar_field_print(self, field):
-        return f"${self._symbol_from_coord_scalar(field.field)}$"
+        return (f"${field.name}"
+                f"(x, y{", z" if field.dimension == 3 else ""})="
+                f"{self._symbol_from_coord_scalar(field.field)}$")
 
     @staticmethod
     def _symbol_from_Mul(expr: Mul) -> Expr:
