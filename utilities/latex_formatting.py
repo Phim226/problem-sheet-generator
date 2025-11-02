@@ -8,7 +8,8 @@ from sympy import (Add, Expr, Mul, Number, Pow, Symbol,
                    S,
                    expand, factor_terms, latex)
 from sympy.printing.latex import LatexPrinter
-from sympy.vector import BaseScalar, BaseVector, Vector, ParametricRegion
+from sympy.vector import (BaseScalar, BaseVector, CoordSys3D,
+                          ParametricRegion, Vector, VectorZero)
 from sympy.vector.basisdependent import BasisDependent
 
 I_HAT_LATEX = r"\mathbf{{\hat{{i}}}}"
@@ -86,26 +87,15 @@ def format_vector_function_latex(
         return vector_latex
 
 
-# TODO: Write _print_ParametricRegion function.
-# TODO: Integrate _print_ParametricRegion function into generation of curve latex.
-# TODO: Maybe expand scope of class to ImplicitRegion and other geometric objects as well.
-class ParametricRegionLatexPrinter(LatexPrinter):
-
-    def parametric_curve_print(self, curve: Curve, with_limits = True):
-        pass
-
-    def _print_ParametricRegion(self, region: ParametricRegion):
-        print(region.definition)
-
 # TODO: Write docstrings
 class CleanVectorLatexPrinter(LatexPrinter):
 
-    def vector_field_print(self, field: VectorField):
+    def vector_field_print(self, field: VectorField) -> str:
         return (rf"${field.name_latex}"
                 f"(x, y{", z" if field.dimension == 3 else ""})="
                 f"{self.doprint(field.field)}$")
 
-    def scalar_field_print(self, field: ScalarField):
+    def scalar_field_print(self, field: ScalarField) -> str:
         return (f"${field.name}"
                 f"(x, y{", z" if field.dimension == 3 else ""})="
                 f"{self._symbol_from_coord_scalar(field.field)}$")
@@ -121,7 +111,7 @@ class CleanVectorLatexPrinter(LatexPrinter):
 
         expr_has_coeff = isinstance(args[0], Number)
         variables = args[1:] if expr_has_coeff else args
-        new_expr = args[0] if expr_has_coeff else 1
+        new_expr = args[0] if expr_has_coeff else S.One
         for var in variables:
             if isinstance(var, Pow):
                 new_expr *= Symbol(str(var.args[0])[-1])**var.args[1]
@@ -130,6 +120,10 @@ class CleanVectorLatexPrinter(LatexPrinter):
         return new_expr
 
     def _symbol_from_coord_scalar(self, expr: Expr) -> Expr:
+        if (not expr.free_symbols or
+            not hasattr(next(iter(expr.free_symbols)), "system")):
+            return expr
+
         expr = expand(expr)
         if isinstance(expr, BaseScalar):
             return Symbol(str(expr)[-1])
@@ -138,7 +132,7 @@ class CleanVectorLatexPrinter(LatexPrinter):
             return self._symbol_from_Mul(expr)
 
         elif isinstance(expr, Add):
-            new_expr = 0
+            new_expr = S.Zero
             for arg in expr.args:
                 if isinstance(arg, BaseScalar):
                     new_expr += Symbol(str(arg)[-1])
@@ -187,3 +181,22 @@ class CleanVectorLatexPrinter(LatexPrinter):
         if outstr[0] == "+":
             outstr = outstr[1:]
         return outstr
+
+
+# TODO: Integrate _print_ParametricRegion function into generation of curve latex.
+# TODO: Maybe expand scope of class to ImplicitRegion and other geometric objects as well.
+class ParametricRegionLatexPrinter(CleanVectorLatexPrinter):
+
+    def parametric_curve_print(self, curve: Curve):
+        pass
+
+    def _print_ParametricRegion(self, region: ParametricRegion):
+        C = CoordSys3D("C")
+        curve_vect_defn: Vector = sum(
+            (comp*vect for comp, vect in
+             zip(region.definition, C.base_vectors())),
+            VectorZero()
+        )
+
+        return self.doprint(curve_vect_defn)
+
