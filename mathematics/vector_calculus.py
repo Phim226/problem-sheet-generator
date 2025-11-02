@@ -108,13 +108,9 @@ class VectorField(Field):
             if not all(c is S.Zero for c in self._components):
                 break
 
-        field_dict = {
-            vect: comp
-            for vect, comp in zip(self._C.base_vectors(), self._components)
-        }
-
         self._field: Vector = sum(
-            (comp*vect for vect, comp in field_dict.items()),
+            (comp*vect for comp, vect in
+             zip(self._components, self._C.base_vectors())),
             VectorZero()
         )
 

@@ -69,22 +69,14 @@ class Curve():
             param: Symbol,
             dimension: int
     ) -> ParametricRegion:
-        x_component: Expr = factor_terms(
-            self._generate_random_polynomial(param),
-            sign = True
-        )
-        y_component: Expr = factor_terms(
-            self._generate_random_polynomial(param),
-            sign = True
-        )
-        z_component: Expr = factor_terms(
-            self._generate_random_polynomial(param),
-            sign = True
-        ) if dimension == 3 else 0
+        components = [
+            factor_terms(self._generate_random_polynomial(param), sign = True)
+            for _ in range(dimension)
+        ]
+        if dimension == 2:
+            components.append(0)
 
-        return ParametricRegion((x_component,
-                                 y_component,
-                                 z_component),
+        return ParametricRegion(tuple(components),
                                 (param,) + random_limits(-3, 3)
                 )
 
