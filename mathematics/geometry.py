@@ -2,8 +2,7 @@ from logging import info
 from sympy import Expr, Symbol, factor_terms
 from sympy.abc import t, theta
 from sympy.vector import ParametricRegion
-from utilities.latex_formatting import (ParametricRegionLatexPrinter, format_vector_component_latex,
-                                        format_vector_function_latex)
+from utilities.latex_formatting import ParametricRegionLatexPrinter
 from utilities.mathematics import (polynomial_from_coeffs,
                                    random_limits,
                                    random_weighted_coefficients)
@@ -19,8 +18,8 @@ class Curve():
     J_HAT_LATEX = r"\mathbf{{\hat{{j}}}}"
     K_HAT_LATEX = r"\mathbf{{\hat{{k}}}}"
 
-    def __init__(self, param: Symbol, dimension: int):
-        self._param: Symbol = param
+    def __init__(self, parameter: Symbol, dimension: int):
+        self._parameter: Symbol = parameter
         if dimension not in (2, 3):
             raise ValueError((f"{dimension} is not a valid dimension. "
                             "It should be 2 or 3.")
@@ -28,16 +27,15 @@ class Curve():
         self._dimension: int = dimension
 
         self._curve: ParametricRegion = self._generate_random_parametric_curve(
-            param,
+            parameter,
             dimension
         )
 
         printer: ParametricRegionLatexPrinter = ParametricRegionLatexPrinter()
-        print(printer.doprint(self.curve))
-        self._curve_latex: str = self._format_curve_latex(self.curve)
+        self._curve_latex: str = printer.parametric_curve_print(self)
 
         info((f"Curve is {self.curve.definition} "
-              f"with limits {self.curve.limits[param]}"))
+              f"with limits {self.curve.limits[parameter]}"))
 
         """ if p is t:
             print(f"Symbol is {t}")
@@ -52,8 +50,12 @@ class Curve():
     def curve(self) -> ParametricRegion:
         return self._curve
 
+    @property
+    def parameter(self) -> Symbol:
+        return self._parameter
+
     @staticmethod
-    def _generate_random_polynomial(param: Symbol) -> Expr:
+    def _generate_random_polynomial(parameter: Symbol) -> Expr:
         coeffs = random_weighted_coefficients(
             max_index = 4,
             non_zero_coeffs_range = (1, 2),
@@ -62,41 +64,24 @@ class Curve():
             coeff_value_weights = [0.01, 0.05, 0.05, 0.1, 0.4, 0.2, 0.1, 0.09],
             index_weights = [0.5, 0.5, 1, 1]
         )
-        return polynomial_from_coeffs(param, coeffs)
+        return polynomial_from_coeffs(parameter, coeffs)
 
     def _generate_random_parametric_curve(
             self,
-            param: Symbol,
+            parameter: Symbol,
             dimension: int
     ) -> ParametricRegion:
         components = [
-            factor_terms(self._generate_random_polynomial(param), sign = True)
+            factor_terms(
+                self._generate_random_polynomial(parameter),
+                sign = True
+            )
             for _ in range(dimension)
         ]
         if dimension == 2:
             components.append(0)
 
-        return ParametricRegion(tuple(components),
-                                (param,) + random_limits(-3, 3)
-                )
-
-
-    def _format_curve_latex(self, curve: ParametricRegion) -> str:
-        curve_def_x: str = format_vector_component_latex(
-            curve.definition[0],
-            is_x_component = True
+        return ParametricRegion(
+            tuple(components),
+            (parameter,) + random_limits(-3, 3)
         )
-        curve_def_y: str = format_vector_component_latex(curve.definition[1])
-        curve_def_z: str = format_vector_component_latex(curve.definition[2])
-
-        curve_latex = format_vector_function_latex(
-            curve_def_x,
-            curve_def_y,
-            curve_def_z
-        )
-
-        lower_lim: int = curve.limits[self._param][0]
-        upper_lim: int = curve.limits[self._param][1]
-
-        return (rf"$\mathbf{{r}}({self._param})={curve_latex}$ "
-                rf"for ${lower_lim}\le {self._param}\le {upper_lim}$")
