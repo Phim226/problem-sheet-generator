@@ -14,9 +14,6 @@ from utilities.mathematics import (polynomial_from_coeffs,
 # TODO: Implement implicit curve definitions
 class Curve():
 
-    I_HAT_LATEX = r"\mathbf{{\hat{{i}}}}"
-    J_HAT_LATEX = r"\mathbf{{\hat{{j}}}}"
-    K_HAT_LATEX = r"\mathbf{{\hat{{k}}}}"
 
     def __init__(self, parameter: Symbol, dimension: int):
         self._parameter: Symbol = parameter
