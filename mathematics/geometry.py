@@ -8,7 +8,6 @@ from utilities.mathematics import (polynomial_from_coeffs,
                                    random_weighted_coefficients)
 
 # TODO: Allow for curves to be geometric objects, e.g. triangles, circles etc
-# TODO: Detect if curve is closed
 # TODO: Allow for curves to be made piecewise
 # TODO: Implement wordy curve definitions
 # TODO: Implement implicit curve definitions
