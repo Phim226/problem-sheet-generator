@@ -31,13 +31,13 @@ class Curve():
                 )
             self._ambient_dim: int = ambient_dim
 
-            self._curve: ParametricRegion = (
-                self._generate_random_parametric_curve()
-                if not limits else ParametricRegion(
+            if not limits:
+                self._curve: ParametricRegion = self._generate_random_parametric_curve()
+            else:
+                self._curve: ParametricRegion = ParametricRegion(
                     self._generate_random_components(),
-                    (self.parameter,) + limits
+                    (self._parameter,) + limits
                 )
-            )
         else:
             if len(components) not in (2, 3):
                 raise ValueError(
@@ -72,8 +72,6 @@ class Curve():
             self._curve: ParametricRegion = ParametricRegion(
                 tuple(components),
                 (self._parameter,) + lims)
-
-            print("hello")
 
 
 
@@ -125,10 +123,7 @@ class Curve():
 
     def _generate_random_components(self) -> list[Expr]:
         return tuple([
-            factor_terms(
-                self._generate_random_polynomial(),
-                sign = True
-            )
+            factor_terms(self._generate_random_polynomial(), sign = True)
             for _ in range(self._ambient_dim)
         ])
 

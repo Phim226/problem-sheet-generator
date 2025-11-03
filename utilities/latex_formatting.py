@@ -119,8 +119,7 @@ class ParametricRegionLatexPrinter(CleanVectorLatexPrinter):
     def _print_ParametricRegion(self, region: ParametricRegion):
         C = CoordSys3D("C")
         curve_vect_defn: Vector = sum(
-            (comp*vect for comp, vect in
-             zip(region.definition, C.base_vectors())),
+            (comp*vect for comp, vect in zip(region.definition, C.base_vectors())),
             VectorZero()
         )
 

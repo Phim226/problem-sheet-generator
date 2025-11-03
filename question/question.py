@@ -60,8 +60,7 @@ class VectorCalculusQuestion(Question):
         self._dimension = dimension
 
         if topic == "line_integral":
-            if subtopic not in ("vector_field",
-                                "scalar_field",
+            if subtopic not in ("vector_field", "scalar_field",
                                 "fundamental_thm_line_integrals"):
                 msg = (f"{subtopic} is not a valid subtopic for the "
                        "line_integral question topic")
@@ -77,6 +76,7 @@ class VectorCalculusQuestion(Question):
 
                 answer: Rational = field.calculate_line_integral(curve.curve)
                 answer_is_clumsy = clumsy_rational(answer)
+
         self._answer: str = self._generate_answer_latex(answer)
         self._question: str = self._generate_question_latex(field, curve)
 

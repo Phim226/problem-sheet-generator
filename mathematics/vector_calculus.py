@@ -100,17 +100,14 @@ class VectorField(Field):
 
         while True:
             self._components: list[Expr] = [
-                factor_terms(
-                    self._generate_random_component(),
-                    sign = True
-                ) for _ in range(dimension)
+                factor_terms(self._generate_random_component(), sign = True)
+                for _ in range(dimension)
             ]
             if not all(c is S.Zero for c in self._components):
                 break
 
         self._field: Vector = sum(
-            (comp*vect for comp, vect in
-             zip(self._components, self._C.base_vectors())),
+            (comp*vect for comp, vect in zip(self._components, self._C.base_vectors())),
             VectorZero()
         )
 
