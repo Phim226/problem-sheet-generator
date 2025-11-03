@@ -81,6 +81,18 @@ class Curve():
         printer: ParametricRegionLatexPrinter = ParametricRegionLatexPrinter()
         self._curve_latex: str = printer.parametric_curve_print(self)
 
+        self.is_closed = (
+            self._curve.definition.subs(
+                self._parameter,
+                self._curve.limits[self._parameter][0]
+            )
+            ==
+            self._curve.definition.subs(
+                self._parameter,
+                self._curve.limits[self._parameter][1]
+            )
+        )
+
         info((f"Curve is {self.curve.definition} "
               f"with limits {self.curve.limits[parameter]}"))
 
