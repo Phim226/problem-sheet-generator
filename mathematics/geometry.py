@@ -15,18 +15,68 @@ from utilities.mathematics import (polynomial_from_coeffs,
 class Curve():
 
 
-    def __init__(self, parameter: Symbol, dimension: int):
-        self._parameter: Symbol = parameter
-        if dimension not in (2, 3):
-            raise ValueError((f"{dimension} is not a valid dimension. "
-                            "It should be 2 or 3.")
-                    )
-        self._dimension: int = dimension
+    def __init__(
+            self,
+            parameter: Symbol = t,
+            ambient_dim: int = 3,
+            components: tuple[Expr] = None,
+            limits: tuple[int] = None
+    ):
+        if not components:
+            self._parameter: Symbol = parameter
 
-        self._curve: ParametricRegion = self._generate_random_parametric_curve(
-            parameter,
-            dimension
-        )
+            if ambient_dim not in (2, 3):
+                raise ValueError(
+                    (f"Curve embedding into {ambient_dim}D space is not "
+                     "supported. Ambient dimension should be 2 or 3.")
+                )
+            self._ambient_dim: int = ambient_dim
+
+            self._curve: ParametricRegion = (
+                self._generate_random_parametric_curve()
+                if not limits else ParametricRegion(
+                    self._generate_random_components(),
+                    (self.parameter,) + limits
+                )
+            )
+        else:
+            if len(components) not in (2, 3):
+                raise ValueError(
+                    (f"Curve embedding into {len(components)}D space is not "
+                     "supported. Ambient dimension should be 2 or 3.")
+                )
+            self._ambient_dim: int = len(components)
+
+            max_symbols: set[Symbol]
+            max_len = 0
+            for comp in components:
+                if not hasattr(comp, "free_symbols"):
+                    continue
+
+                elif len(comp.free_symbols) > max_len:
+                    max_len = len(comp.free_symbols)
+                    max_symbols = comp.free_symbols
+
+            if max_len == 0:
+                self._parameter: Symbol = parameter
+
+            elif max_len > 1:
+                raise ValueError(
+                    f" Parameters are {max_symbols}. Parametric curves can "
+                    "only have one parameter. "
+                )
+
+            else:
+                self._parameter: Symbol = next(iter(components[0].free_symbols))
+
+            lims = limits if limits else random_limits(-3, 3)
+            self._curve: ParametricRegion = ParametricRegion(
+                tuple(components),
+                (self._parameter,) + lims)
+
+            print("hello")
+
+
 
         printer: ParametricRegionLatexPrinter = ParametricRegionLatexPrinter()
         self._curve_latex: str = printer.parametric_curve_print(self)
@@ -51,8 +101,7 @@ class Curve():
     def parameter(self) -> Symbol:
         return self._parameter
 
-    @staticmethod
-    def _generate_random_polynomial(parameter: Symbol) -> Expr:
+    def _generate_random_polynomial(self) -> Expr:
         coeffs = random_weighted_coefficients(
             max_index = 4,
             non_zero_coeffs_range = (1, 2),
@@ -61,24 +110,19 @@ class Curve():
             coeff_value_weights = [0.01, 0.05, 0.05, 0.1, 0.4, 0.2, 0.1, 0.09],
             index_weights = [0.5, 0.5, 1, 1]
         )
-        return polynomial_from_coeffs(parameter, coeffs)
+        return polynomial_from_coeffs(self.parameter, coeffs)
 
-    def _generate_random_parametric_curve(
-            self,
-            parameter: Symbol,
-            dimension: int
-    ) -> ParametricRegion:
-        components = [
+    def _generate_random_components(self) -> list[Expr]:
+        return tuple([
             factor_terms(
-                self._generate_random_polynomial(parameter),
+                self._generate_random_polynomial(),
                 sign = True
             )
-            for _ in range(dimension)
-        ]
-        if dimension == 2:
-            components.append(0)
+            for _ in range(self._ambient_dim)
+        ])
 
+    def _generate_random_parametric_curve(self) -> ParametricRegion:
         return ParametricRegion(
-            tuple(components),
-            (parameter,) + random_limits(-3, 3)
+            self._generate_random_components(),
+            (self.parameter,) + random_limits(-3, 3)
         )
