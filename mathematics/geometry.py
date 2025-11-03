@@ -3,8 +3,7 @@ from sympy import Expr, Symbol, factor_terms
 from sympy.abc import t, theta
 from sympy.vector import ParametricRegion
 from utilities.latex_formatting import ParametricRegionLatexPrinter
-from utilities.mathematics import (polynomial_from_coeffs,
-                                   random_limits,
+from utilities.mathematics import (polynomial_from_coeffs, random_limits,
                                    random_weighted_coefficients)
 
 # TODO: Allow for curves to be geometric objects, e.g. triangles, circles etc

@@ -2,15 +2,11 @@ from abc import abstractmethod
 from functools import reduce
 from logging import info
 from random import random
-from sympy import (Expr,
-                   S,
-                   factor_terms)
-from sympy.vector import (BaseScalar, CoordSys3D,
-                          ParametricRegion, Vector, VectorZero,
+from sympy import Expr, S, factor_terms
+from sympy.vector import (BaseScalar, CoordSys3D, ParametricRegion, Vector, VectorZero,
                           vector_integrate)
 from utilities.latex_formatting import CleanVectorLatexPrinter
-from utilities.mathematics import (polynomial_from_coeffs,
-                                   random_weighted_coefficients)
+from utilities.mathematics import polynomial_from_coeffs, random_weighted_coefficients
 
 class Field():
 

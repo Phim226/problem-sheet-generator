@@ -4,12 +4,9 @@ if TYPE_CHECKING:
     from mathematics.vector_calculus import VectorField, ScalarField
     from mathematics.geometry import Curve
 from logging import info
-from sympy import (Add, Expr, Mul, Number, Pow, Symbol,
-                   S,
-                   expand, factor_terms, latex)
+from sympy import Add, Expr, Mul, Number, Pow, Symbol, S, expand, factor_terms, latex
 from sympy.printing.latex import LatexPrinter
-from sympy.vector import (BaseScalar, BaseVector, CoordSys3D,
-                          ParametricRegion, Vector, VectorZero)
+from sympy.vector import BaseScalar, BaseVector, CoordSys3D, ParametricRegion, Vector, VectorZero
 from sympy.vector.basisdependent import BasisDependent
 
 # TODO: Write docstrings
