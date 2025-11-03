@@ -1,6 +1,8 @@
+from __future__ import annotations
 from inspect import getfullargspec
-from typing import Any, Callable, Type, TypeVar
-
+from typing import Any, Callable, Type, TYPE_CHECKING
+if TYPE_CHECKING:
+    from question.question import Question
 
 
 """
@@ -25,10 +27,6 @@ LinearAlgebraQuestion class. Creating a new question class without the
 decorator and attempting to use it by calling the create_question function
 will result in a ValueError.
 
-Note that the Question type in this module is NOT the actual abstract Question
-class in the questions.py file. Here it's just an unspecified type used as a
-placeholder for the Question class for better type hint readability.
-
 The **kwargs in the create_question function represents the full set of
 optional inputs across all subclasses of Question. More information about
 these optional parameters can be found in the questions.py file in the
@@ -38,7 +36,6 @@ appropriate classes. The type hint "bool" refers to the optional parameter
 # TODO: Figure out a way of passing appropriate kwargs into each class (kwargs registry?).
 # TODO: Write better docstring
 
-Question = TypeVar("Question", bound=type)
 QUESTION_REGISTRY: dict[str, Type[Question]] = {}
 KEYWORD_REGISTRY: dict[str, Any] = {}
 
