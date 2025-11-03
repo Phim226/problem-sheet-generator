@@ -24,10 +24,9 @@ class Curve():
             self._parameter: Symbol = parameter
 
             if ambient_dim not in (2, 3):
-                raise ValueError(
-                    (f"Curve embedding into {ambient_dim}D space is not "
-                     "supported. Ambient dimension should be 2 or 3.")
-                )
+                msg = (f"Curve embedding into {ambient_dim}D space is not supported. "
+                     "Ambient dimension should be 2 or 3.")
+                raise ValueError(msg)
             self._ambient_dim: int = ambient_dim
 
             if not limits:
@@ -39,10 +38,9 @@ class Curve():
                 )
         else:
             if len(components) not in (2, 3):
-                raise ValueError(
-                    (f"Curve embedding into {len(components)}D space is not "
-                     "supported. Ambient dimension should be 2 or 3.")
-                )
+                msg = (f"Curve embedding into {len(components)}D space is not supported. "
+                     "Ambient dimension should be 2 or 3.")
+                raise ValueError(msg)
             self._ambient_dim: int = len(components)
 
             max_symbols: set[Symbol]
@@ -59,10 +57,9 @@ class Curve():
                 self._parameter: Symbol = parameter
 
             elif max_len > 1:
-                raise ValueError(
-                    f" Parameters are {max_symbols}. Parametric curves can "
-                    "only have one parameter. "
-                )
+                msg = (f" Parameters are {max_symbols}. Parametric curves can "
+                    "only have one parameter. ")
+                raise ValueError(msg)
 
             else:
                 self._parameter: Symbol = next(iter(components[0].free_symbols))
