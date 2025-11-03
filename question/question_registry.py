@@ -60,9 +60,11 @@ def register_question_type(name: str) -> Callable[[Type[Question]], Type[Questio
 
 def create_question(name: str, topic: str, **kwargs: bool) -> Question:
     if name == "question":
-        raise ValueError(f"{name} is not a valid question type")
+        msg = f"{name} is not a valid question type"
+        raise ValueError(msg)
 
     cls = QUESTION_REGISTRY.get(name)
     if cls is None:
-        raise ValueError(f"Unknown question type: {name}")
+        msg = f"Unknown question type: {name}"
+        raise ValueError(msg)
     return cls(topic, **kwargs)
