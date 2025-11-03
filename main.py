@@ -33,13 +33,6 @@ def _fill_preamble(
         author: str = "",
         date: str = ""
 ) -> None:
-    doc.preamble.append(
-        Command(
-            "usepackage",
-            "geometry",
-            "left=2.5cm, right=2.5cm"
-        )
-    )  # Adjusts margin size of output pdf.
     doc.preamble.append(Command("title", title))
     doc.preamble.append(Command("author", author))
     doc.preamble.append(Command("date", date))
@@ -61,7 +54,7 @@ def _generate_output_files(document: Document, name: str):
 
 # TODO: Change the names of the output files to include the creation date.
 def create_document():
-    questions = Document()
+    questions = Document(geometry_options = {"left": "2.5cm", "right": "2.5cm"})
     _fill_preamble(questions, "Questions")
 
     n = 1
@@ -86,7 +79,7 @@ def create_document():
             answers_list.append(question.answer)
             info(f"Answer: {question.answer}")
 
-    answers = Document()
+    answers = Document(geometry_options = {"left": "2.5cm", "right": "2.5cm"})
     _fill_preamble(answers, "Answers")
 
     with answers.create(Enumerate()) as enum:
