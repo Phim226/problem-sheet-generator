@@ -69,7 +69,7 @@ class VectorCalculusQuestion(Question):
 
             answer_is_clumsy = True
             while answer_is_clumsy:
-                curve: Curve = Curve(t, dimension)
+                curve: Curve = Curve(ambient_dim = dimension)
                 field: VectorField | ScalarField = (
                     VectorField("F", dimension) if subtopic == "vector_field"
                     else ScalarField("phi", dimension)
