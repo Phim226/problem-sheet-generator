@@ -45,8 +45,6 @@ class Question(ABC):
 class VectorCalculusQuestion(Question):
 
 
-    VECTOR_FIELD_SYMBOL_LATEX = r"\mathbf{{F}}"
-
     # TODO: Improve question LaTeX generation logic based on question subtopic etc.
     # TODO: Properly format answer LaTeX.
     def __init__(
@@ -58,6 +56,7 @@ class VectorCalculusQuestion(Question):
             **kwargs: bool
     ):
         super().__init__(topic)
+
         self._dimension = dimension
 
         if topic == "line_integral":
@@ -65,7 +64,7 @@ class VectorCalculusQuestion(Question):
                                 "scalar_field",
                                 "fundamental_thm_line_integrals"):
                 msg = (f"{subtopic} is not a valid subtopic for the "
-                       "line_integral topic")
+                       "line_integral question topic")
                 raise ValueError(msg)
 
             answer_is_clumsy = True
@@ -81,13 +80,14 @@ class VectorCalculusQuestion(Question):
         self._answer: str = self._generate_answer_latex(answer)
         self._question: str = self._generate_question_latex(field, curve)
 
-    def _generate_question_latex(self, vector_field: VectorField, curve: Curve) -> str:
+    @staticmethod
+    def _generate_question_latex(vector_field: VectorField, curve: Curve) -> str:
         return NoEscape(
-            rf"Let ${self.VECTOR_FIELD_SYMBOL_LATEX}$ be the "
+            rf"Let ${vector_field.name_latex}$ be the "
             f"vector field {vector_field.field_latex} and $C$ the "
             f"curve given by {curve.curve_latex}. "
             r"Calculate $\displaystyle\int_C"
-            rf"{self.VECTOR_FIELD_SYMBOL_LATEX}\cdot\mathbf{{dr}}$."
+            rf"{vector_field.name_latex}\cdot\mathbf{{dr}}$."
         )
 
     @staticmethod
