@@ -17,9 +17,9 @@ class Field():
         self._name = name
 
         if dimension not in (2, 3):
-            raise ValueError((f"{dimension} is not a valid dimension. "
-                            "Fields should have dimension 2 or 3.")
-                    )
+            msg = (f"{dimension} dimensional fields are not supported. "
+                   "The dimension should be 2 or 3.")
+            raise ValueError(msg)
         self._dimension = dimension
         self._C = CoordSys3D("C")
 
