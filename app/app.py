@@ -9,9 +9,5 @@ class ProblemSheetGeneratorApp():
         root.geometry("500x500")
         self._root = root
 
-    @property
-    def root(self):
-        return self._root
-
     def build(self):
         QuestionSelecterBuilder(self._root).build()

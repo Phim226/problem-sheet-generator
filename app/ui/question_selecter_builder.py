@@ -11,10 +11,6 @@ class QuestionSelecterBuilder():
     def __init__(self, root: Tk):
         self._root = root
 
-    @property
-    def root(self):
-        return self._root
-
     def build(self):
         self._build_question_tree()
         self._selected_question_tree()
