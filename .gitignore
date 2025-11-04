@@ -6,12 +6,14 @@
 /mathematics/__pycache__
 /question/__pycache__
 /utilities/__pycache__
+/app/__pycache__
+/app/ui/__pycache__
 
 # outputs
-#/output/questions.pdf
-#/output/questions.tex
-#/output/answers.pdf
-#/output/answers.tex
+/output/questions.pdf
+/output/questions.tex
+/output/answers.pdf
+/output/answers.tex
 
 # local script
 /mess_about_script.py
