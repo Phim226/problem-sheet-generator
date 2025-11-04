@@ -67,9 +67,8 @@ class Curve():
             lims = limits if limits else random_limits(-3, 3)
             self._curve: ParametricRegion = ParametricRegion(
                 tuple(components),
-                (self._parameter,) + lims)
-
-
+                (self._parameter,) + lims
+            )
 
         printer: ParametricRegionLatexPrinter = ParametricRegionLatexPrinter()
         self._curve_latex: str = printer.parametric_curve_print(self)
