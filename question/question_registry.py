@@ -35,9 +35,11 @@ appropriate classes. The type hint "bool" refers to the optional parameter
 
 # TODO: Figure out a way of passing appropriate kwargs into each class (kwargs registry?).
 # TODO: Write better docstring
+# TODO: Maybe change keyword and topic registry to database tables in sqlite.
 
 QUESTION_REGISTRY: dict[str, Type[Question]] = {}
 KEYWORD_REGISTRY: dict[str, Any] = {}
+TOPIC_REGISTRY: dict[str, list[str]] = {}
 
 def get_kwargs(func: Callable) -> dict[str, Any]:
     spec = getfullargspec(func)
@@ -52,6 +54,7 @@ def register_question_type(name: str) -> Callable[[Type[Question]], Type[Questio
     def wrapper(cls: Type[Question]) -> Type[Question]:
         QUESTION_REGISTRY[name] = cls
         KEYWORD_REGISTRY[name] = get_kwargs(cls.__init__)
+        TOPIC_REGISTRY[name] = cls.subtopics
         return cls
     return wrapper
 
