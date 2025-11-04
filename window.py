@@ -4,17 +4,14 @@ from tkinter.ttk import Treeview
 from main import create_document
 from question.question_registry import KEYWORD_REGISTRY, QUESTION_REGISTRY
 from utilities.misc import configure_log
+from app.app import ProblemSheetGeneratorApp
 
 # TODO: Design UI.
 # TODO: Add number of questions functionality.
-# TODO: Have method of adding topics and subtopics to questions list.
 # TODO: Make pdf of questions and answers viewable in the app.
 # TODO: Temporarily store files and give option to save or export them for permanant storage.
 # TODO: Have problem sheet templates with typical collections of questions.
 # TODO: Each problem sheet stored in a ProblemSheet object containing #questions, question topics etc.
-# TODO: Have left most column full list of questions, column to the right questions is current ProblemSheet, with "add" and "remove" buttons.
-# TODO: Double click moves question to selected questions.
-# TODO: Questions list have tick boxes, pressing "add" adds all selected questions.
 if __name__ == "__main__":
     configure_log()
 
@@ -22,8 +19,8 @@ if __name__ == "__main__":
     info(f"Keyword registry: {KEYWORD_REGISTRY}")
 
     root = Tk()
-    root.title("Problem Sheet Generator")
-    root.geometry("500x500")
+    app = ProblemSheetGeneratorApp(root)
+    app.build()
 
     """ button = Button(
         root,
@@ -31,17 +28,5 @@ if __name__ == "__main__":
         command = create_document
     )
     button.grid() """
-
-    question_tree = Treeview(root, show = "tree headings")
-    question_tree.heading("#0", text = "Questions")
-    question_tree.insert("", "end", "vect_calc", text = "Vector Calculus")
-    question_tree.insert("vect_calc", "end", "line_integral", text = "Line integrals")
-    question_tree.insert("line_integral", "end", "vector_field", text = "Vector fields")
-    question_tree.insert("line_integral", "end", "scalar_field", text = "Scalar fields")
-    question_tree.grid(row = 0, column = 0)
-
-    selected_tree = Treeview(root, show = "tree headings")
-    selected_tree.heading("#0", text = "Selected questions")
-    selected_tree.grid(row = 0, column = 1)
 
     root.mainloop()
