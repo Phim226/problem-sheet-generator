@@ -43,7 +43,8 @@ class Field():
     def field_latex(self) -> str:
         return self._field_latex
 
-    # TODO: Change weights depending on whether field is vector or scalar
+    # TODO: Change weights depending on whether field is vector or scalar.
+    # TODO: Improve generation process to include functions (sin, cos, e, log etc), rationals and fractional powers.
     def _generate_random_component(self, allow_zero: bool = True) -> Expr:
         if allow_zero and random() < 0.05:
             return S.Zero

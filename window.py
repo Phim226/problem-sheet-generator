@@ -13,6 +13,8 @@ from utilities.misc import configure_log
 # TODO: Have problem sheet templates with typical collections of questions.
 # TODO: Each problem sheet stored in a ProblemSheet object containing #questions, question topics etc.
 # TODO: Have left most column full list of questions, column to the right questions is current ProblemSheet, with "add" and "remove" buttons.
+# TODO: Double click moves question to selected questions.
+# TODO: Questions list have tick boxes, pressing "add" adds all selected questions.
 if __name__ == "__main__":
     configure_log()
 
