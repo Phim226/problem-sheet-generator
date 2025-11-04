@@ -40,10 +40,15 @@ class Question(ABC):
         pass
 
 
-
 @register_question_type("vector_calculus")
 class VectorCalculusQuestion(Question):
 
+
+    subtopics: dict[str, list[str]] = {
+        "line_integral": ["scalar_field", "vector_field", "fundamental_thm_line_integrals",
+                          "conservative_vector_field", "greens_theorem"],
+        "surface_integral": ["scalar_field", "vector_field", "stokes_theorem", "divergence_theorem"]
+    }
 
     # TODO: Improve question LaTeX generation logic based on question subtopic etc.
     # TODO: Properly format answer LaTeX.
