@@ -14,6 +14,7 @@ from utilities.mathematics import clumsy_rational
 @register_question_type("question")
 class Question(ABC):
 
+    subtopics: dict[str, list[str]] = {}
 
     def __init__(self, topic: str, nested: bool = False, difficulty: str = "easy"):
         self._topic: str = topic
@@ -46,9 +47,9 @@ class VectorCalculusQuestion(Question):
 
 
     subtopics: dict[str, list[str]] = {
-        "line_integral": ["scalar_field", "vector_field", "fundamental_thm_line_integrals",
-                          "conservative_vector_field", "greens_theorem"],
-        "surface_integral": ["scalar_field", "vector_field", "stokes_theorem", "divergence_theorem"]
+        "line_integrals": ["scalar_field", "vector_field", "fundamental_theorem_of_line_integrals",
+                          "conservative_vector_field", "green's_theorem"],
+        "surface_integrals": ["scalar_field", "vector_field", "stoke's_theorem", "divergence_theorem"]
     }
 
     # TODO: Improve question LaTeX generation logic based on question subtopic etc.
@@ -99,3 +100,52 @@ class VectorCalculusQuestion(Question):
     @staticmethod
     def _generate_answer_latex(answer: str) -> str:
         return NoEscape(f"${latex(answer)}$")
+
+@register_question_type("linear_algebra")
+class LinearAlgebraQuestion(Question):
+
+    subtopics: dict[str, list[str]] = {
+        "vectors": ["vector_operations"],
+        "matrices": ["matrix_operations"]
+    }
+
+    def __init__(self, topic, nested = False, difficulty = "easy"):
+        super().__init__(topic, nested, difficulty)
+
+    def _generate_question_latex(self, *args, **kwargs):
+        return super()._generate_question_latex(*args, **kwargs)
+
+    def _generate_answer_latex(self, *args, **kwargs):
+        return super()._generate_answer_latex(*args, **kwargs)
+
+@register_question_type("differential_equations")
+class DifferentialEquationQuestion(Question):
+
+    subtopics: dict[str, list[str]] = {
+        "ODEs": ["first_order", "second_order"]
+    }
+
+    def __init__(self, topic, nested = False, difficulty = "easy"):
+        super().__init__(topic, nested, difficulty)
+
+    def _generate_question_latex(self, *args, **kwargs):
+        return super()._generate_question_latex(*args, **kwargs)
+
+    def _generate_answer_latex(self, *args, **kwargs):
+        return super()._generate_answer_latex(*args, **kwargs)
+
+@register_question_type("complex_analysis")
+class ComplexAnalysisQuestion(Question):
+
+    subtopics: dict[str, list[str]] = {
+        "complex_numbers": ["argand_diagrams"]
+    }
+
+    def __init__(self, topic, nested = False, difficulty = "easy"):
+        super().__init__(topic, nested, difficulty)
+
+    def _generate_question_latex(self, *args, **kwargs):
+        return super()._generate_question_latex(*args, **kwargs)
+
+    def _generate_answer_latex(self, *args, **kwargs):
+        return super()._generate_answer_latex(*args, **kwargs)
