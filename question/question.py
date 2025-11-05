@@ -149,3 +149,56 @@ class ComplexAnalysisQuestion(Question):
 
     def _generate_answer_latex(self, *args, **kwargs):
         return super()._generate_answer_latex(*args, **kwargs)
+
+@register_question_type("calculus")
+class CalculusQuestion(Question):
+
+    subtopics: dict[str, list[str]] = {
+        "derivatives": ["quotient_rule", "chain_rule", "product_rule", "implicit_differentiation"],
+        "integrals": ["indefinite", "definite", "substitution", "integration_by_parts"],
+        "limits": ["basic_computation", "one_sided_limits", "lhospitals_rule"],
+        "series": []
+    }
+
+    def __init__(self, topic, nested = False, difficulty = "easy"):
+        super().__init__(topic, nested, difficulty)
+
+    def _generate_question_latex(self, *args, **kwargs):
+        return super()._generate_question_latex(*args, **kwargs)
+
+    def _generate_answer_latex(self, *args, **kwargs):
+        return super()._generate_answer_latex(*args, **kwargs)
+
+@register_question_type("analytic_geometry")
+class AnalyticGeometryQuestion(Question):
+
+    subtopics: dict[str, list[str]] = {
+        "lines": ["line_equation"],
+        "planes": ["plane_equation"],
+        "conics": ["circles", "ellipses", "parabolas", "hyperbolas"],
+    }
+
+    def __init__(self, topic, nested = False, difficulty = "easy"):
+        super().__init__(topic, nested, difficulty)
+
+    def _generate_question_latex(self, *args, **kwargs):
+        return super()._generate_question_latex(*args, **kwargs)
+
+    def _generate_answer_latex(self, *args, **kwargs):
+        return super()._generate_answer_latex(*args, **kwargs)
+
+@register_question_type("trigonometry")
+class TrigonometryQuestion(Question):
+
+    subtopics: dict[str, list[str]] = {
+        "triangles": ["sine_rule", "cosine_rule"]
+    }
+
+    def __init__(self, topic, nested = False, difficulty = "easy"):
+        super().__init__(topic, nested, difficulty)
+
+    def _generate_question_latex(self, *args, **kwargs):
+        return super()._generate_question_latex(*args, **kwargs)
+
+    def _generate_answer_latex(self, *args, **kwargs):
+        return super()._generate_answer_latex(*args, **kwargs)
