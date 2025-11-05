@@ -1,6 +1,5 @@
 from logging import info
-from tkinter import Button, Canvas, Tk
-from tkinter.ttk import Treeview
+from tkinter import Tk
 from main import create_document
 from question.question_registry import KEYWORD_REGISTRY, QUESTION_REGISTRY
 from utilities.misc import configure_log
@@ -19,6 +18,7 @@ if __name__ == "__main__":
     info(f"Keyword registry: {KEYWORD_REGISTRY}")
 
     root = Tk()
+
     app = ProblemSheetGeneratorApp(root)
     app.build()
 
