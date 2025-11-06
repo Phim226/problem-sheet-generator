@@ -10,6 +10,12 @@ from question.question_registry import TOPIC_REGISTRY, QUESTION_REGISTRY
 # TODO: Give users ability to edit questions in question selecter
 class QuestionSelecterBuilder():
 
+    _question_tree_title: str = "Question Topics"
+    _question_tree_id: str = "questions_tree"
+
+    _selected_tree_title: str = "Selected Topics"
+    _selected_tree_id: str = "selected_questions_tree"
+
 
     def __init__(self, root: Tk):
         self._root = root
@@ -21,14 +27,14 @@ class QuestionSelecterBuilder():
         return self._question_tree
 
     @property
-    def selection_tree(self) -> Treeview:
+    def selected_tree(self) -> Treeview:
         return self._selected_tree
 
     def build(self) -> None:
-        self._question_tree: Treeview = self._build_question_tree("Questions")
+        self._question_tree: Treeview = self._build_question_tree(self._question_tree_title, self._question_tree_id)
         self._populate_question_tree(self._question_tree)
 
-        self._selected_tree: Treeview = self._build_question_tree("Selected Questions")
+        self._selected_tree: Treeview = self._build_question_tree(self._selected_tree_title, self._selected_tree_id)
 
     @staticmethod
     def _populate_question_tree(tree: Treeview) -> None:
@@ -42,10 +48,10 @@ class QuestionSelecterBuilder():
 
                 subtopics = TOPIC_REGISTRY[name][topic]
                 for subtopic in subtopics:
-                    tree.insert(topic, "end", f"{topic}_{subtopic}", text = subtopic)
+                    tree.insert(topic, "end", iid = f"{topic}_{subtopic}", text = subtopic)
 
 
-    def _build_question_tree(self, title: str) -> Treeview:
+    def _build_question_tree(self, title: str, id: str) -> Treeview:
         tree_frame: Frame = Frame(self._selecter_frame)
         tree_frame.pack(side = "left")
 
