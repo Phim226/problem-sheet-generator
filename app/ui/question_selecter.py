@@ -9,6 +9,7 @@ from question.question_registry import TOPIC_REGISTRY, QUESTION_REGISTRY
 # TODO: Questions list have tick boxes, pressing "add" adds all selected questions.
 # TODO: Have method of adding topics and subtopics to questions list.
 # TODO: Give users ability to edit questions in question selecter
+# TODO: Disable selected questions (maybe delete them from Questions tree)
 class QuestionSelecter():
 
     _question_tree_title: str = "Question Topics"
