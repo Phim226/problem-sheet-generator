@@ -15,12 +15,12 @@ class ProblemSheetGeneratorApp():
 
         self._question_selecter = QuestionSelecter(self._root)
 
-    def build(self):
+    def build(self) -> None:
         self._configure_style()
         self._question_selecter.build()
 
     @staticmethod
-    def _configure_style():
+    def _configure_style() -> None:
         style = Style(theme = THEME)
         style.configure(
         "Treeview.Heading",
@@ -29,12 +29,20 @@ class ProblemSheetGeneratorApp():
         font=("Segoe UI", 9, "bold")
     )
 
-    def _global_mouse_click(self, event: Event):
+    def _global_mouse_click(self, event: Event) -> None:
         widget = event.widget
 
         self._deselect_treeviews(widget, event)
 
-    def _deselect_treeviews(self, widget: Widget, event: Event):
+    def _deselect_treeviews(self, widget: Widget, event: Event) -> None:
+
+        # Prevents the question treeviews from being deselected when "add" or "removed" is pressed.
+        if hasattr(widget, "tree_button_id") and widget.tree_button_id in (
+             self._question_selecter.question_tree_id,
+             self._question_selecter.selected_tree_id
+        ):
+             return
+
         treeviews = [
                 self._question_selecter.question_tree,
                 self._question_selecter.selected_tree
