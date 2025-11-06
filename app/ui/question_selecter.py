@@ -91,48 +91,76 @@ class QuestionSelecter():
 
         return tree
 
-    def _get_root_item_id(self, tree: Treeview, item_id: str) -> str:
+    def _get_parents(
+            self,
+            tree: Treeview,
+            item_id: str,
+            parents: list[str] = []
+    ) -> list[str]:
         parent = tree.parent(item_id)
 
         if not parent:
-            return item_id
+            return parents
         else:
-            return self._get_root_item_id(tree, parent)
+            parents.append(parent)
+            return self._get_parents(tree, parent, parents)
+
+    def _copy_parents(self, src_tree: Treeview, dest_tree: Treeview, parents: list[str]) -> None:
+        parent_id = ""
+        for parent in parents:
+            text = src_tree.item(parent)["text"]
+            parent_id = dest_tree.insert(parent_id, "end", iid = parent, text = text)
 
     def _copy_children(
-            self,
-            source_tree: Treeview,
-            destination_tree: Treeview,
-            item_id: str,
-            parent_id: str = "",
-            children: list[str] = []
+            self, src_tree: Treeview, dest_tree: Treeview, item_id: str,
+            parent_id: str = "", children: list[str] = []
     ) -> list[str]:
-        text = source_tree.item(item_id)["text"]
-        id = destination_tree.insert(parent_id, "end", iid = item_id, text = text)
+        text = src_tree.item(item_id)["text"]
+        id = dest_tree.insert(parent_id, "end", iid = item_id, text = text)
 
-        item_children = source_tree.get_children(item_id)
+        item_children = src_tree.get_children(item_id)
         if item_children:
             for child_id in item_children:
                 children.append(child_id)
-                self._copy_children(source_tree, destination_tree, child_id, id, children)
+                self._copy_children(src_tree, dest_tree, child_id, id, children)
             return children
         return children
 
     def _add(self) -> None:
         selection: list[str] = list(self._question_tree.selection())
-        if selection:
-            children = []
-            for item_id in selection:
-                if not item_id in children:
-                    children += self._copy_children(
-                        source_tree = self._question_tree,
-                        destination_tree = self._selected_tree,
-                        item_id = item_id,
-                        parent_id = "",
-                        children = []
+        if not selection:
+            return
+
+        children = []
+        parents = []
+
+        for item_id in selection:
+            if item_id in children:
+                continue
+
+            parent = self._question_tree.parent(item_id)
+
+            if parent not in parents:
+                item_parents = self._get_parents(
+                    tree = self._question_tree,
+                    item_id = item_id,
+                    parents = []
                     )
+                item_parents.reverse()
+                parents += item_parents
+                self._copy_parents(
+                    src_tree = self._question_tree,
+                    dest_tree = self._selected_tree,
+                    parents = item_parents
+                )
 
-
+            children += self._copy_children(
+                src_tree = self._question_tree,
+                dest_tree = self._selected_tree,
+                item_id = item_id,
+                parent_id = parent,
+                children = []
+            )
 
     def _remove(self) -> None:
         print("remove pressed")
