@@ -15,6 +15,8 @@ class QuestionSelecter():
     _selected_tree_title: str = "Selected Topics"
     _selected_tree_id: str = "selected_questions_tree"
 
+    _selected_question_ids: set[str] = set()
+
 
     def __init__(self, root: Tk):
         self._root = root
@@ -106,6 +108,8 @@ class QuestionSelecter():
     def _copy_parents(self, src_tree: Treeview, dest_tree: Treeview, parents: list[str]) -> None:
         parent_id = ""
         for parent in parents:
+            if parent in self._selected_question_ids:
+                continue
             text = src_tree.item(parent)["text"]
             parent_id = dest_tree.insert(parent_id, "end", iid = parent, text = text)
 
@@ -129,11 +133,11 @@ class QuestionSelecter():
         if not selection:
             return
 
-        children = []
-        parents = []
+        children: set[str] = set()
+        parents: set[str] = set()
 
         for item_id in selection:
-            if item_id in children:
+            if item_id in children or item_id in self._selected_question_ids:
                 continue
 
             parent = self._question_tree.parent(item_id)
@@ -145,20 +149,24 @@ class QuestionSelecter():
                     parents = []
                     )
                 item_parents.reverse()
-                parents += item_parents
+                parents.update(item_parents)
                 self._copy_parents(
                     src_tree = self._question_tree,
                     dest_tree = self._selected_tree,
                     parents = item_parents
                 )
 
-            children += self._copy_children(
+            item_children = self._copy_children(
                 src_tree = self._question_tree,
                 dest_tree = self._selected_tree,
                 item_id = item_id,
                 parent_id = parent,
                 children = []
             )
+            children.update(item_children)
+
+            self._selected_question_ids.update(children, parents)
+            self._selected_question_ids.add(item_id)
 
     def _remove(self) -> None:
         print("remove pressed")
