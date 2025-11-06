@@ -1,5 +1,5 @@
-from tkinter import Tk
-from ttkbootstrap import Style
+from tkinter import Event, Tk, Widget
+from ttkbootstrap import Style, Treeview
 from app.ui.question_selecter_builder import QuestionSelecterBuilder
 
 THEME: str = "darkly"
@@ -10,11 +10,14 @@ class ProblemSheetGeneratorApp():
     def __init__(self, root: Tk):
         root.title("Problem Sheet Generator")
         root.geometry("500x500")
+        root.bind_all("<Button-1>", self._global_mouse_click, add = "+")
         self._root = root
+
+        self._question_selecter = QuestionSelecterBuilder(self._root)
 
     def build(self):
         self._configure_style()
-        QuestionSelecterBuilder(self._root).build()
+        self._question_selecter.build()
 
     @staticmethod
     def _configure_style():
@@ -25,3 +28,28 @@ class ProblemSheetGeneratorApp():
         foreground="#CFCFCF",
         font=("Segoe UI", 9, "bold")
     )
+
+    def _global_mouse_click(self, event: Event):
+        widget = event.widget
+
+        self._deselect_treeviews(widget, event)
+
+    def _deselect_treeviews(self, widget: Widget, event: Event):
+        treeviews = [
+                self._question_selecter.question_tree,
+                self._question_selecter.selected_tree
+            ]
+
+        if isinstance(widget, Treeview):
+            treeviews.remove(widget)
+            row = widget.identify_row(event.y)
+            if row:
+                for tree in treeviews:
+                    tree.selection_remove(tree.selection())
+                return
+            else:
+                widget.selection_remove(widget.selection())
+
+        for tree in treeviews:
+                    tree.selection_remove(tree.selection())
+
