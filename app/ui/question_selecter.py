@@ -1,4 +1,4 @@
-from tkinter import Event, Tk
+from tkinter import Tk
 from ttkbootstrap import Button, Frame, Scrollbar, Treeview
 from question.question import Question
 from question.question_registry import TOPIC_REGISTRY, QUESTION_REGISTRY
