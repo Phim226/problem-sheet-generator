@@ -27,7 +27,6 @@ class ProblemSheetGeneratorApp():
         style.configure(
         "Treeview.Heading",
         background="#36434E",
-        foreground="#CFCFCF",
         font=("Segoe UI", 9, "bold")
     )
 
