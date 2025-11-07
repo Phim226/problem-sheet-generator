@@ -4,6 +4,7 @@ from app.ui.question_selecter import QuestionSelecter
 
 THEME: str = "darkly"
 
+# TODO: Build configuration panel for inputting number of questions etc.
 class ProblemSheetGeneratorApp():
 
 
