@@ -75,8 +75,15 @@ class QuestionSelecter():
         button.tree_button_id = id
         button.pack(side = "bottom", anchor = "se")
 
-        tree = Treeview(tree_frame, show = "tree headings")
+        tree = Treeview(
+            tree_frame,
+            columns = None if title == self._question_tree_title else ("count",),
+            show = "tree headings"
+        )
         tree.heading("#0", text = title)
+        if title == self._selected_tree_title:
+            tree.heading("count", text = "#Qs")
+            tree.column("count", width = 60, anchor = "center", stretch = False)
         tree.pack(side = "left")
 
         vertical_scroll = Scrollbar(tree_frame, orient = "vertical", command = tree.yview)
@@ -111,7 +118,7 @@ class QuestionSelecter():
                 parent_id = parent
                 continue
             text = src_tree.item(parent)["text"]
-            parent_id = dest_tree.insert(parent_id, "end", iid = parent, text = text)
+            parent_id = dest_tree.insert(parent_id, "end", iid = parent, text = text, values = "-")
 
     def _get_all_children(self, tree: Treeview, item_id: str, children: list[str] = []) -> list[str]:
         item_children = list(tree.get_children(item_id))
@@ -125,12 +132,24 @@ class QuestionSelecter():
 
         return children
 
+    def _num_of_youngest_children(self, tree: Treeview, item_id: str, num_children: int = 0) -> int:
+        item_children = list(tree.get_children(item_id))
+
+        if not item_children:
+            num_children += 1
+            return num_children
+
+        for child in item_children:
+            num_children = self._num_of_youngest_children(tree, child, num_children)
+
+        return num_children
+
     def _copy_children(
             self, src_tree: Treeview, dest_tree: Treeview, item_id: str,
             parent_id: str = "", children: list[str] = []
     ) -> list[str]:
         text = src_tree.item(item_id)["text"]
-        id = dest_tree.insert(parent_id, "end", iid = item_id, text = text)
+        id = dest_tree.insert(parent_id, "end", iid = item_id, text = text, values = "-")
 
         item_children = src_tree.get_children(item_id)
         if item_children:
@@ -180,6 +199,15 @@ class QuestionSelecter():
 
             self._selected_question_ids.update(children, parents)
             self._selected_question_ids.add(item_id)
+
+            self._selected_tree.set(
+                item_id,
+                "count",
+                self._num_of_youngest_children(
+                    self._question_tree,
+                    item_id
+                )
+            )
 
     def _remove(self) -> None:
         selection: list[str] = list(self._selected_tree.selection())
