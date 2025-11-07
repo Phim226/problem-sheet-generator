@@ -1,6 +1,7 @@
 from tkinter import Event, Tk, Widget
 from ttkbootstrap import Style, Treeview
 from app.ui.question_selecter import QuestionSelecter
+from app.ui.question_configurer import QuestionConfigurer
 
 THEME: str = "darkly"
 
@@ -15,11 +16,14 @@ class ProblemSheetGeneratorApp():
         root.bind_all("<Button-1>", self._global_mouse_click, add = "+")
         self._root = root
 
-        self._question_selecter = QuestionSelecter(self._root)
+        self._question_selecter = QuestionSelecter(root)
+
+        self._question_configurer = QuestionConfigurer(root)
 
     def build(self) -> None:
         self._configure_style()
         self._question_selecter.build()
+        self._question_configurer.build()
 
     @staticmethod
     def _configure_style() -> None:
