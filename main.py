@@ -3,8 +3,8 @@ from os import remove
 from subprocess import CalledProcessError
 from pylatex import Command, Document, Enumerate
 from pylatex.utils import NoEscape
-from question.question_registry import KEYWORD_REGISTRY, QUESTION_REGISTRY, create_question
-from question.question import Question
+from core.question.question_registry import KEYWORD_REGISTRY, QUESTION_REGISTRY, create_question
+from core.question.question import Question
 from utilities.misc import configure_log
 
 # TODO: Include docstrings

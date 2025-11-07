@@ -3,8 +3,8 @@
 
 # pycache
 /__pycache__
-/mathematics/__pycache__
-/question/__pycache__
+core/mathematics/__pycache__
+core/question/__pycache__
 /utilities/__pycache__
 /app/__pycache__
 /app/ui/__pycache__

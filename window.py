@@ -1,7 +1,7 @@
 from logging import info
 from tkinter import Tk
 from main import create_document
-from question.question_registry import KEYWORD_REGISTRY, QUESTION_REGISTRY
+from core.question.question_registry import KEYWORD_REGISTRY, QUESTION_REGISTRY
 from utilities.misc import configure_log
 from app.app import ProblemSheetGeneratorApp
 

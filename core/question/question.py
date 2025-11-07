@@ -3,9 +3,9 @@ from abc import ABC, abstractmethod
 from sympy import Rational, latex
 from sympy.abc import t
 from pylatex.utils import NoEscape
-from question.question_registry import register_question_type
-from mathematics.vector_calculus import ScalarField, VectorField
-from mathematics.geometry import Curve
+from core.question.question_registry import register_question_type
+from core.mathematics.vector_calculus import ScalarField, VectorField
+from core.mathematics.geometry import Curve
 from utilities.mathematics import clumsy_rational
 
 # TODO: Populate file with question classes.

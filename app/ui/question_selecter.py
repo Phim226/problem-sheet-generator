@@ -1,7 +1,7 @@
 from tkinter import Tk
 from ttkbootstrap import Button, Frame, Scrollbar, Treeview
-from question.question import Question
-from question.question_registry import TOPIC_REGISTRY, QUESTION_REGISTRY
+from core.question.question import Question
+from core.question.question_registry import TOPIC_REGISTRY, QUESTION_REGISTRY
 
 # TODO: Write docstrings.
 class QuestionSelecter():
