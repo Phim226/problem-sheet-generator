@@ -3,10 +3,7 @@ from ttkbootstrap import Button, Frame, Scrollbar, Treeview
 from question.question import Question
 from question.question_registry import TOPIC_REGISTRY, QUESTION_REGISTRY
 
-# TODO: Write docstrings
-# TODO: Have method of adding topics and subtopics to questions list.
-# TODO: Give users ability to edit questions in question selecter
-# TODO: Disable selected questions (maybe delete them from Questions tree)
+# TODO: Write docstrings.
 class QuestionSelecter():
 
     _question_tree_title: str = "Question Topics"
@@ -91,7 +88,7 @@ class QuestionSelecter():
 
         return tree
 
-    def _get_parents(
+    def _get_all_parents(
             self,
             tree: Treeview,
             item_id: str,
@@ -101,17 +98,32 @@ class QuestionSelecter():
 
         if not parent:
             return parents
-        else:
-            parents.append(parent)
-            return self._get_parents(tree, parent, parents)
 
-    def _copy_parents(self, src_tree: Treeview, dest_tree: Treeview, parents: list[str]) -> None:
+        parents.append(parent)
+        return self._get_all_parents(tree, parent, parents)
+
+    def _copy_parents(
+            self, src_tree: Treeview, dest_tree: Treeview, parents: list[str]
+    ) -> None:
         parent_id = ""
         for parent in parents:
             if parent in self._selected_question_ids:
+                parent_id = parent
                 continue
             text = src_tree.item(parent)["text"]
             parent_id = dest_tree.insert(parent_id, "end", iid = parent, text = text)
+
+    def _get_all_children(self, tree: Treeview, item_id: str, children: list[str] = []) -> list[str]:
+        item_children = list(tree.get_children(item_id))
+
+        if not item_children:
+            return children
+
+        for child in item_children:
+            children.append(child)
+            self._get_all_children(tree, child, children)
+
+        return children
 
     def _copy_children(
             self, src_tree: Treeview, dest_tree: Treeview, item_id: str,
@@ -126,6 +138,7 @@ class QuestionSelecter():
                 children.append(child_id)
                 self._copy_children(src_tree, dest_tree, child_id, id, children)
             return children
+
         return children
 
     def _add(self) -> None:
@@ -143,7 +156,7 @@ class QuestionSelecter():
             parent = self._question_tree.parent(item_id)
 
             if parent not in parents:
-                item_parents = self._get_parents(
+                item_parents = self._get_all_parents(
                     tree = self._question_tree,
                     item_id = item_id,
                     parents = []
@@ -169,4 +182,28 @@ class QuestionSelecter():
             self._selected_question_ids.add(item_id)
 
     def _remove(self) -> None:
-        print("remove pressed")
+        selection: list[str] = list(self._selected_tree.selection())
+        if not selection:
+            return
+
+        children: set[str] = set()
+
+        for item_id in selection:
+            if item_id in children:
+                continue
+
+            item_children = self._get_all_children(
+                tree = self._selected_tree,
+                item_id = item_id,
+            )
+            children.update(item_children)
+            self._selected_question_ids = self._selected_question_ids - children
+
+            parent = self._selected_tree.parent(item_id)
+
+            self._selected_tree.delete(item_id)
+            self._selected_question_ids.remove(item_id)
+
+            if parent and not self._selected_tree.get_children(parent):
+                self._selected_tree.delete(parent)
+                self._selected_question_ids.remove(parent)
