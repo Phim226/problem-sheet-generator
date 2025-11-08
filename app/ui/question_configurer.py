@@ -1,5 +1,5 @@
 from tkinter import Tk
-from ttkbootstrap import Button, Checkbutton, Entry, Frame, IntVar, Label, Labelframe, StringVar
+from ttkbootstrap import Button, Checkbutton, Entry, IntVar, Label, Labelframe
 from main import create_document
 
 class QuestionConfigurer():

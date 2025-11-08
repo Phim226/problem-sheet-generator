@@ -117,6 +117,7 @@ class QuestionSelecter():
             if parent in self._selected_question_ids:
                 parent_id = parent
                 continue
+
             text = src_tree.item(parent)["text"]
             parent_id = dest_tree.insert(parent_id, "end", iid = parent, text = text, values = "-")
 
