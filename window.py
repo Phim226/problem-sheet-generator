@@ -6,7 +6,6 @@ from utilities.misc import configure_log
 from app.app import ProblemSheetGeneratorApp
 
 # TODO: Design UI.
-# TODO: Add number of questions functionality.
 # TODO: Make pdf of questions and answers viewable in the app.
 # TODO: Temporarily store files and give option to save or export them for permanant storage.
 # TODO: Have problem sheet templates with typical collections of questions.

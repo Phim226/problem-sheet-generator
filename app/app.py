@@ -5,7 +5,6 @@ from app.ui.question_configurer import QuestionConfigurer
 
 THEME: str = "darkly"
 
-# TODO: Build configuration panel for inputting number of questions etc.
 # TODO: Put placement data here and pass to objects so there is a higher level view of panel placement.
 class ProblemSheetGeneratorApp():
 
