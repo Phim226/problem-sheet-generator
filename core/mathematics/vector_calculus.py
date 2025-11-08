@@ -8,6 +8,9 @@ from sympy.vector import (BaseScalar, CoordSys3D, ParametricRegion, Vector, Vect
 from utilities.latex_formatting import CleanVectorLatexPrinter
 from utilities.mathematics import polynomial_from_coeffs, random_weighted_coefficients
 
+
+# TODO: Write docstrings.
+# TODO: Allow for manual creation (for strictly testing purposes).
 class Field():
 
 
