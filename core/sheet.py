@@ -3,13 +3,15 @@ from pylatex.utils import NoEscape
 
 class Sheet():
 
-
-    def __init__(self, title: str, author: str = "", date: str = "", margin: tuple[str] = ("2.5cm", "2.5cm")):
+    #TODO: file name needs validation.
+    def __init__(self, title: str, file_name: str = "", author: str = "", date: str = "", margin: tuple[str] = ("2.5cm", "2.5cm")):
         self._document: Document = Document(
             geometry_options = {"left": margin[0], "right": margin[1]}
         )
 
         self._title: str = title
+
+        self._file_name: str = file_name if file_name else title
 
         self._fill_preamble(title, author, date)
 
@@ -20,6 +22,10 @@ class Sheet():
     @property
     def title(self) -> str:
         return self._title
+
+    @property
+    def file_name(self) -> str:
+        return self._file_name
 
     def _fill_preamble(self, title: str, author: str = "", date: str = "") -> None:
         self._document.preamble.append(Command("title", title))

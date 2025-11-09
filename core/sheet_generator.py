@@ -66,8 +66,8 @@ class SheetGenerator():
                 enum.add_item(answers_list[i])
 
         try:
-            self._generate_output_files(questions, self._question_sheet.title)
-            self._generate_output_files(answers, self._answer_sheet.title)
+            self._generate_output_files(questions, self._question_sheet.file_name)
+            self._generate_output_files(answers, self._answer_sheet.file_name)
         except CalledProcessError as e:
             msg = (
                 " LaTeX failed to process. This is most likely due to a mistake in the LaTeX syntax,"
