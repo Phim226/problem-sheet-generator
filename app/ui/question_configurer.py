@@ -1,12 +1,15 @@
 from tkinter import Tk
 from ttkbootstrap import Button, Checkbutton, Entry, IntVar, Label, Labelframe
-from main import create_document
+from core.sheet_generator import SheetGenerator
 
 class QuestionConfigurer():
 
 
-    def __init__(self, root: Tk):
+    def __init__(self, root: Tk, generator: SheetGenerator):
         self._root = root
+
+        self._generator = generator
+
         self._config_frame = Labelframe(root, text = "Configuration")
         self._config_frame.pack(side = "top", anchor = "nw")
 
@@ -47,7 +50,7 @@ class QuestionConfigurer():
         button = Button(
             self._config_frame,
             text = "Generate Problem Sheet",
-            command = create_document
+            command = self._generator.generate_sheets
         )
         button.grid(row = 3, column = 1, padx = 4, pady = 4)
 
