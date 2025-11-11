@@ -14,19 +14,19 @@ class QuestionConfigurer():
         self._config_frame.pack(side = "top", anchor = "nw")
 
     @property
-    def problem_name_entry(self):
+    def problem_name_entry(self) -> Entry:
         return self._problem_name_entry
 
     @property
-    def answer_name_entry(self):
+    def answer_name_entry(self) -> Entry:
         return self._answer_name_entry
 
     @property
-    def tex_check(self):
+    def tex_check(self) -> bool:
         return self._tex_check
 
 
-    def build(self):
+    def build(self) -> None:
         Label(self._config_frame, text = "Problem sheet name: ").grid(row = 0, column = 0)
         self._problem_name_entry: Entry = Entry(self._config_frame)
         self._problem_name_entry.insert(0, "Problem_Sheet")
