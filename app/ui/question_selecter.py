@@ -1,10 +1,10 @@
-from tkinter import Tk
-from ttkbootstrap import Button, Frame, Scrollbar, Treeview
+from tkinter import Event, Tk
+from ttkbootstrap import Button, Entry, Frame, Scrollbar, Treeview
 from core.question.question import Question
 from core.question.question_registry import TOPIC_REGISTRY, QUESTION_REGISTRY
 
-# TODO: Write docstrings.
-# TODO: Implement # questions editing.
+# TODO: Improve docstrings.
+# TODO: Have # questions be for the current level only.
 class QuestionSelecter():
 
     QUESTION_TREE_CONFIG: dict[str, str | bool] = {
@@ -87,6 +87,9 @@ class QuestionSelecter():
         if config["has_count_column"]:
             tree.heading("count", text = "#Qs")
             tree.column("count", width = 60, anchor = "center", stretch = False)
+
+            tree.bind("<Double-1>", self._edit_count)
+
         tree.pack(side = "left")
 
         vertical_scroll = Scrollbar(tree_frame, orient = "vertical", command = tree.yview)
@@ -94,6 +97,61 @@ class QuestionSelecter():
         tree.configure(yscrollcommand = vertical_scroll.set)
 
         return tree
+
+    def _edit_count(self, event: Event) -> None | str:
+        """
+        Creates an entry box at the position of a valid #Qs column cell and overrides current
+        numerical value with the inputted value.
+        """
+        column = self.selected_tree.identify_column(event.x)
+        if column != "#1":
+            return
+
+        row_id = self.selected_tree.identify_row(event.y)
+        if not row_id:
+            return
+
+        current = self.selected_tree.set(row_id, "count")
+
+        bbox = self.selected_tree.bbox(row_id, column)
+        if not bbox:
+            return "break"
+
+        x, y, width, height = bbox
+
+        pad_x = 2
+        pad_y = 2
+        width = max(width, 50)
+        height = height + pad_y
+
+        entry = Entry(self.selected_tree)
+        entry.insert(0, current)
+        entry.select_range(0, "end")
+        entry.focus_set()
+
+        entry.place(
+            x = x - pad_x,
+            y = y - pad_y//2,
+            width = width + 2*pad_x,
+            height = height + pad_y
+        )
+
+        def commit(event=None):
+            new_val = entry.get().strip()
+            # TODO: properly validate inputs.
+            if new_val == "":
+                new_val = "0"
+            self.selected_tree.set(row_id, "count", new_val)
+            entry.destroy()
+
+        def cancel(event=None):
+            entry.destroy()
+
+        entry.bind("<Return>", commit)
+        entry.bind("<FocusOut>", commit)
+        entry.bind("<Escape>", cancel)
+
+        return "break"
 
     def _get_all_parents(self, tree: Treeview, item_id: str, parents: list[str] = None) -> list[str]:
         """
