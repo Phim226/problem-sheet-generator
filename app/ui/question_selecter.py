@@ -5,7 +5,7 @@ from core.question.question_registry import TOPIC_REGISTRY, QUESTION_REGISTRY
 
 # TODO: Improve docstrings.
 # TODO: Have # questions be for the current level only.
-class QuestionSelecter():
+class QuestionSelector():
 
     QUESTION_TREE_CONFIG: dict[str, str | bool] = {
         "title": "Question Topics",
@@ -23,8 +23,8 @@ class QuestionSelecter():
 
     def __init__(self, root: Tk):
         self._root = root
-        self._selecter_frame = Frame(root)
-        self._selecter_frame.pack(side = "top", anchor = "nw")
+        self._selector_frame = Frame(root)
+        self._selector_frame.pack(side = "top", anchor = "nw")
         self._selected_question_ids: set[str] = set()
 
     @property
@@ -72,7 +72,7 @@ class QuestionSelecter():
         """
         Builds the tree and button UI widgets for the given configuration.
         """
-        tree_frame: Frame = Frame(self._selecter_frame)
+        tree_frame: Frame = Frame(self._selector_frame)
         tree_frame.pack(side = "left")
 
         command = self._add if config["button_label"] == "add" else self._remove
@@ -153,12 +153,12 @@ class QuestionSelecter():
 
         return "break"
 
-    def _get_all_parents(self, tree: Treeview, item_id: str, parents: list[str] = None) -> list[str]:
+    def _get_all_parents(self, tree: Treeview, item_id: str, parents: list[str] | None = None) -> list[str]:
         """
         Returns the chain of parent items from item_id up to the root item.
         """
         if parents is None:
-            parents = []
+            parents: list[str] = []
 
         parent = tree.parent(item_id)
 
@@ -168,12 +168,12 @@ class QuestionSelecter():
         parents.append(parent)
         return self._get_all_parents(tree, parent, parents)
 
-    def _get_subtree_ids(self, tree: Treeview, item_id: str, children: list[str] = None) -> list[str]:
+    def _get_subtree_ids(self, tree: Treeview, item_id: str, children: list[str] | None = None) -> list[str]:
         """
         Returns the full list of item ids in the subtree with item_id acting as the root node.
         """
         if children is None:
-            children = []
+            children: list[str] = []
 
         children.append(item_id)
 
