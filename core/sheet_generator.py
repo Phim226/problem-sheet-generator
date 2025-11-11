@@ -27,9 +27,7 @@ class SheetGenerator():
                 " is being used by other processes and cannot be deleted. Close it before attempting"
                 " to rerun the problem sheet generation process."
             )
-            error(
-                (f"{type(e).__name__}: {file_name}{msg}")
-            )
+            error(f"{type(e).__name__}: {file_name}{msg}")
         except FileNotFoundError:
             return
 
@@ -76,9 +74,8 @@ class SheetGenerator():
                 " attempt will now be made to delete the output files to prevent issues when"
                 " rerunning the code."
             )
-            error(
-                f"{type(e).__name__}:{msg}"
-            )
+            error(f"{type(e).__name__}:{msg}")
+
             self._try_delete_file("output/questions.fdb_latexmk")
             self._try_delete_file("output/questions.pdf")
             self._try_delete_file("output/questions.tex")
