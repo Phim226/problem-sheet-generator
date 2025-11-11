@@ -15,8 +15,8 @@ class SheetGenerator():
         self._question_sheet: QuestionSheet = QuestionSheet("Questions")
 
     @staticmethod
-    def _generate_output_files(document: Document, name: str):
-        document.generate_pdf(f"output/{name}", clean_tex = False)
+    def _generate_output_files(document: Document, name: str, clean_tex: bool = False):
+        document.generate_pdf(f"output/{name}", clean_tex = clean_tex)
 
     @staticmethod
     def _try_delete_file(file_name: str) -> None:
