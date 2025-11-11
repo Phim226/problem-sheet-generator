@@ -7,19 +7,25 @@ from core.question.question_registry import TOPIC_REGISTRY, QUESTION_REGISTRY
 # TODO: Implement # questions editing.
 class QuestionSelecter():
 
-    _question_tree_title: str = "Question Topics"
-    _question_tree_id: str = "questions_tree"
+    QUESTION_TREE_CONFIG: dict[str, str | bool] = {
+        "title": "Question Topics",
+        "tree_id": "questions_tree",
+        "button_label": "add",
+        "has_count_column": False
+    }
 
-    _selected_tree_title: str = "Selected Topics"
-    _selected_tree_id: str = "selected_questions_tree"
-
-    _selected_question_ids: set[str] = set()
-
+    SELECTED_TREE_CONFIG: dict[str, str | bool] = {
+        "title": "Selected Topics",
+        "tree_id": "selected_questions_tree",
+        "button_label": "remove",
+        "has_count_column": True
+    }
 
     def __init__(self, root: Tk):
         self._root = root
         self._selecter_frame = Frame(root)
         self._selecter_frame.pack(side = "top", anchor = "nw")
+        self._selected_question_ids: set[str] = set()
 
     @property
     def question_tree(self) -> Treeview:
@@ -31,26 +37,24 @@ class QuestionSelecter():
 
     @property
     def question_tree_id(self) -> str:
-        return self._question_tree_id
+        return self.QUESTION_TREE_CONFIG["tree_id"]
 
     @property
     def selected_tree_id(self) -> str:
-        return self._selected_tree_id
+        return self.SELECTED_TREE_CONFIG["tree_id"]
 
     def build(self) -> None:
-        self._question_tree: Treeview = self._build_question_tree(
-            self._question_tree_title,
-            self._question_tree_id
-        )
-        self._populate_question_tree(self._question_tree)
+        self._question_tree: Treeview = self._build_tree(self.QUESTION_TREE_CONFIG)
+        self._selected_tree: Treeview = self._build_tree(self.SELECTED_TREE_CONFIG)
 
-        self._selected_tree: Treeview = self._build_question_tree(
-            self._selected_tree_title,
-            self._selected_tree_id
-        )
+        self._populate_question_tree(self._question_tree)
 
     @staticmethod
     def _populate_question_tree(tree: Treeview) -> None:
+        """
+        Fills the Question Topics tree with the questions, topics and subtopics that have been
+        registered in the Question and Topic registries.
+        """
         question_types: list[Question] = sorted(list(TOPIC_REGISTRY.keys())[1:])
         for name in question_types:
             tree.insert("", "end", iid = name, text = name)
@@ -64,39 +68,37 @@ class QuestionSelecter():
                     tree.insert(topic, "end", iid = f"{topic}_{subtopic}", text = subtopic)
 
 
-    def _build_question_tree(self, title: str, id: str) -> Treeview:
+    def _build_tree(self, config: dict[str, str | bool]) -> Treeview:
+        """
+        Builds the tree and button UI widgets for the given configuration.
+        """
         tree_frame: Frame = Frame(self._selecter_frame)
         tree_frame.pack(side = "left")
 
-        button = Button(
-            tree_frame,
-            text = "add" if title == self._question_tree_title else "remove",
-            command = self._add if title == self._question_tree_title else self._remove
-        )
-        button.tree_button_id = id
+        command = self._add if config["button_label"] == "add" else self._remove
+        button = Button(tree_frame, text = config["button_label"], command = command)
+        button.tree_button_id = config["tree_id"]
         button.pack(side = "bottom", anchor = "se")
 
-        tree = Treeview(
-            tree_frame,
-            columns = None if title == self._question_tree_title else ("count",),
-            show = "tree headings"
-        )
-        tree.heading("#0", text = title)
-        if title == self._selected_tree_title:
+        columns = ("count",) if config["has_count_column"] else None
+        tree = Treeview(tree_frame, columns = columns, show = "tree headings")
+        tree.heading("#0", text = config["title"])
+
+        if config["has_count_column"]:
             tree.heading("count", text = "#Qs")
             tree.column("count", width = 60, anchor = "center", stretch = False)
         tree.pack(side = "left")
 
         vertical_scroll = Scrollbar(tree_frame, orient = "vertical", command = tree.yview)
         vertical_scroll.pack(side = "right", fill = "y")
-
         tree.configure(yscrollcommand = vertical_scroll.set)
-
-        tree.widget_id = id
 
         return tree
 
     def _get_all_parents(self, tree: Treeview, item_id: str, parents: list[str] = None) -> list[str]:
+        """
+        Returns the chain of parent items from item_id up to the root item.
+        """
         if parents is None:
             parents = []
 
@@ -109,6 +111,9 @@ class QuestionSelecter():
         return self._get_all_parents(tree, parent, parents)
 
     def _get_subtree_ids(self, tree: Treeview, item_id: str, children: list[str] = None) -> list[str]:
+        """
+        Returns the full list of item ids in the subtree with item_id acting as the root node.
+        """
         if children is None:
             children = []
 
@@ -125,6 +130,9 @@ class QuestionSelecter():
         return children
 
     def _count_leaves(self, tree: Treeview, item_id: str, num_children: int = 0) -> int:
+        """
+        Counts the number of question subtopics in the subtree of item_id.
+        """
         item_children = list(tree.get_children(item_id))
 
         if not item_children:
@@ -139,6 +147,9 @@ class QuestionSelecter():
     def _copy_item(
             self, src_tree: Treeview, dest_tree: Treeview, item_id: str, parent_id: str
     ) -> None:
+        """
+        Copies item_id from the source tree to the destination tree.
+        """
         if item_id in dest_tree.get_children(parent_id):
             return
 
@@ -148,6 +159,10 @@ class QuestionSelecter():
     def _copy_subtree(
             self, src_tree: Treeview, dest_tree: Treeview, item_id: str, parent_id: str = ""
     ) -> None:
+        """
+        Copies the full subtree with item_id as the root node from the source tree to the
+        destination tree.
+        """
         self._copy_item(src_tree, dest_tree, item_id, parent_id)
 
         item_children = src_tree.get_children(item_id)
@@ -155,6 +170,10 @@ class QuestionSelecter():
             self._copy_subtree(src_tree, dest_tree, child_id, item_id)
 
     def _add(self) -> None:
+        """
+        Adds the selected items from the Question Topics tree to the Selected Topics tree, and
+        keeps track of the selected items.
+        """
         selection: list[str] = list(self._question_tree.selection())
         if not selection:
             return
@@ -184,6 +203,9 @@ class QuestionSelecter():
             self._selected_tree.set(item_id, "count", count)
 
     def _remove(self) -> None:
+        """
+        Deletes the selected items from the Selected Topics tree and from the tracked items.
+        """
         selection: list[str] = list(self._selected_tree.selection())
         if not selection:
             return
