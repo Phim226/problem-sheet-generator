@@ -4,6 +4,7 @@ from core.question.question import Question
 from core.question.question_registry import TOPIC_REGISTRY, QUESTION_REGISTRY
 
 # TODO: Write docstrings.
+# TODO: Implement # questions editing.
 class QuestionSelecter():
 
     _question_tree_title: str = "Question Topics"
@@ -95,12 +96,10 @@ class QuestionSelecter():
 
         return tree
 
-    def _get_all_parents(
-            self,
-            tree: Treeview,
-            item_id: str,
-            parents: list[str] = []
-    ) -> list[str]:
+    def _get_all_parents(self, tree: Treeview, item_id: str, parents: list[str] = None) -> list[str]:
+        if parents is None:
+            parents = []
+
         parent = tree.parent(item_id)
 
         if not parent:
@@ -109,27 +108,19 @@ class QuestionSelecter():
         parents.append(parent)
         return self._get_all_parents(tree, parent, parents)
 
-    def _copy_parents(
-            self, src_tree: Treeview, dest_tree: Treeview, parents: list[str]
-    ) -> None:
-        parent_id = ""
-        for parent in parents:
-            if parent in self._selected_question_ids:
-                parent_id = parent
-                continue
+    def _get_subtree_ids(self, tree: Treeview, item_id: str, children: list[str] = None) -> list[str]:
+        if children is None:
+            children = []
 
-            text = src_tree.item(parent)["text"]
-            parent_id = dest_tree.insert(parent_id, "end", iid = parent, text = text, values = "-")
+        children.append(item_id)
 
-    def _get_all_children(self, tree: Treeview, item_id: str, children: list[str] = []) -> list[str]:
         item_children = list(tree.get_children(item_id))
 
         if not item_children:
             return children
 
         for child in item_children:
-            children.append(child)
-            self._get_all_children(tree, child, children)
+            self._get_subtree_ids(tree, child, children)
 
         return children
 
@@ -145,94 +136,69 @@ class QuestionSelecter():
 
         return num_children
 
-    def _copy_children(
-            self, src_tree: Treeview, dest_tree: Treeview, item_id: str,
-            parent_id: str = "", children: list[str] = []
-    ) -> list[str]:
+    def _copy_item(
+            self, src_tree: Treeview, dest_tree: Treeview, item_id: str, parent_id: str
+    ) -> None:
+        if item_id in dest_tree.get_children(parent_id):
+            return
+
         text = src_tree.item(item_id)["text"]
-        id = dest_tree.insert(parent_id, "end", iid = item_id, text = text, values = "-")
+        dest_tree.insert(parent_id, "end", iid = item_id, text = text, values = "-")
+
+    def _copy_subtree(
+            self, src_tree: Treeview, dest_tree: Treeview, item_id: str, parent_id: str = ""
+    ) -> None:
+        self._copy_item(src_tree, dest_tree, item_id, parent_id)
 
         item_children = src_tree.get_children(item_id)
-        if item_children:
-            for child_id in item_children:
-                children.append(child_id)
-                self._copy_children(src_tree, dest_tree, child_id, id, children)
-            return children
-
-        return children
+        for child_id in item_children:
+            self._copy_subtree(src_tree, dest_tree, child_id, item_id)
 
     def _add(self) -> None:
         selection: list[str] = list(self._question_tree.selection())
         if not selection:
             return
 
-        children: set[str] = set()
-        parents: set[str] = set()
-
         for item_id in selection:
-            if item_id in children or item_id in self._selected_question_ids:
+            if item_id in self._selected_question_ids:
                 continue
 
-            parent = self._question_tree.parent(item_id)
+            item_parents = self._get_all_parents(self._question_tree, item_id)
+            item_parents.reverse()
 
-            if parent not in parents:
-                item_parents = self._get_all_parents(
-                    tree = self._question_tree,
-                    item_id = item_id,
-                    parents = []
-                    )
-                item_parents.reverse()
-                parents.update(item_parents)
-                self._copy_parents(
-                    src_tree = self._question_tree,
-                    dest_tree = self._selected_tree,
-                    parents = item_parents
-                )
+            for i, parent in enumerate(item_parents):
+                if parent in self._selected_question_ids:
+                    continue
 
-            item_children = self._copy_children(
-                src_tree = self._question_tree,
-                dest_tree = self._selected_tree,
-                item_id = item_id,
-                parent_id = parent,
-                children = []
-            )
-            children.update(item_children)
+                parent_id = "" if i == 0 else item_parents[i-1]
+                self._copy_item(self._question_tree, self._selected_tree, parent, parent_id)
+                self._selected_question_ids.add(parent)
 
-            self._selected_question_ids.update(children, parents)
-            self._selected_question_ids.add(item_id)
+            parent_id = self._question_tree.parent(item_id)
+            self._copy_subtree(self._question_tree, self._selected_tree, item_id, parent_id)
 
-            self._selected_tree.set(
-                item_id,
-                "count",
-                self._num_of_youngest_children(
-                    self._question_tree,
-                    item_id
-                )
-            )
+            subtree_ids = self._get_subtree_ids(self._question_tree, item_id)
+            self._selected_question_ids.update(subtree_ids)
+
+            count = self._num_of_youngest_children(self._question_tree, item_id)
+            self._selected_tree.set(item_id, "count", count)
 
     def _remove(self) -> None:
         selection: list[str] = list(self._selected_tree.selection())
         if not selection:
             return
 
-        children: set[str] = set()
-
         for item_id in selection:
-            if item_id in children:
+            if item_id not in self._selected_question_ids:
                 continue
 
-            item_children = self._get_all_children(
-                tree = self._selected_tree,
-                item_id = item_id,
-            )
-            children.update(item_children)
-            self._selected_question_ids = self._selected_question_ids - children
+            subtree_ids = self._get_subtree_ids(self._selected_tree, item_id)
+            self._selected_question_ids = self._selected_question_ids - set(subtree_ids)
 
-            parent = self._selected_tree.parent(item_id)
-
+            parents = self._get_all_parents(self._selected_tree, item_id)
             self._selected_tree.delete(item_id)
-            self._selected_question_ids.remove(item_id)
 
-            if parent and not self._selected_tree.get_children(parent):
-                self._selected_tree.delete(parent)
-                self._selected_question_ids.remove(parent)
+            for parent in parents:
+                if parent and not self._selected_tree.get_children(parent):
+                    self._selected_tree.delete(parent)
+                    self._selected_question_ids.remove(parent)
