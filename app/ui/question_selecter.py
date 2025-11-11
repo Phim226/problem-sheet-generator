@@ -124,7 +124,7 @@ class QuestionSelecter():
 
         return children
 
-    def _num_of_youngest_children(self, tree: Treeview, item_id: str, num_children: int = 0) -> int:
+    def _count_leaves(self, tree: Treeview, item_id: str, num_children: int = 0) -> int:
         item_children = list(tree.get_children(item_id))
 
         if not item_children:
@@ -132,7 +132,7 @@ class QuestionSelecter():
             return num_children
 
         for child in item_children:
-            num_children = self._num_of_youngest_children(tree, child, num_children)
+            num_children = self._count_leaves(tree, child, num_children)
 
         return num_children
 
@@ -180,7 +180,7 @@ class QuestionSelecter():
             subtree_ids = self._get_subtree_ids(self._question_tree, item_id)
             self._selected_question_ids.update(subtree_ids)
 
-            count = self._num_of_youngest_children(self._question_tree, item_id)
+            count = self._count_leaves(self._question_tree, item_id)
             self._selected_tree.set(item_id, "count", count)
 
     def _remove(self) -> None:
