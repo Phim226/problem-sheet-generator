@@ -32,7 +32,8 @@ class ProblemSheetGeneratorApp():
         "Treeview.Heading",
         background="#36434E",
         font=("Segoe UI", 9, "bold")
-    )
+        )
+        style.configure("Treeview", rowheight=19)
 
     def _global_mouse_click(self, event: Event) -> None:
         widget = event.widget
