@@ -1,6 +1,6 @@
 from tkinter import Event, Tk, Widget
 from ttkbootstrap import Style, Treeview
-from app.ui.question_selecter import QuestionSelecter
+from app.ui.question_selecter import QuestionSelector
 from app.ui.question_configurer import QuestionConfigurer
 from core.sheet_generator import SheetGenerator
 
@@ -16,7 +16,7 @@ class ProblemSheetGeneratorApp():
         root.bind_all("<Button-1>", self._global_mouse_click, add = "+")
         self._root = root
 
-        self._question_selecter = QuestionSelecter(root)
+        self._question_selecter = QuestionSelector(root)
 
         self._question_configurer = QuestionConfigurer(root, generator)
 
