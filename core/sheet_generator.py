@@ -14,23 +14,6 @@ class SheetGenerator():
         self._answer_sheet: AnswerSheet = AnswerSheet("Answers")
         self._question_sheet: QuestionSheet = QuestionSheet("Questions")
 
-    @staticmethod
-    def _generate_output_files(document: Document, name: str, clean_tex: bool = False):
-        document.generate_pdf(f"output/{name}", clean_tex = clean_tex)
-
-    @staticmethod
-    def _try_delete_file(file_name: str) -> None:
-        try:
-            remove(file_name)
-        except PermissionError as e:
-            msg = (
-                " is being used by other processes and cannot be deleted. Close it before attempting"
-                " to rerun the problem sheet generation process."
-            )
-            error(f"{type(e).__name__}: {file_name}{msg}")
-        except FileNotFoundError:
-            return
-
     # TODO: Change the names of the output files to include the creation date.
     def generate_sheets(self):
         questions = self._question_sheet.document
@@ -76,12 +59,28 @@ class SheetGenerator():
             )
             error(f"{type(e).__name__}:{msg}")
 
-            self._try_delete_file("output/questions.fdb_latexmk")
-            self._try_delete_file("output/questions.pdf")
-            self._try_delete_file("output/questions.tex")
+            self._delete_files()
 
-            self._try_delete_file("output/answers.fdb_latexmk")
-            self._try_delete_file("output/answers.pdf")
-            self._try_delete_file("output/answers.tex")
+    @staticmethod
+    def _generate_output_files(document: Document, name: str, clean_tex: bool = False):
+        document.generate_pdf(f"output/{name}", clean_tex = clean_tex)
+
+    @staticmethod
+    def _delete_files():
+        files = [
+            "output/questions.fdb_latexmk", "output/questions.pdf", "output/questions.tex",
+            "output/answers.fdb_latexmk", "output/answers.pdf", "output/answers.tex"
+        ]
+        for file in files:
+            try:
+                remove(file)
+            except PermissionError as e:
+                msg = (
+                    " is being used by other processes and cannot be deleted. Close it before attempting"
+                    " to rerun the problem sheet generation process."
+                )
+                error(f"{type(e).__name__}: {file}{msg}")
+            except FileNotFoundError:
+                continue
 
 
