@@ -203,7 +203,7 @@ class QuestionSelector():
         return num_children
 
     def _copy_item(
-            self, src_tree: Treeview, dest_tree: Treeview, item_id: str, parent_id: str
+            self, src_tree: Treeview, dest_tree: Treeview, item_id: str, parent_id: str, item_open: bool
     ) -> None:
         """
         Copies item_id from the source tree to the destination tree.
@@ -212,16 +212,16 @@ class QuestionSelector():
             return
 
         text = src_tree.item(item_id)["text"]
-        dest_tree.insert(parent_id, "end", iid = item_id, text = text, values = "-")
+        dest_tree.insert(parent_id, "end", iid = item_id, text = text, values = "-", open = item_open)
 
     def _copy_subtree(
-            self, src_tree: Treeview, dest_tree: Treeview, item_id: str, parent_id: str = ""
+            self, src_tree: Treeview, dest_tree: Treeview, item_id: str, parent_id: str = "",
     ) -> None:
         """
         Copies the full subtree with item_id as the root node from the source tree to the
         destination tree.
         """
-        self._copy_item(src_tree, dest_tree, item_id, parent_id)
+        self._copy_item(src_tree, dest_tree, item_id, parent_id, False)
 
         item_children = src_tree.get_children(item_id)
         for child_id in item_children:
@@ -248,7 +248,7 @@ class QuestionSelector():
                     continue
 
                 parent_id = "" if i == 0 else item_parents[i-1]
-                self._copy_item(self._question_tree, self._selected_tree, parent, parent_id)
+                self._copy_item(self._question_tree, self._selected_tree, parent, parent_id, True)
                 self._selected_question_ids.add(parent)
 
             parent_id = self._question_tree.parent(item_id)
