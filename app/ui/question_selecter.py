@@ -1,4 +1,4 @@
-from tkinter import Event, Tk
+from tkinter import Event, messagebox, Tk
 from ttkbootstrap import Button, Entry, Frame, Scrollbar, Treeview
 from core.question.question import Question
 from core.question.question_registry import TOPIC_REGISTRY, QUESTION_REGISTRY
@@ -136,15 +136,29 @@ class QuestionSelector():
             height = height + pad_y
         )
 
-        def commit(event=None):
+        committed = False
+        def commit(event: Event = None) -> None:
+            nonlocal committed
+            if committed:
+                committed = False
+                return
+            committed = True
+
             new_val = entry.get().strip()
-            # TODO: properly validate inputs.
+
+            while True:
+                try:
+                    int(new_val)
+                    break
+                except ValueError:
+                    messagebox.showwarning("Warning", "Invalid input")
+                    return
             if new_val == "":
-                new_val = "0"
+                new_val = "-"
             self.selected_tree.set(row_id, "count", new_val)
             entry.destroy()
 
-        def cancel(event=None):
+        def cancel(event: Event = None) -> None:
             entry.destroy()
 
         entry.bind("<Return>", commit)
