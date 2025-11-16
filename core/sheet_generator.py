@@ -6,6 +6,7 @@ from core.sheet import AnswerSheet, QuestionSheet
 from core.question.question_registry import create_question
 from core.question.question import Question
 
+# TODO: Integrate configuration settings from app into sheet generation.
 # TODO: Include docstrings
 class SheetGenerator():
 
