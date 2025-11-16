@@ -1,8 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from mathematics.vector_calculus import VectorField, ScalarField
-    from mathematics.geometry import Curve
+    from core.mathematics.vector_calculus import VectorField, ScalarField
+    from core.mathematics.geometry import Curve
 from logging import info
 from sympy import Add, Expr, Mul, Number, Pow, Symbol, S, expand, factor_terms, latex
 from sympy.printing.latex import LatexPrinter
