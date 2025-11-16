@@ -11,7 +11,7 @@ class Sheet():
 
         self._title: str = title
 
-        self._file_name: str = file_name if file_name else title
+        self._file_name: str = file_name if file_name else title.strip().replace(" ", "_")
 
         self._fill_preamble(title, author, date)
 
