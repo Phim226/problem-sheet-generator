@@ -38,6 +38,9 @@ class ProblemSheetGeneratorApp():
     def _global_mouse_click(self, event: Event) -> None:
         widget = event.widget
 
+        if self._root.focus_get() != widget:
+             self._root.focus()
+
         self._deselect_treeviews(widget, event)
 
     def _deselect_treeviews(self, widget: Widget, event: Event) -> None:
