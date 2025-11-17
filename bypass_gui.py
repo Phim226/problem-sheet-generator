@@ -11,4 +11,4 @@ if __name__ == "__main__":
     info(f"Keyword registry: {KEYWORD_REGISTRY}")
 
     sheet_generator = SheetGenerator()
-    sheet_generator.generate_sheets()
+    sheet_generator.generate()
