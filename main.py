@@ -3,7 +3,6 @@ from tkinter import Tk
 from core.question.question_registry import KEYWORD_REGISTRY, QUESTION_REGISTRY
 from utilities.misc import configure_log
 from app.app import ProblemSheetGeneratorApp
-from core.sheet_generator import SheetGenerator
 
 # TODO: Design UI.
 # TODO: Make pdf of questions and answers viewable in the app.
@@ -19,9 +18,7 @@ if __name__ == "__main__":
 
     root = Tk()
 
-    generator: SheetGenerator = SheetGenerator()
-
-    app: ProblemSheetGeneratorApp = ProblemSheetGeneratorApp(root, generator)
+    app: ProblemSheetGeneratorApp = ProblemSheetGeneratorApp(root)
     app.build()
 
     root.mainloop()
