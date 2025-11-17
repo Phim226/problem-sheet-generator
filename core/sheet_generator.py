@@ -32,7 +32,7 @@ class SheetGenerator():
         )
 
     # TODO: Change the names of the output files to include the creation date.
-    def generate(self, num_questions: int = 1):
+    def generate(self, num_questions: int = 1, generate_tex: bool = True):
         questions = self._question_sheet.document
 
         answers_list = []
@@ -54,8 +54,8 @@ class SheetGenerator():
                 enum.add_item(answers_list[i])
 
         try:
-            self._generate_output_files(questions, self._question_sheet.file_name)
-            self._generate_output_files(answers, self._answer_sheet.file_name)
+            self._generate_output_files(questions, self._question_sheet.file_name, not generate_tex)
+            self._generate_output_files(answers, self._answer_sheet.file_name, not generate_tex)
         except CalledProcessError as e:
             msg = (
                 " LaTeX failed to process. This is most likely due to a mistake in the LaTeX syntax,"
