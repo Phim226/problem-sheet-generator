@@ -18,7 +18,6 @@ class SheetConfig():
     margin_left: str = "2.5cm"
     margin_right: str = "2.5cm"
 
-# TODO: Validate problem and answer names.
 class QuestionConfigurer():
 
     def __init__(self, root: Tk):
