@@ -4,7 +4,7 @@ from pylatex.utils import NoEscape
 class Sheet():
 
     #TODO: file name needs validation.
-    def __init__(self, title: str, file_name: str = "", author: str = "", date: str = "", margin: tuple[str] = ("2.5cm", "2.5cm")):
+    def __init__(self, title: str = "", file_name: str = "", author: str = "", date: str = "", margin: tuple[str] = ("2.5cm", "2.5cm")):
         self._document: Document = Document(
             geometry_options = {"left": margin[0], "right": margin[1]}
         )
