@@ -1,3 +1,7 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from app.ui.question_configurer import SheetConfig
 from logging import error, info
 from os import remove
 from subprocess import CalledProcessError
@@ -6,32 +10,35 @@ from core.sheet import AnswerSheet, QuestionSheet
 from core.question.question_registry import create_question
 from core.question.question import Question
 
+
 # TODO: Integrate configuration settings from app into sheet generation.
 # TODO: Include docstrings
 class SheetGenerator():
 
 
-    def __init__(self):
-        self._answer_sheet: AnswerSheet = AnswerSheet("Answers")
-        self._question_sheet: QuestionSheet = QuestionSheet("Questions")
+    def __init__(self, config: SheetConfig):
+        self._question_sheet: QuestionSheet = QuestionSheet(
+            title = config.problem_title,
+            file_name = config.problem_filename,
+            author = config.author,
+            date = config.date,
+            margin = (config.margin_left, config.margin_right)
+        )
+        self._answer_sheet: AnswerSheet = AnswerSheet(
+            title = config.answer_title,
+            file_name = config.answer_filename,
+            author = config.author,
+            date = config.date,
+            margin = (config.margin_left, config.margin_right)
+        )
 
     # TODO: Change the names of the output files to include the creation date.
-    def generate_sheets(self):
+    def generate(self, num_questions: int = 1):
         questions = self._question_sheet.document
-
-        n = 1
-        # TODO: Implement inputting desired number of questions.
-        """ while True:
-            n = input("Enter number of questions:")
-            try:
-                n = int(n)
-                break
-            except:
-                print("That is not a valid input. Please try again.") """
 
         answers_list = []
         with questions.create(Enumerate()) as enum:
-            for i in range(n):
+            for i in range(num_questions):
                 question: Question = create_question(
                     "vector_calculus",
                     "line_integral",
@@ -44,7 +51,7 @@ class SheetGenerator():
         answers = self._answer_sheet.document
 
         with answers.create(Enumerate()) as enum:
-            for i in range(n):
+            for i in range(num_questions):
                 enum.add_item(answers_list[i])
 
         try:
