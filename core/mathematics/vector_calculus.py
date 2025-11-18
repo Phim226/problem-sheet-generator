@@ -46,6 +46,26 @@ class Field():
     def field_latex(self) -> str:
         return self._field_latex
 
+    def _generate_component_from_coeffs(
+            self, x_coeffs: list[int], y_coeffs: list[int], z_coeffs: list[int] = None,
+            gen_by_sum: bool = None
+    ) -> Expr:
+        def make_component_terms(scalar: BaseScalar, coeffs: list[int]) -> Expr:
+            return (S.One if not coeffs or all(c == 0 for c in coeffs)
+                    else polynomial_from_coeffs(scalar, coeffs))
+
+        terms = [
+            make_component_terms(self._C.x, x_coeffs),
+            make_component_terms(self._C.y, y_coeffs)
+        ]
+        if self._dimension == 3:
+            terms.append(make_component_terms(self._C.z, z_coeffs))
+
+        if (gen_by_sum is None and random() < 0.5) or gen_by_sum:
+            return sum((term for term in terms), S.Zero)
+        else:
+            return reduce(lambda a, b: a*b, terms, S.One)
+
     # TODO: Change weights depending on whether field is vector or scalar.
     # TODO: Improve generation process to include functions (sin, cos, e, log etc), rationals and fractional powers.
     def _generate_random_component(self, allow_zero: bool = True) -> Expr:
