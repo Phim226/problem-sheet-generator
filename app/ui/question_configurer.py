@@ -29,7 +29,8 @@ class QuestionConfigurer():
 
         self._config: SheetConfig = SheetConfig()
 
-        self._filenames_valid: bool = True
+        self._problem_filename_valid: bool = True
+        self._answer_filename_valid: bool = True
 
         config_vars: list[str] = [key for key in self._config.__dict__.keys()]
         self._problem_filename_entry_id: str = config_vars[1]
@@ -37,7 +38,7 @@ class QuestionConfigurer():
         self._tex_check_id: str = config_vars[4]
 
     def _generate_sheets(self) -> None:
-        if not self._filenames_valid:
+        if not (self._problem_filename_valid and self._answer_filename_valid):
             messagebox.showwarning("Warning", "Filenames are not valid. Rename them before generating.")
             return
 
@@ -129,22 +130,23 @@ class QuestionConfigurer():
     def _validate_filename(self, widget_str: str) -> bool:
         widget: Entry = self._root.nametowidget(widget_str)
         filename: str = widget.get()
+        print(widget.id)
 
         reserved_filenames: list[str] = ["CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4",
                                          "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2",
                                          "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"]
 
         if search('[\\\/<>:"|*?]', filename):
-            self._filenames_valid = False
+            setattr(self, f"_{widget.id}_valid", False)
             messagebox.showwarning("Warning", 'Filenames can\'t contain any of the following characters: \\ / < > : " | * ?')
             return True
 
         elif filename in reserved_filenames:
-            self._filenames_valid = False
+            setattr(self, f"_{widget.id}_valid", False)
             messagebox.showwarning("Warning", f"{filename} is a reserved filename is windows.")
             return True
 
-        self._filenames_valid = True
+        setattr(self, f"_{widget.id}_valid", True)
         self._save_config_value(widget)
 
         return True
