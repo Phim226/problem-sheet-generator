@@ -1,6 +1,6 @@
 from random import choices, randint
 from sympy import Expr, Rational, Symbol
-
+# TODO: Write docstrings, especially for polynomial_from_coeffs (coeff index corresponds inversely to degree)
 def polynomial_from_coeffs(p: Symbol, coeffs: list[int]) -> Expr:
     poly: Expr = 0
     degree: int = len(coeffs) - 1
