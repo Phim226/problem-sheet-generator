@@ -103,17 +103,17 @@ class QuestionSelector():
         Creates an entry box at the position of a valid #Qs column cell and overrides current
         numerical value with the inputted value.
         """
-        column = self.selected_tree.identify_column(event.x)
+        column = self._selected_tree.identify_column(event.x)
         if column != "#1":
             return
 
-        row_id = self.selected_tree.identify_row(event.y)
+        row_id = self._selected_tree.identify_row(event.y)
         if not row_id:
             return
 
-        current = self.selected_tree.set(row_id, "count")
+        current = self._selected_tree.set(row_id, "count")
 
-        bbox = self.selected_tree.bbox(row_id, column)
+        bbox = self._selected_tree.bbox(row_id, column)
         if not bbox:
             return "break"
 
@@ -124,7 +124,7 @@ class QuestionSelector():
         width = max(width, 50)
         height = height + pad_y
 
-        entry = Entry(self.selected_tree)
+        entry = Entry(self._selected_tree)
         entry.insert(0, current)
         entry.select_range(0, "end")
         entry.focus_set()
@@ -155,7 +155,7 @@ class QuestionSelector():
                     return
             if new_val == "":
                 new_val = "-"
-            self.selected_tree.set(row_id, "count", new_val)
+            self._selected_tree.set(row_id, "count", new_val)
             entry.destroy()
 
         def cancel(event: Event = None) -> None:
