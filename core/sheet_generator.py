@@ -83,8 +83,8 @@ class SheetGenerator():
                 remove(file)
             except PermissionError as e:
                 msg = (
-                    " is being used by other processes and cannot be deleted. Close it before attempting"
-                    " to rerun the problem sheet generation process."
+                    " is being used by other processes and cannot be deleted. Close it before"
+                    " attempting to rerun the problem sheet generation process."
                 )
                 error(f"{type(e).__name__}: {file}{msg}")
             except FileNotFoundError:
