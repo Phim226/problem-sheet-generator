@@ -88,46 +88,67 @@ class Field():
         x_coeffs, y_coeffs, z_coeffs = (coeffs[0:3], coeffs[3:6],
                                         coeffs[6:9] if self._dimension == 3 else None)
 
-        def make_component_terms(scalar: BaseScalar, coeffs: list[int]) -> Expr:
-            return (S.One if not coeffs or all(c == 0 for c in coeffs)
-                    else polynomial_from_coeffs(scalar, coeffs))
+        return self._generate_component_from_coeffs(x_coeffs, y_coeffs, z_coeffs)
 
-        terms = [
-            make_component_terms(self._C.x, x_coeffs),
-            make_component_terms(self._C.y, y_coeffs)
-        ]
-        if self.dimension == 3:
-            terms.append(make_component_terms(self._C.z, z_coeffs))
-
-        return reduce(lambda a, b: a*b, terms, S.One)
+    def calculate_line_integral(self, curve: ParametricRegion):
+        return vector_integrate(self._field, curve)
 
     def __repr__(self):
         return f"{self._field}"
 
+# TODO: Include validation of manual inputs in ScalarField and VectorField.
 class ScalarField(Field):
 
     # TODO: Attempt to parse name string as greek letter for latex (phi being the main one) otherwise name is verbatim
-    def __init__(self, name: str, dimension: int):
+    def __init__(
+            self,
+            name: str,
+            dimension: int,
+            component_coeffs: list[list[int]] = None,
+            gen_by_sum: bool = None
+    ):
         super().__init__(name, dimension)
-        self._field: Expr = self._generate_random_component(
-            allow_zero = False
-        )
+
+        if component_coeffs:
+            self._field: Expr = self._generate_component_from_coeffs(component_coeffs[0],
+                                                                     component_coeffs[1],
+                                                                     component_coeffs[2],
+                                                                     gen_by_sum)
+
+        else:
+            self._field: Expr = self._generate_random_component(allow_zero = False)
 
 class VectorField(Field):
 
 
-    def __init__(self, name: str, dimension: int):
+    def __init__(
+            self,
+            name: str,
+            dimension: int,
+            component_coeffs: list[list[list[int]]] = None,
+            gen_by_sum: bool = None
+    ):
         super().__init__(name, dimension)
 
         self._name_latex = rf"\mathbf{{{name}}}"
 
-        while True:
+        if component_coeffs:
             self._components: list[Expr] = [
-                factor_terms(self._generate_random_component(), sign = True)
-                for _ in range(dimension)
+                factor_terms(self._generate_component_from_coeffs(component_coeffs[i][0],
+                                                                  component_coeffs[i][1],
+                                                                  component_coeffs[i][2],
+                                                                  gen_by_sum))
+                for i in range(dimension)
             ]
-            if not all(c is S.Zero for c in self._components):
-                break
+
+        else:
+            while True:
+                self._components: list[Expr] = [
+                    factor_terms(self._generate_random_component(), sign = True)
+                    for _ in range(dimension)
+                ]
+                if not all(c is S.Zero for c in self._components):
+                    break
 
         self._field: Vector = sum(
             (comp*vect for comp, vect in zip(self._components, self._C.base_vectors())),
@@ -138,7 +159,3 @@ class VectorField(Field):
 
         printer: CleanVectorLatexPrinter = CleanVectorLatexPrinter()
         self._field_latex: str = printer.vector_field_print(self)
-
-
-    def calculate_line_integral(self, curve: ParametricRegion):
-        return vector_integrate(self._field, curve)
