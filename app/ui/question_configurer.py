@@ -39,7 +39,8 @@ class QuestionConfigurer():
 
     def _generate_sheets(self) -> None:
         if not (self._problem_filename_valid and self._answer_filename_valid):
-            messagebox.showwarning("Warning", "Filenames are not valid. Rename them before generating.")
+            msg = "Filenames are not valid. Rename them before generating."
+            messagebox.showwarning("Warning", msg)
             return
 
         generator: SheetGenerator = SheetGenerator(self._config)
@@ -69,7 +70,9 @@ class QuestionConfigurer():
 
         self._build_generate_button()
 
-    def _build_entry(self, label_text: str, default_value: str, id: str, row: int, validation_register: str) -> None:
+    def _build_entry(
+            self, label_text: str, default_value: str, id: str, row: int, validation_register: str
+    ) -> None:
         Label(self._config_frame, text = label_text).grid(row = row, column = 0)
 
         entry_type: str = label_text.split()[0].lower()
@@ -137,7 +140,9 @@ class QuestionConfigurer():
 
         if search('[\\\/<>:"|*?]', filename):
             setattr(self, f"_{widget.id}_valid", False)
-            messagebox.showwarning("Warning", 'Filenames can\'t contain any of the following characters: \\ / < > : " | * ?')
+
+            msg = 'Filenames can\'t contain any of the following characters: \\ / < > : " | * ?'
+            messagebox.showwarning("Warning", msg)
             return True
 
         elif filename in reserved_filenames:
