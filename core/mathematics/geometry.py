@@ -11,8 +11,18 @@ from utilities.mathematics import (polynomial_from_coeffs, random_limits,
 # TODO: Allow for curves to be made piecewise.
 # TODO: Implement wordy curve definitions.
 # TODO: Implement implicit curve definitions.
+# TODO: Complete docstring for the Curve class
 class Curve():
+    """
 
+    Parameters
+    ==========
+    components: tuple[Expr], optional
+        A tuple of expressions for manually defining a curve. Manual definitions should be used for
+        testing only. The length of this tuple should match the ambient_dim, and only one symbols
+        should be used. The symbol used in the expressions will override any symbols passed in the
+        parameter argument.
+    """
 
     def __init__(
             self,
