@@ -46,6 +46,75 @@ class QuestionConfigurer():
 
         self._root.focus()
 
+    def build(self) -> None:
+        validate_filename = self._root.register(self._validate_filename)
+        self._build_entry(
+            "Problem sheet filename: ",
+            self._config.problem_filename,
+            self._problem_filename_entry_id,
+            0,
+            validate_filename
+        )
+
+        self._build_entry(
+            "Answer sheet filename: ",
+            self._config.answer_filename,
+            self._answer_filename_entry_id,
+            1,
+            validate_filename
+        )
+
+        self._build_tex_checkbox()
+
+        self._build_generate_button()
+
+    def _build_entry(self, label_text: str, default_value: str, id: str, row: int, validation_register: str) -> None:
+        Label(self._config_frame, text = label_text).grid(row = row, column = 0)
+
+        entry_type: str = label_text.split()[0].lower()
+
+        var: StringVar = StringVar(value = default_value, name = id)
+        var_attr_name: str = f"_{entry_type}_filename_var"
+        setattr(self, var_attr_name, var)
+
+        entry_attr_name: str = f"_{entry_type}_filename_entry"
+        entry: Entry = Entry(
+            self._config_frame,
+            textvariable = getattr(self, var_attr_name),
+            validate = "focusout"
+        )
+        setattr(self, entry_attr_name, entry)
+
+        widget: Entry = getattr(self, entry_attr_name)
+        widget.config(validatecommand = (validation_register, "%W"))
+        widget.id = id
+        widget.grid(row = row, column = 1, padx = 2, pady = 2)
+
+    def _build_tex_checkbox (self):
+        self._tex_var: IntVar = IntVar(
+            value = self._config.generate_tex_int,
+            name = self._tex_check_id
+        )
+        self._tex_check = Checkbutton(
+            self._config_frame,
+            text = "Generate tex file",
+            variable = self._tex_var,
+            onvalue = 1,
+            offvalue = 0
+        )
+        save_config_val = self._root.register(self._save_config_value)
+        self._tex_check.configure(command = (save_config_val, self._tex_check))
+        self._tex_check.id = self._tex_check_id
+        self._tex_check.grid(row = 2, column = 0, pady = 2)
+
+    def _build_generate_button(self):
+        self._generate_button = Button(
+            self._config_frame,
+            text = "Generate Problem Sheet",
+            command = self._generate_sheets
+        )
+        self._generate_button.grid(row = 4, column = 0, padx = 4, pady = 4)
+
     def _save_config_value(self, widget: Widget | str) -> None:
         if not isinstance(widget, Widget):
             widget = self._root.nametowidget(widget)
@@ -79,59 +148,3 @@ class QuestionConfigurer():
         self._save_config_value(widget)
 
         return True
-
-    def build(self) -> None:
-        validate_filename = self._root.register(self._validate_filename)
-        save_config_val = self._root.register(self._save_config_value)
-
-        Label(self._config_frame, text = "Problem sheet filename: ").grid(row = 0, column = 0)
-        self._problem_filename_var: StringVar = StringVar(
-            value = self._config.problem_filename,
-            name = self._problem_filename_entry_id
-        )
-        self._problem_filename_entry: Entry = Entry(
-            self._config_frame,
-            textvariable = self._problem_filename_var,
-            validate = "focusout"
-        )
-        self._problem_filename_entry.config(validatecommand = (validate_filename, "%W"))
-        self._problem_filename_entry.id = self._problem_filename_entry_id
-        self._problem_filename_entry.grid(row = 0, column = 1, padx = 2, pady = 2)
-
-        Label(self._config_frame, text = "Answer sheet filename: ").grid(row = 1, column = 0)
-        self._answer_filename_var: StringVar = StringVar(
-            value = self._config.answer_filename,
-            name = self._answer_filename_entry_id
-        )
-        self._answer_filename_entry: Entry = Entry(
-            self._config_frame,
-            textvariable = self._answer_filename_var,
-            validate = "focusout"
-        )
-        self._answer_filename_entry.config(validatecommand = (validate_filename, "%W"))
-        self._answer_filename_entry.id = self._answer_filename_entry_id
-        self._answer_filename_entry.grid(row = 1, column = 1, padx = 2, pady = 2)
-
-        self._tex_var: IntVar = IntVar(
-            value = self._config.generate_tex_int,
-            name = self._tex_check_id
-        )
-        self._tex_check = Checkbutton(
-            self._config_frame,
-            text = "Generate tex file",
-            variable = self._tex_var,
-            onvalue = 1,
-            offvalue = 0
-        )
-        self._tex_check.configure(command = (save_config_val, self._tex_check))
-        self._tex_check.id = self._tex_check_id
-        self._tex_check.grid(row = 2, column = 0, pady = 2)
-
-        self._generate_button = Button(
-            self._config_frame,
-            text = "Generate Problem Sheet",
-            command = self._generate_sheets
-        )
-        self._generate_button.grid(row = 3, column = 1, padx = 4, pady = 4)
-
-
