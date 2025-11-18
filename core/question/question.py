@@ -46,10 +46,14 @@ class Question(ABC):
 class VectorCalculusQuestion(Question):
 
 
-    subtopics: dict[str, list[str]] = {
+    """ subtopics: dict[str, list[str]] = {
         "line_integrals": ["scalar_field", "vector_field", "fundamental_theorem_of_line_integrals",
                           "conservative_vector_field", "green's_theorem"],
         "surface_integrals": ["scalar_field", "vector_field", "stoke's_theorem", "divergence_theorem"]
+    } """
+
+    subtopics: dict[str, list[str]] = {
+        "line_integrals": ["vector_field"]
     }
 
     # TODO: Improve question LaTeX generation logic based on question subtopic etc.
@@ -68,7 +72,7 @@ class VectorCalculusQuestion(Question):
 
         if topic == "line_integral":
             if subtopic not in ("vector_field", "scalar_field",
-                                "fundamental_thm_line_integrals"):
+                                "fundamental_theorem_of_line_integrals"):
                 msg = (f"{subtopic} is not a valid subtopic for the "
                        "line_integral question topic")
                 raise ValueError(msg)
@@ -101,7 +105,7 @@ class VectorCalculusQuestion(Question):
     def _generate_answer_latex(answer: str) -> str:
         return NoEscape(f"${latex(answer)}$")
 
-@register_question_type("linear_algebra")
+""" @register_question_type("linear_algebra")
 class LinearAlgebraQuestion(Question):
 
     subtopics: dict[str, list[str]] = {
@@ -201,4 +205,4 @@ class TrigonometryQuestion(Question):
         return super()._generate_question_latex(*args, **kwargs)
 
     def _generate_answer_latex(self, *args, **kwargs):
-        return super()._generate_answer_latex(*args, **kwargs)
+        return super()._generate_answer_latex(*args, **kwargs) """
