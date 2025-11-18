@@ -130,7 +130,6 @@ class QuestionConfigurer():
     def _validate_filename(self, widget_str: str) -> bool:
         widget: Entry = self._root.nametowidget(widget_str)
         filename: str = widget.get()
-        print(widget.id)
 
         reserved_filenames: list[str] = ["CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4",
                                          "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2",
