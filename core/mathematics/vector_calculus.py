@@ -81,6 +81,9 @@ class Field():
 
         return reduce(lambda a, b: a*b, terms, S.One)
 
+    def __repr__(self):
+        return f"{self._field}"
+
 class ScalarField(Field):
 
     # TODO: Attempt to parse name string as greek letter for latex (phi being the main one) otherwise name is verbatim

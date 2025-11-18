@@ -128,3 +128,6 @@ class Curve():
             self._generate_random_components(),
             (self.parameter,) + random_limits(-3, 3)
         )
+
+    def __repr__(self):
+        return f"{self._curve}"
