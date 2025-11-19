@@ -58,8 +58,6 @@ class MultivariableCalculusQuestion(Question):
 
     # TODO: Improve question LaTeX generation logic based on question subtopic etc.
     # TODO: Properly format answer LaTeX.
-    # TODO: Have logic for LaTeX generation of scalar field question.
-    # TODO: Restrict answers of scalar field questions to be sensible (can only have linear curve components).
     # TODO: Improve reinitilising Field objects logic. Maybe have classes implement regen() functions.
     def __init__(
             self, topic: str,
