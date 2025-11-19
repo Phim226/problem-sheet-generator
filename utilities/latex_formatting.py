@@ -104,9 +104,6 @@ class CleanVectorLatexPrinter(LatexPrinter):
             outstr = outstr[1:]
         return outstr
 
-    def _print_VectorFunction(self):
-        pass
-
 # TODO: Maybe expand scope of class to ImplicitRegion and other geometric objects as well.
 class ParametricRegionLatexPrinter(CleanVectorLatexPrinter):
 
