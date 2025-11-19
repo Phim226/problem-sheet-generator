@@ -2,13 +2,8 @@
 /question_app_db.db
 
 # pycache
-/__pycache__
-core/__pycache__
-core/mathematics/__pycache__
-core/question/__pycache__
-/utilities/__pycache__
-/app/__pycache__
-/app/ui/__pycache__
+__pycache__/
+*.pyc
 
 # outputs
 /output/Answer_Sheet.pdf
