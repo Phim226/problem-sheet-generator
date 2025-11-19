@@ -11,10 +11,10 @@ core/question/__pycache__
 /app/ui/__pycache__
 
 # outputs
-/output/questions.pdf
-/output/questions.tex
-/output/answers.pdf
-/output/answers.tex
+/output/Answer_Sheet.pdf
+/output/Answer_Sheet.tex
+/output/Problem_Sheet.pdf
+/output/Problem_Sheet.tex
 
 # local script
 /mess_about_script.py
