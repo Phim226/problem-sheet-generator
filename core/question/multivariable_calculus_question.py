@@ -7,7 +7,7 @@ from core.mathematics.vector_calculus import ScalarField, VectorField
 from core.mathematics.geometry import Curve
 from utilities.mathematics import clumsy_rational
 
-class VectorCalculusQuestion(Question):
+class MultivariableCalculusQuestion(Question):
 
 
     subtopics: dict[str, list[str]] = {
@@ -66,7 +66,7 @@ class VectorCalculusQuestion(Question):
         return NoEscape(f"${latex(answer)}$")
 
 
-class LineIntegralQuestion(VectorCalculusQuestion):
+class LineIntegralQuestion(MultivariableCalculusQuestion):
 
     subtopics: list[str] = [
         "scalar_field", "vector_field", "fundamental_theorem_of_line_integrals",
@@ -76,5 +76,5 @@ class LineIntegralQuestion(VectorCalculusQuestion):
     def __init__(self, subtopic, dimension = 3, curve_is_parametric = True, curve_is_implicit = False, **kwargs):
         super().__init__("line_integral", subtopic, dimension, curve_is_parametric, curve_is_implicit, **kwargs)
 
-class SurfaceIntegralQuestion(VectorCalculusQuestion):
+class SurfaceIntegralQuestion(MultivariableCalculusQuestion):
     pass

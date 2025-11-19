@@ -42,8 +42,8 @@ class Question(ABC):
         pass
 
 
-@register_question_type("vector_calculus")
-class VectorCalculusQuestion(Question):
+@register_question_type("multivariable_calculus")
+class MultivariableCalculusQuestion(Question):
 
 
     """ subtopics: dict[str, list[str]] = {
