@@ -20,7 +20,7 @@ class CleanVectorLatexPrinter(LatexPrinter):
     def scalar_field_print(self, field: ScalarField) -> str:
         return (f"${field.name_latex}"
                 f"(x, y{", z" if field.dimension == 3 else ""})="
-                f"{self._symbol_from_coord_scalar(field.field)}$")
+                f"{latex(self._symbol_from_coord_scalar(field.field))}$")
 
     @staticmethod
     def _symbol_from_Mul(expr: Mul) -> Expr:
