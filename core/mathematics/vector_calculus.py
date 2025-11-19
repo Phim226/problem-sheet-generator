@@ -94,7 +94,7 @@ class Field():
         return vector_integrate(self._field, curve)
 
     def __repr__(self):
-        return f"{self._field}"
+        return f"{self._name} = {self._field}"
 
 # TODO: Include validation of manual inputs in ScalarField and VectorField.
 class ScalarField(Field):
