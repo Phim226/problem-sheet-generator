@@ -67,7 +67,7 @@ class Field():
         else:
             return reduce(lambda a, b: a*b, terms, S.One)
 
-    # TODO: Change weights depending on whether field is vector or scalar.
+    # TODO: Change weights depending on whether field is vector or scalar (scalars tend to produce constants quite often).
     # TODO: Improve generation process to include functions (sin, cos, e, log etc), rationals and fractional powers.
     def _generate_random_component(self, allow_zero: bool = True) -> Expr:
         if allow_zero and random() < 0.05:
