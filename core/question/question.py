@@ -60,6 +60,7 @@ class MultivariableCalculusQuestion(Question):
     # TODO: Properly format answer LaTeX.
     # TODO: Have logic for LaTeX generation of scalar field question.
     # TODO: Restrict answers of scalar field questions to be sensible (can only have linear curve components).
+    # TODO: Improve reinitilising Field objects logic. Maybe have classes implement regen() functions.
     def __init__(
             self, topic: str,
             subtopic: str = "",
@@ -81,11 +82,12 @@ class MultivariableCalculusQuestion(Question):
 
             answer_is_awkward = True
             while answer_is_awkward:
-                curve: Curve = Curve(ambient_dim = dimension)
                 field: VectorField | ScalarField = (
                     VectorField("F", dimension) if subtopic == "vector_field"
                     else ScalarField("phi", dimension)
                 )
+                linear_components = subtopic == "scalar_field"
+                curve: Curve = Curve(ambient_dim = dimension, linear_components = linear_components)
 
                 answer: Rational = field.calculate_line_integral(curve.curve)
                 answer_is_awkward = awkward_number(answer)

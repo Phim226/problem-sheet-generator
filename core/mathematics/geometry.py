@@ -28,6 +28,7 @@ class Curve():
             self,
             parameter: Symbol = t,
             ambient_dim: int = 3,
+            linear_components: bool = False,
             components: tuple[Expr] = None,
             limits: tuple[int] = None
     ):
@@ -41,10 +42,10 @@ class Curve():
             self._ambient_dim: int = ambient_dim
 
             if not limits:
-                self._curve: ParametricRegion = self._generate_random_parametric_curve()
+                self._curve: ParametricRegion = self._generate_random_parametric_curve(linear_components)
             else:
                 self._curve: ParametricRegion = ParametricRegion(
-                    self._generate_random_components(),
+                    self._generate_random_components(linear_components),
                     (self._parameter,) + limits
                 )
         else:
@@ -116,26 +117,28 @@ class Curve():
     def parameter(self) -> Symbol:
         return self._parameter
 
-    def _generate_random_polynomial(self) -> Expr:
+    def _generate_random_polynomial(self, linear_components: bool) -> Expr:
+        max_index = 2 if linear_components else 4
+        index_weights = [1, 1] if linear_components else [0.5, 0.5, 1, 1]
         coeffs = random_weighted_coefficients(
-            max_index = 4,
+            max_index = max_index,
             non_zero_coeffs_range = (1, 2),
             coeff_value_range = (-4, 4),
             non_zero_coeff_weights = [0.6, 0.4],
             coeff_value_weights = [0.01, 0.05, 0.05, 0.1, 0.4, 0.2, 0.1, 0.09],
-            index_weights = [0.5, 0.5, 1, 1]
+            index_weights = index_weights
         )
         return polynomial_from_coeffs(self.parameter, coeffs)
 
-    def _generate_random_components(self) -> list[Expr]:
+    def _generate_random_components(self, linear_components: bool) -> list[Expr]:
         return tuple([
-            factor_terms(self._generate_random_polynomial(), sign = True)
+            factor_terms(self._generate_random_polynomial(linear_components), sign = True)
             for _ in range(self._ambient_dim)
         ])
 
-    def _generate_random_parametric_curve(self) -> ParametricRegion:
+    def _generate_random_parametric_curve(self, linear_components: bool) -> ParametricRegion:
         return ParametricRegion(
-            self._generate_random_components(),
+            self._generate_random_components(linear_components),
             (self.parameter,) + random_limits(-3, 3)
         )
 
