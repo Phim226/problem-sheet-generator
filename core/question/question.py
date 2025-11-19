@@ -4,9 +4,9 @@ from sympy import Rational, latex
 from sympy.abc import t
 from pylatex.utils import NoEscape
 from core.question.question_registry import register_question_type
-from core.mathematics.multivariable_calculus import ScalarField, VectorField
+from core.mathematics.multivariable_calculus import ScalarField, VectorField, Field
 from core.mathematics.geometry import Curve
-from utilities.mathematics import clumsy_rational
+from utilities.mathematics import awkward_number
 
 # TODO: Populate file with question classes.
 # TODO: Give option for answer to be worked.
@@ -58,6 +58,8 @@ class MultivariableCalculusQuestion(Question):
 
     # TODO: Improve question LaTeX generation logic based on question subtopic etc.
     # TODO: Properly format answer LaTeX.
+    # TODO: Have logic for LaTeX generation of scalar field question.
+    # TODO: Restrict answers of scalar field questions to be sensible.
     def __init__(
             self, topic: str,
             subtopic: str = "",
@@ -77,8 +79,8 @@ class MultivariableCalculusQuestion(Question):
                        "line_integral question topic")
                 raise ValueError(msg)
 
-            answer_is_clumsy = True
-            while answer_is_clumsy:
+            answer_is_awkward = True
+            while answer_is_awkward:
                 curve: Curve = Curve(ambient_dim = dimension)
                 field: VectorField | ScalarField = (
                     VectorField("F", dimension) if subtopic == "vector_field"
@@ -86,19 +88,19 @@ class MultivariableCalculusQuestion(Question):
                 )
 
                 answer: Rational = field.calculate_line_integral(curve.curve)
-                answer_is_clumsy = clumsy_rational(answer)
+                answer_is_awkward = awkward_number(answer)
 
         self._answer: str = self._generate_answer_latex(answer)
         self._question: str = self._generate_question_latex(field, curve)
 
     @staticmethod
-    def _generate_question_latex(vector_field: VectorField, curve: Curve) -> str:
+    def _generate_question_latex(field: Field, curve: Curve) -> str:
+        is_vector_field = isinstance(field, VectorField)
         return NoEscape(
-            rf"Let ${vector_field.name_latex}$ be the "
-            f"vector field {vector_field.field_latex} and $C$ the "
-            f"curve given by {curve.curve_latex}. "
-            r"Calculate $\displaystyle\int_C"
-            rf"{vector_field.name_latex}\cdot\mathbf{{dr}}$."
+            rf"Let ${field.name_latex}$ be the {"vector field" if is_vector_field else "scalar field"} "
+            rf"{field.field_latex} and $C$ the curve given by {curve.curve_latex}. Calculate "
+            rf"$\displaystyle\int_C{field.name_latex}"
+            rf"{r"\cdot\mathrm{{d}}\mathbf{{r}}" if is_vector_field else r"\,\mathrm{{d}} s"}$."
         )
 
     @staticmethod
