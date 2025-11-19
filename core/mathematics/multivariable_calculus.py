@@ -5,6 +5,7 @@ from random import random
 from sympy import Expr, Symbol, S, factor_terms, latex
 from sympy.vector import (BaseScalar, CoordSys3D, ParametricRegion, Vector, VectorZero,
                           vector_integrate)
+from core.regenerating import Regenerating
 from utilities.latex_formatting import CleanVectorLatexPrinter
 from utilities.mathematics import polynomial_from_coeffs, random_weighted_coefficients
 
@@ -104,7 +105,7 @@ class Field():
         return f"{self._name} = {self._field}"
 
 # TODO: Include validation of manual inputs in ScalarField and VectorField.
-class ScalarField(Field):
+class ScalarField(Regenerating, Field):
 
     # TODO: Attempt to parse name string as greek letter for latex (phi being the main one) otherwise name is verbatim
     def __init__(
@@ -117,12 +118,19 @@ class ScalarField(Field):
         super().__init__(name, dimension)
 
         self._name_latex = latex(Symbol(name))
+        self._dimension = dimension
 
-        if component_coeffs:
-            self._field: Expr = self._generate_component_from_coeffs(component_coeffs[0],
-                                                                     component_coeffs[1],
-                                                                     component_coeffs[2],
-                                                                     gen_by_sum)
+        self._manual_coeffs = component_coeffs
+        self._gen_by_sum = gen_by_sum
+
+        self._regenerate()
+
+    def _regenerate(self):
+        if self._manual_coeffs:
+            self._field: Expr = self._generate_component_from_coeffs(self._manual_coeffs[0],
+                                                                     self._manual_coeffs[1],
+                                                                     self._manual_coeffs[2],
+                                                                     self._gen_by_sum)
 
         else:
             self._field: Expr = self._generate_random_component(allow_zero = False)
@@ -132,7 +140,7 @@ class ScalarField(Field):
         printer: CleanVectorLatexPrinter = CleanVectorLatexPrinter()
         self._field_latex: str = printer.scalar_field_print(self)
 
-class VectorField(Field):
+class VectorField(Regenerating, Field):
 
 
     def __init__(
@@ -145,21 +153,28 @@ class VectorField(Field):
         super().__init__(name, dimension)
 
         self._name_latex = rf"\mathbf{{{latex(Symbol(name))}}}"
+        self._dimension = dimension
 
-        if component_coeffs:
+        self._manual_coeffs = component_coeffs
+        self._gen_by_sum = gen_by_sum
+
+        self._regenerate()
+
+    def _regenerate(self):
+        if self._manual_coeffs:
             self._components: list[Expr] = [
-                factor_terms(self._generate_component_from_coeffs(component_coeffs[i][0],
-                                                                  component_coeffs[i][1],
-                                                                  component_coeffs[i][2],
-                                                                  gen_by_sum))
-                for i in range(dimension)
+                factor_terms(self._generate_component_from_coeffs(self._manual_coeffs[i][0],
+                                                                  self._manual_coeffs[i][1],
+                                                                  self._manual_coeffs[i][2],
+                                                                  self._gen_by_sum))
+                for i in range(self._dimension)
             ]
 
         else:
             while True:
                 self._components: list[Expr] = [
                     factor_terms(self._generate_random_component(), sign = True)
-                    for _ in range(dimension)
+                    for _ in range(self._dimension)
                 ]
                 if not all(c is S.Zero for c in self._components):
                     break

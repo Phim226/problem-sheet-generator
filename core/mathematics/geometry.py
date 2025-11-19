@@ -2,6 +2,7 @@ from logging import info
 from sympy import Expr, Symbol, factor_terms
 from sympy.abc import t, theta
 from sympy.vector import ParametricRegion
+from core.regenerating import Regenerating
 from utilities.latex_formatting import ParametricRegionLatexPrinter
 from utilities.mathematics import (polynomial_from_coeffs, random_limits,
                                    random_weighted_coefficients)
@@ -12,14 +13,14 @@ from utilities.mathematics import (polynomial_from_coeffs, random_limits,
 # TODO: Implement wordy curve definitions.
 # TODO: Implement implicit curve definitions.
 # TODO: Complete docstring for the Curve class
-class Curve():
+class Curve(Regenerating):
     """
 
     Parameters
     ==========
     components: tuple[Expr], optional
         A tuple of expressions for manually defining a curve. Manual definitions should be used for
-        testing only. The length of this tuple should match the ambient_dim, and only one symbols
+        testing only. The length of this tuple should match the ambient_dim, and only one symbol
         should be used. The symbol used in the expressions will override any symbols passed in the
         parameter argument.
     """
@@ -32,32 +33,41 @@ class Curve():
             components: tuple[Expr] = None,
             limits: tuple[int] = None
     ):
-        if not components:
-            self._parameter: Symbol = parameter
+        self._parameter = parameter
 
-            if ambient_dim not in (2, 3):
+        if ambient_dim not in (2, 3):
                 msg = (f"Curve embedding into {ambient_dim}D space is not supported. "
                      "Ambient dimension should be 2 or 3.")
                 raise ValueError(msg)
-            self._ambient_dim: int = ambient_dim
+        self._ambient_dim: int = ambient_dim
 
-            if not limits:
-                self._curve: ParametricRegion = self._generate_random_parametric_curve(linear_components)
+        self._linear_components = linear_components
+
+        self._manual_components = components
+        self._manual_limis = limits
+
+        self._regenerate()
+
+
+    def _regenerate(self):
+        if not self._manual_components:
+            if not  self._manual_limis:
+                self._curve: ParametricRegion = self._generate_random_parametric_curve(self._linear_components)
             else:
                 self._curve: ParametricRegion = ParametricRegion(
-                    self._generate_random_components(linear_components),
-                    (self._parameter,) + limits
+                    self._generate_random_components(self._linear_components),
+                    (self._parameter,) + self._manual_limis
                 )
         else:
-            if len(components) not in (2, 3):
-                msg = (f"Curve embedding into {len(components)}D space is not supported. "
+            if len(self._manual_components) not in (2, 3):
+                msg = (f"Curve embedding into {len(self._manual_components)}D space is not supported. "
                      "Ambient dimension should be 2 or 3.")
                 raise ValueError(msg)
-            self._ambient_dim: int = len(components)
+            self._ambient_dim: int = len(self._manual_components)
 
             max_symbols: set[Symbol]
             max_len = 0
-            for comp in components:
+            for comp in self._manual_components:
                 if not hasattr(comp, "free_symbols"):
                     continue
 
@@ -65,20 +75,17 @@ class Curve():
                     max_len = len(comp.free_symbols)
                     max_symbols = comp.free_symbols
 
-            if max_len == 0:
-                self._parameter: Symbol = parameter
-
-            elif max_len > 1:
+            if max_len > 1:
                 msg = (f" Parameters are {max_symbols}. Parametric curves can "
                     "only have one parameter. ")
                 raise ValueError(msg)
 
             else:
-                self._parameter: Symbol = next(iter(components[0].free_symbols))
+                self._parameter: Symbol = next(iter(self._manual_components[0].free_symbols))
 
-            lims = limits if limits else random_limits(-3, 3)
+            lims = self._manual_limis if self._manual_limis else random_limits(-3, 3)
             self._curve: ParametricRegion = ParametricRegion(
-                tuple(components),
+                tuple(self._manual_components),
                 (self._parameter,) + lims
             )
 
@@ -98,7 +105,7 @@ class Curve():
         )
 
         info((f"Curve is {self.curve.definition} "
-              f"with limits {self.curve.limits[parameter]}"))
+              f"with limits {self.curve.limits[self._parameter]}"))
 
         """ if p is t:
             print(f"Symbol is {t}")
