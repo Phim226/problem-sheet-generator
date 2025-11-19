@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from core.mathematics.vector_calculus import VectorField, ScalarField
+    from core.mathematics.multivariable_calculus import VectorField, ScalarField
     from core.mathematics.geometry import Curve
 from logging import info
 from sympy import Add, Expr, Mul, Number, Pow, Symbol, S, expand, factor_terms, latex
@@ -18,7 +18,7 @@ class CleanVectorLatexPrinter(LatexPrinter):
                 f"{self.doprint(field.field)}$")
 
     def scalar_field_print(self, field: ScalarField) -> str:
-        return (f"${field.name}"
+        return (f"${field.name_latex}"
                 f"(x, y{", z" if field.dimension == 3 else ""})="
                 f"{self._symbol_from_coord_scalar(field.field)}$")
 
@@ -103,6 +103,9 @@ class CleanVectorLatexPrinter(LatexPrinter):
         if outstr[0] == "+":
             outstr = outstr[1:]
         return outstr
+
+    def _print_VectorFunction(self):
+        pass
 
 # TODO: Maybe expand scope of class to ImplicitRegion and other geometric objects as well.
 class ParametricRegionLatexPrinter(CleanVectorLatexPrinter):

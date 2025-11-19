@@ -4,7 +4,7 @@ from sympy import Rational, latex
 from sympy.abc import t
 from pylatex.utils import NoEscape
 from core.question.question_registry import register_question_type
-from core.mathematics.vector_calculus import ScalarField, VectorField
+from core.mathematics.multivariable_calculus import ScalarField, VectorField
 from core.mathematics.geometry import Curve
 from utilities.mathematics import clumsy_rational
 
@@ -53,7 +53,7 @@ class MultivariableCalculusQuestion(Question):
     } """
 
     subtopics: dict[str, list[str]] = {
-        "line_integrals": ["vector_field"]
+        "line_integrals": ["vector_field", "scalar_field"]
     }
 
     # TODO: Improve question LaTeX generation logic based on question subtopic etc.

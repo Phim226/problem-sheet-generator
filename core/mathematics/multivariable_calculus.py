@@ -2,7 +2,7 @@ from abc import abstractmethod
 from functools import reduce
 from logging import info
 from random import random
-from sympy import Expr, S, factor_terms
+from sympy import Expr, S, factor_terms, latex
 from sympy.vector import (BaseScalar, CoordSys3D, ParametricRegion, Vector, VectorZero,
                           vector_integrate)
 from utilities.latex_formatting import CleanVectorLatexPrinter
@@ -109,6 +109,8 @@ class ScalarField(Field):
     ):
         super().__init__(name, dimension)
 
+        self._name_latex = latex(name)
+
         if component_coeffs:
             self._field: Expr = self._generate_component_from_coeffs(component_coeffs[0],
                                                                      component_coeffs[1],
@@ -130,7 +132,7 @@ class VectorField(Field):
     ):
         super().__init__(name, dimension)
 
-        self._name_latex = rf"\mathbf{{{name}}}"
+        self._name_latex = rf"\mathbf{{{latex(name)}}}"
 
         if component_coeffs:
             self._components: list[Expr] = [

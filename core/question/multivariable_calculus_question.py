@@ -3,7 +3,7 @@ from sympy.abc import t
 from pylatex.utils import NoEscape
 from core.question.question import Question
 from core.question.question_registry import register_question_type
-from core.mathematics.vector_calculus import ScalarField, VectorField
+from core.mathematics.multivariable_calculus import ScalarField, VectorField
 from core.mathematics.geometry import Curve
 from utilities.mathematics import clumsy_rational
 

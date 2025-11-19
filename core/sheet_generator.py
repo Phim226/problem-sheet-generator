@@ -39,7 +39,7 @@ class SheetGenerator():
         with questions.create(Enumerate()) as enum:
             for i in range(num_questions):
                 question: Question = create_question(
-                    "vector_calculus",
+                    "multivariable_calculus",
                     "line_integral",
                     **{"subtopic": "vector_field"}
                 )
