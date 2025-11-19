@@ -1,6 +1,6 @@
 import logging
 from abc import ABC, abstractmethod
-from sympy import Rational, latex
+from sympy import Expr, latex
 from sympy.abc import t
 from pylatex.utils import NoEscape
 from core.question.question_registry import register_question_type
@@ -58,7 +58,6 @@ class MultivariableCalculusQuestion(Question):
 
     # TODO: Improve question LaTeX generation logic based on question subtopic etc.
     # TODO: Properly format answer LaTeX.
-    # TODO: Improve reinitilising Field objects logic. Maybe have classes implement regen() functions.
     def __init__(
             self, topic: str,
             subtopic: str = "",
@@ -78,16 +77,21 @@ class MultivariableCalculusQuestion(Question):
                        "line_integral question topic")
                 raise ValueError(msg)
 
-            answer_is_awkward = True
-            while answer_is_awkward:
-                field: VectorField | ScalarField = (
+            field: VectorField | ScalarField = (
                     VectorField("F", dimension) if subtopic == "vector_field"
                     else ScalarField("phi", dimension)
-                )
-                linear_components = subtopic == "scalar_field"
-                curve: Curve = Curve(ambient_dim = dimension, linear_components = linear_components)
+            )
+            linear_components = subtopic == "scalar_field"
+            curve: Curve = Curve(ambient_dim = dimension, linear_components = linear_components)
 
-                answer: Rational = field.calculate_line_integral(curve.curve)
+            answer: Expr = field.calculate_line_integral(curve.curve)
+            answer_is_awkward = awkward_number(answer)
+
+            while answer_is_awkward:
+                field.regenerate()
+                curve.regenerate()
+
+                answer = field.calculate_line_integral(curve.curve)
                 answer_is_awkward = awkward_number(answer)
 
         self._answer: str = self._generate_answer_latex(answer)
