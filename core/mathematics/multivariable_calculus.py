@@ -2,7 +2,7 @@ from abc import abstractmethod
 from functools import reduce
 from logging import info
 from random import random
-from sympy import Expr, S, factor_terms, latex
+from sympy import Expr, Symbol, S, factor_terms, latex
 from sympy.vector import (BaseScalar, CoordSys3D, ParametricRegion, Vector, VectorZero,
                           vector_integrate)
 from utilities.latex_formatting import CleanVectorLatexPrinter
@@ -24,6 +24,7 @@ class Field():
                    "The dimension should be 2 or 3.")
             raise ValueError(msg)
         self._dimension = dimension
+
         self._C = CoordSys3D("C")
 
     @property
@@ -91,6 +92,12 @@ class Field():
         return self._generate_component_from_coeffs(x_coeffs, y_coeffs, z_coeffs)
 
     def calculate_line_integral(self, curve: ParametricRegion):
+        """
+        Calculates line integral of the (scalar or vector) field along the given curve.
+
+        The line integral calculated for scalar fields is the line integral with respect to arc
+        length.
+        """
         return vector_integrate(self._field, curve)
 
     def __repr__(self):
@@ -109,7 +116,7 @@ class ScalarField(Field):
     ):
         super().__init__(name, dimension)
 
-        self._name_latex = latex(name)
+        self._name_latex = latex(Symbol(name))
 
         if component_coeffs:
             self._field: Expr = self._generate_component_from_coeffs(component_coeffs[0],
@@ -119,6 +126,11 @@ class ScalarField(Field):
 
         else:
             self._field: Expr = self._generate_random_component(allow_zero = False)
+
+        info(f"Scalar field expression: {self._field}")
+
+        printer: CleanVectorLatexPrinter = CleanVectorLatexPrinter()
+        self._field_latex: str = printer.scalar_field_print(self)
 
 class VectorField(Field):
 
@@ -132,7 +144,7 @@ class VectorField(Field):
     ):
         super().__init__(name, dimension)
 
-        self._name_latex = rf"\mathbf{{{latex(name)}}}"
+        self._name_latex = rf"\mathbf{{{latex(Symbol(name))}}}"
 
         if component_coeffs:
             self._components: list[Expr] = [
