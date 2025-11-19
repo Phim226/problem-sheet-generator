@@ -134,7 +134,12 @@ def random_limits(
     lower_limit = randint(min_limit, max_limit - 1)
     return lower_limit, randint(lower_limit + 1, max_limit)
 
-def clumsy_rational(rat: Rational) -> bool:
+def awkward_number(num: Expr) -> bool:
+    if isinstance(num, Rational):
+        return _awkward_rational(num)
+    return False
+
+def _awkward_rational(rat: Rational) -> bool:
     num_str = str(rat.p)
     den_str = str(rat.q)
     num_str.replace("-", "")

@@ -5,7 +5,7 @@ from core.question.question import Question
 from core.question.question_registry import register_question_type
 from core.mathematics.multivariable_calculus import ScalarField, VectorField
 from core.mathematics.geometry import Curve
-from utilities.mathematics import clumsy_rational
+from utilities.mathematics import _awkward_rational
 
 class MultivariableCalculusQuestion(Question):
 
@@ -46,7 +46,7 @@ class MultivariableCalculusQuestion(Question):
                 )
 
                 answer: Rational = field.calculate_line_integral(curve.curve)
-                answer_is_clumsy = clumsy_rational(answer)
+                answer_is_clumsy = _awkward_rational(answer)
 
         self._answer: str = self._generate_answer_latex(answer)
         self._question: str = self._generate_question_latex(field, curve)
