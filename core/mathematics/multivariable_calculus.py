@@ -107,7 +107,7 @@ class Field():
 # TODO: Include validation of manual inputs in ScalarField and VectorField.
 class ScalarField(Regenerating, Field):
 
-    # TODO: Attempt to parse name string as greek letter for latex (phi being the main one) otherwise name is verbatim
+
     def __init__(
             self,
             name: str,
