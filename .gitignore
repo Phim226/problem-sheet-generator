@@ -6,10 +6,7 @@ __pycache__/
 *.pyc
 
 # outputs
-/output/Answer_Sheet.pdf
-/output/Answer_Sheet.tex
-/output/Problem_Sheet.pdf
-/output/Problem_Sheet.tex
+output/
 
 # local script
 /mess_about_script.py
