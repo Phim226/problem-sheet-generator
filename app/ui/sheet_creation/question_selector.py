@@ -1,7 +1,41 @@
+from dataclasses import dataclass, field
+from uuid import uuid4
 from tkinter import Event, messagebox, Tk
 from ttkbootstrap import Button, Entry, Frame, Scrollbar, Treeview
 from core.question.question import Question
 from core.question.question_registry import TOPIC_REGISTRY, QUESTION_REGISTRY
+
+@dataclass(slots = True)
+class QuestionConfig():
+
+    _id: str = field(default_factory=lambda: str(uuid4()), init=False)
+    _question_type: str = field(init=False)
+    _topic: str = field(init=False)
+    _subtopic: str = field(init=False)
+    num_questions: int = 1
+
+    def __init__(self, question_type: str, topic: str, subtopic: str, num_questions: int = 1):
+        object.__setattr__(self, "_id", str(uuid4()))
+        object.__setattr__(self, "_question_type", question_type)
+        object.__setattr__(self, "_topic", topic)
+        object.__setattr__(self, "_subtopic", subtopic)
+        self.num_questions = num_questions
+
+    @property
+    def id(self):
+        return self._id
+
+    @property
+    def question_type(self):
+        return self._question_type
+
+    @property
+    def topic(self):
+        return self._topic
+
+    @property
+    def subtopic(self):
+        return self._subtopic
 
 # TODO: Improve docstrings.
 # TODO: Have # questions be for the current level only.
@@ -15,7 +49,7 @@ class QuestionSelector():
     }
 
     SELECTED_TREE_CONFIG: dict[str, str | bool] = {
-        "title": "Selected Topics",
+        "title": "Selected Questions",
         "tree_id": "selected_questions_tree",
         "button_label": "remove",
         "has_count_column": True
