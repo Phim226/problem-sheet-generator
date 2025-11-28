@@ -19,6 +19,7 @@ class SheetConfig():
     margin_right: str = "2.5cm"
 
 # TODO: Make a label reporting status of file generation.
+# TODO: Connect selecter information to config
 class QuestionConfigurer():
 
     def __init__(self, root: Tk):
