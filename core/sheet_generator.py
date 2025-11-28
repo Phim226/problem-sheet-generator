@@ -40,10 +40,10 @@ class SheetGenerator():
             num_questions: int = 1,
             generate_tex: bool = True
     ) -> None:
-        questions = self._question_sheet.document
+        questions_doc = self._question_sheet.document
 
         answers_list = []
-        with questions.create(Enumerate()) as enum:
+        with questions_doc.create(Enumerate()) as enum:
             for i in range(num_questions):
                 question: Question = create_question(
                     "multivariable_calculus",
@@ -54,15 +54,15 @@ class SheetGenerator():
                 answers_list.append(question.answer)
                 info(f"Answer: {question.answer}")
 
-        answers = self._answer_sheet.document
+        answers_doc = self._answer_sheet.document
 
-        with answers.create(Enumerate()) as enum:
+        with answers_doc.create(Enumerate()) as enum:
             for i in range(num_questions):
                 enum.add_item(answers_list[i])
 
         try:
-            self._generate_output_files(questions, self._question_sheet.file_name, not generate_tex)
-            self._generate_output_files(answers, self._answer_sheet.file_name, not generate_tex)
+            self._generate_output_files(questions_doc, self._question_sheet.file_name, not generate_tex)
+            self._generate_output_files(answers_doc, self._answer_sheet.file_name, not generate_tex)
         except CalledProcessError as e:
             msg = (
                 " LaTeX failed to process. This is most likely due to a mistake in the LaTeX syntax,"
