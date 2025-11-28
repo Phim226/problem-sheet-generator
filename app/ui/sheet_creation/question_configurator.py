@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from tkinter import Tk, Widget, messagebox
 from re import search
 from ttkbootstrap import Button, Checkbutton, Entry, IntVar, Label, Labelframe, StringVar
@@ -11,12 +11,23 @@ class SheetConfig():
     problem_filename: str = "Problem_Sheet"
     answer_title: str = "Answers"
     answer_filename: str = "Answer_Sheet"
-    generate_tex_int: int = 1 # 1 is True, 0 is False
     num_questions: int = 1
     author: str = ""
     date: str = ""
     margin_left: str = "2.5cm"
     margin_right: str = "2.5cm"
+
+    _generate_tex_int: int = field(default=1, repr=False)
+
+    @property
+    def generate_tex_int(self) -> int:
+        return self._generate_tex_int
+
+    @generate_tex_int.setter
+    def generate_tex_int(self, value: int):
+        if value not in (0, 1):
+            raise ValueError("generate_tex_int must be 0 or 1")
+        self._generate_tex_int = value
 
 # TODO: Make a label reporting status of file generation.
 # TODO: Connect selecter information to config
