@@ -15,13 +15,13 @@ class ProblemSheetGeneratorApp():
         root.bind_all("<Button-1>", self._global_mouse_click, add = "+")
         self._root = root
 
-        self._question_selecter = QuestionSelector(root)
+        self._question_selector = QuestionSelector(root)
 
-        self._question_configurer = QuestionConfigurator(root)
+        self._question_configurer = QuestionConfigurator(root, self._question_selector)
 
     def build(self) -> None:
         self._configure_style()
-        self._question_selecter.build()
+        self._question_selector.build()
         self._question_configurer.build()
 
     @staticmethod
@@ -46,14 +46,14 @@ class ProblemSheetGeneratorApp():
 
         # Prevents the question treeviews from being deselected when "add" or "removed" is pressed.
         if hasattr(widget, "tree_button_id") and widget.tree_button_id in (
-             self._question_selecter.question_tree_id,
-             self._question_selecter.selected_tree_id
+             self._question_selector.question_tree_id,
+             self._question_selector.selected_tree_id
         ):
              return
 
         treeviews = [
-                self._question_selecter.question_tree,
-                self._question_selecter.selected_tree
+                self._question_selector.question_tree,
+                self._question_selector.selected_tree
             ]
 
         if isinstance(widget, Treeview):
