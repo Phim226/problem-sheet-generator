@@ -34,9 +34,10 @@ class SheetGenerator():
         )
 
     # TODO: Change the names of the output files to include the creation date.
+    # TODO: Change logic to deal with empty topics in QuestionConfig objects
     def generate(
             self,
-            selected_questions: dict[str, QuestionConfig],
+            selected_questions: list[QuestionConfig],
             num_questions: int = 1,
             generate_tex: bool = True
     ) -> None:
@@ -44,11 +45,13 @@ class SheetGenerator():
 
         answers_list = []
         with questions_doc.create(Enumerate()) as enum:
-            for i in range(num_questions):
+            for selected_q in selected_questions:
+                topics = selected_q.topics
+                topics[2] = topics[2].replace(f"{topics[1]}_", "")
                 question: Question = create_question(
-                    "multivariable_calculus",
-                    "line_integral",
-                    "scalar_field"
+                    topics[0],
+                    topics[1],
+                    topics[2]
                 )
                 enum.add_item(question.question)
                 answers_list.append(question.answer)
@@ -79,6 +82,7 @@ class SheetGenerator():
     def _generate_output_files(document: Document, name: str, clean_tex: bool = False):
         document.generate_pdf(f"output/{name}", clean_tex = clean_tex)
 
+    # TODO: Files to delete need to reference output files name. Currently hardcoded.
     @staticmethod
     def _delete_files():
         files = [
