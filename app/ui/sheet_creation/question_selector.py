@@ -47,7 +47,7 @@ class QuestionSelector():
         self._root = root
         self._selector_frame = Frame(root)
         self._selector_frame.pack(side = "top", anchor = "nw")
-        self._selected_question_ids: dict[str, QuestionConfig] = {}
+        self._selected_questions: dict[str, QuestionConfig] = {}
 
     @property
     def question_tree(self) -> Treeview:
@@ -67,7 +67,7 @@ class QuestionSelector():
 
     @property
     def selected_question_ids(self) -> dict[str, QuestionConfig]:
-            return self._selected_question_ids
+            return self._selected_questions
 
     def build(self) -> None:
         self._question_tree: Treeview = self._build_tree(self.QUESTION_TREE_CONFIG)
@@ -189,7 +189,7 @@ class QuestionSelector():
                     messagebox.showwarning("Warning", "Invalid input")
                     return
 
-            self._selected_question_ids[row_id].num_questions = new_val_int
+            self._selected_questions[row_id].num_questions = new_val_int
             self._selected_tree.set(row_id, "count", new_val)
             entry.destroy()
 
@@ -311,7 +311,7 @@ class QuestionSelector():
 
             config = QuestionConfig(topics)
             self._copy_item(self._question_tree, self._selected_tree, item_id, "", False, config.id)
-            self._selected_question_ids[config.id] = config
+            self._selected_questions[config.id] = config
             self._selected_tree.set(config.id, "count", 1)
 
     def _remove(self) -> None:
@@ -323,8 +323,8 @@ class QuestionSelector():
             return
 
         for item_id in selection:
-            if item_id not in self._selected_question_ids:
+            if item_id not in self._selected_questions:
                 continue
 
             self._selected_tree.delete(item_id)
-            self._selected_question_ids.pop(item_id)
+            self._selected_questions.pop(item_id)
