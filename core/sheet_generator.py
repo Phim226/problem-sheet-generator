@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from app.ui.sheet_creation.question_configurator import SheetConfig
+    from app.ui.sheet_creation.question_selector import QuestionConfig
 from logging import error, info
 from os import remove
 from subprocess import CalledProcessError
@@ -33,7 +34,12 @@ class SheetGenerator():
         )
 
     # TODO: Change the names of the output files to include the creation date.
-    def generate(self, num_questions: int = 1, generate_tex: bool = True):
+    def generate(
+            self,
+            selected_questions: dict[str, QuestionConfig],
+            num_questions: int = 1,
+            generate_tex: bool = True
+    ) -> None:
         questions = self._question_sheet.document
 
         answers_list = []
