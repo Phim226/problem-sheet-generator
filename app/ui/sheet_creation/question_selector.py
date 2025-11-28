@@ -66,7 +66,7 @@ class QuestionSelector():
         return self.SELECTED_TREE_CONFIG["tree_id"]
 
     @property
-    def selected_question_ids(self) -> dict[str, QuestionConfig]:
+    def selected_questions(self) -> dict[str, QuestionConfig]:
             return self._selected_questions
 
     def build(self) -> None:
