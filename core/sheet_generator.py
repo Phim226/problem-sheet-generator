@@ -6,7 +6,7 @@ from logging import error, info
 from os import remove
 from subprocess import CalledProcessError
 from pylatex import Document, Enumerate
-from core.sheet import AnswerSheet, QuestionSheet
+from core.sheet import Sheet
 from core.question.question_registry import create_question
 from core.question.question import Question
 
@@ -17,14 +17,14 @@ class SheetGenerator():
 
 
     def __init__(self, config: SheetConfig):
-        self._question_sheet: QuestionSheet = QuestionSheet(
+        self._question_sheet: Sheet = Sheet(
             title = config.problem_title,
             file_name = config.problem_filename,
             author = config.author,
             date = config.date,
             margin = (config.margin_left, config.margin_right)
         )
-        self._answer_sheet: AnswerSheet = AnswerSheet(
+        self._answer_sheet: Sheet = Sheet(
             title = config.answer_title,
             file_name = config.answer_filename,
             author = config.author,

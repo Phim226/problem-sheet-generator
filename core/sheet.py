@@ -38,7 +38,7 @@ class Sheet():
         self._document.preamble.append(Command("date", date))
         self._document.append(NoEscape(r"\maketitle"))
 
-
+"""
 class QuestionSheet(Sheet):
 
     def __init__(self, *args, **kwargs):
@@ -47,4 +47,4 @@ class QuestionSheet(Sheet):
 class AnswerSheet(Sheet):
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs) """
