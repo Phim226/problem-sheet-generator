@@ -1,7 +1,14 @@
+from dataclasses import dataclass
 from tkinter import Event, messagebox, Tk
 from ttkbootstrap import Button, Entry, Frame, Scrollbar, Treeview
 from core.question.question import Question
 from core.question.question_registry import TOPIC_REGISTRY, QUESTION_REGISTRY
+
+@dataclass
+class SelectedTopic():
+    topic: str
+    number: int
+    level: int
 
 # TODO: Improve docstrings.
 # TODO: Have # questions be for the current level only.
@@ -26,6 +33,12 @@ class QuestionSelector():
         self._selector_frame = Frame(root)
         self._selector_frame.pack(side = "top", anchor = "nw")
         self._selected_question_ids: set[str] = set()
+
+        self._selection: list[SelectedTopic] = []
+
+    @property
+    def selection(self) -> list[SelectedTopic]:
+        return self._selection
 
     @property
     def question_tree(self) -> Treeview:
@@ -136,6 +149,7 @@ class QuestionSelector():
             height = height + pad_y
         )
 
+        # TODO: Validate negative numbers (0 does the same as _remove, with warning)
         committed = False
         def commit(event: Event = None) -> None:
             nonlocal committed
@@ -241,6 +255,10 @@ class QuestionSelector():
         for child_id in item_children:
             self._copy_subtree(src_tree, dest_tree, child_id, item_id)
 
+    def _add_to_selection(self, topic: str, number: int, level: int) -> None:
+        selected_topic = SelectedTopic(topic, number, level)
+        self._selection.append(selected_topic)
+
     def _add(self) -> None:
         """
         Adds the selected items from the Question Topics tree to the Selected Topics tree, and
@@ -273,6 +291,9 @@ class QuestionSelector():
 
             count = self._count_leaves(self._question_tree, item_id)
             self._selected_tree.set(item_id, "count", count)
+
+            """ self._add_to_selection(item_id, count, len(item_parents))
+            print(self._selection) """
 
     def _remove(self) -> None:
         """

@@ -1,6 +1,6 @@
 from tkinter import Event, Tk, Widget
 from ttkbootstrap import Style, Treeview
-from app.ui.question_selecter import QuestionSelector
+from app.ui.question_selector import QuestionSelector
 from app.ui.question_configurer import QuestionConfigurer
 
 THEME: str = "darkly"
