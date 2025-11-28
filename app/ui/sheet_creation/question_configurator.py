@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from tkinter import Tk, Widget, messagebox
 from re import search
 from ttkbootstrap import Button, Checkbutton, Entry, IntVar, Label, Labelframe, StringVar
+from app.ui.sheet_creation.question_selector import QuestionSelector
 from core.sheet_generator import SheetGenerator
 
 
@@ -33,8 +34,10 @@ class SheetConfig():
 # TODO: Connect selecter information to config
 class QuestionConfigurator():
 
-    def __init__(self, root: Tk):
+    def __init__(self, root: Tk, selector: QuestionSelector):
         self._root = root
+
+        self._selector = selector
 
         self._config_frame = Labelframe(root, text = "Configuration")
         self._config_frame.pack(side = "top", anchor = "nw")
@@ -56,7 +59,7 @@ class QuestionConfigurator():
             return
 
         generator: SheetGenerator = SheetGenerator(self._config)
-        generator.generate(self._config.num_questions, bool(self._config.generate_tex_int))
+        generator.generate(self._selector.selected_questions, self._config.num_questions, bool(self._config.generate_tex_int))
 
         self._root.focus()
 
