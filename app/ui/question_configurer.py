@@ -147,7 +147,7 @@ class QuestionConfigurer():
 
         elif filename in reserved_filenames:
             setattr(self, f"_{widget.id}_valid", False)
-            messagebox.showwarning("Warning", f"{filename} is a reserved filename is windows.")
+            messagebox.showwarning("Warning", f"{filename} is a reserved filename in Windows.")
             return True
 
         setattr(self, f"_{widget.id}_valid", True)
