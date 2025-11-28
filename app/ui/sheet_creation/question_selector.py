@@ -149,7 +149,11 @@ class QuestionSelector():
 
             while True:
                 try:
-                    int(new_val)
+                    new_val_int = int(new_val)
+
+                    if new_val_int < 0:
+                        raise ValueError
+
                     break
                 except ValueError:
                     messagebox.showwarning("Warning", "Invalid input")
