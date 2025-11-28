@@ -71,7 +71,7 @@ class MultivariableCalculusQuestion(Question):
 
         self._dimension = dimension
 
-        if topic == "line_integral":
+        if topic == "line_integrals":
             if subtopic not in ("vector_field", "scalar_field",
                                 "fundamental_theorem_of_line_integrals"):
                 msg = (f"{subtopic} is not a valid subtopic for the "
