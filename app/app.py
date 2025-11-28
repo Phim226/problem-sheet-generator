@@ -1,7 +1,7 @@
 from tkinter import Event, Tk, Widget
 from ttkbootstrap import Style, Treeview
 from app.ui.sheet_creation.question_selector import QuestionSelector
-from app.ui.sheet_creation.question_configurer import QuestionConfigurer
+from app.ui.sheet_creation.question_configurator import QuestionConfigurator
 
 THEME: str = "darkly"
 
@@ -17,7 +17,7 @@ class ProblemSheetGeneratorApp():
 
         self._question_selecter = QuestionSelector(root)
 
-        self._question_configurer = QuestionConfigurer(root)
+        self._question_configurer = QuestionConfigurator(root)
 
     def build(self) -> None:
         self._configure_style()

@@ -20,7 +20,7 @@ class SheetConfig():
 
 # TODO: Make a label reporting status of file generation.
 # TODO: Connect selecter information to config
-class QuestionConfigurer():
+class QuestionConfigurator():
 
     def __init__(self, root: Tk):
         self._root = root
