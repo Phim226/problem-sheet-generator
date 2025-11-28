@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from app.ui.question_configurer import SheetConfig
+    from app.ui.sheet_creation.question_configurer import SheetConfig
 from logging import error, info
 from os import remove
 from subprocess import CalledProcessError

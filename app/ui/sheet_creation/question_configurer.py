@@ -139,7 +139,7 @@ class QuestionConfigurer():
                                          "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2",
                                          "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"]
 
-        if search('[\\\/<>:"|*?]', filename):
+        if search(r'[\\\/<>:"|*?]', filename):
             setattr(self, f"_{widget.id}_valid", False)
 
             msg = 'Filenames can\'t contain any of the following characters: \\ / < > : " | * ?'

@@ -1,7 +1,7 @@
 from tkinter import Event, Tk, Widget
 from ttkbootstrap import Style, Treeview
-from app.ui.question_selector import QuestionSelector
-from app.ui.question_configurer import QuestionConfigurer
+from app.ui.sheet_creation.question_selector import QuestionSelector
+from app.ui.sheet_creation.question_configurer import QuestionConfigurer
 
 THEME: str = "darkly"
 
