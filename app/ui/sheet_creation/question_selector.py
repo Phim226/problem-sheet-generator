@@ -9,16 +9,12 @@ from core.question.question_registry import TOPIC_REGISTRY, QUESTION_REGISTRY
 class QuestionConfig():
 
     _id: str = field(default_factory=lambda: str(uuid4()), init=False)
-    _question_type: str = field(init=False)
-    _topic: str = field(init=False)
-    _subtopic: str = field(init=False)
+    _topics: list[str | None] = field(init=False)
     num_questions: int = 1
 
-    def __init__(self, question_type: str, topic: str, subtopic: str, num_questions: int = 1):
+    def __init__(self, topics: list[str | None], num_questions: int = 1):
         object.__setattr__(self, "_id", str(uuid4()))
-        object.__setattr__(self, "_question_type", question_type)
-        object.__setattr__(self, "_topic", topic)
-        object.__setattr__(self, "_subtopic", subtopic)
+        object.__setattr__(self, "_topics", topics)
         self.num_questions = num_questions
 
     @property
@@ -26,16 +22,8 @@ class QuestionConfig():
         return self._id
 
     @property
-    def question_type(self):
-        return self._question_type
-
-    @property
-    def topic(self):
-        return self._topic
-
-    @property
-    def subtopic(self):
-        return self._subtopic
+    def topics(self):
+        return self._topics
 
 # TODO: Improve docstrings.
 # TODO: Have # questions be for the current level only.
@@ -59,7 +47,7 @@ class QuestionSelector():
         self._root = root
         self._selector_frame = Frame(root)
         self._selector_frame.pack(side = "top", anchor = "nw")
-        self._selected_question_ids: set[str] = set()
+        self._selected_question_ids: dict[str, QuestionConfig] = {}
 
     @property
     def question_tree(self) -> Treeview:
@@ -76,6 +64,10 @@ class QuestionSelector():
     @property
     def selected_tree_id(self) -> str:
         return self.SELECTED_TREE_CONFIG["tree_id"]
+
+    @property
+    def selected_question_ids(self) -> dict[str, QuestionConfig]:
+            return self._selected_question_ids
 
     def build(self) -> None:
         self._question_tree: Treeview = self._build_tree(self.QUESTION_TREE_CONFIG)
@@ -170,7 +162,7 @@ class QuestionSelector():
             height = height + pad_y
         )
 
-        # TODO: Validate negative numbers (0 does the same as _remove, with warning)
+        # TODO: Have 0 call _remove, with warning
         committed = False
         def commit(event: Event = None) -> None:
             nonlocal committed
@@ -183,6 +175,10 @@ class QuestionSelector():
 
             while True:
                 try:
+
+                    if new_val == "":
+                        raise ValueError
+
                     new_val_int = int(new_val)
 
                     if new_val_int < 0:
@@ -192,8 +188,8 @@ class QuestionSelector():
                 except ValueError:
                     messagebox.showwarning("Warning", "Invalid input")
                     return
-            if new_val == "":
-                new_val = "-"
+
+            self._selected_question_ids[row_id].num_questions = new_val_int
             self._selected_tree.set(row_id, "count", new_val)
             entry.destroy()
 
@@ -206,7 +202,9 @@ class QuestionSelector():
 
         return "break"
 
-    def _get_all_parents(self, tree: Treeview, item_id: str, parents: list[str] | None = None) -> list[str]:
+    def _get_all_parents(
+            self, tree: Treeview, item_id: str, parents: list[str] | None = None
+    ) -> list[str]:
         """
         Returns the chain of parent items from item_id up to the root item.
         """
@@ -221,7 +219,9 @@ class QuestionSelector():
         parents.append(parent)
         return self._get_all_parents(tree, parent, parents)
 
-    def _get_subtree_ids(self, tree: Treeview, item_id: str, children: list[str] | None = None) -> list[str]:
+    def _get_subtree_ids(
+            self, tree: Treeview, item_id: str, children: list[str] | None = None
+    ) -> list[str]:
         """
         Returns the full list of item ids in the subtree with item_id acting as the root node.
         """
@@ -256,7 +256,13 @@ class QuestionSelector():
         return num_children
 
     def _copy_item(
-            self, src_tree: Treeview, dest_tree: Treeview, item_id: str, parent_id: str, item_open: bool
+            self,
+            src_tree: Treeview,
+            dest_tree: Treeview,
+            item_id: str,
+            parent_id: str,
+            item_open: bool,
+            config_id: str
     ) -> None:
         """
         Copies item_id from the source tree to the destination tree.
@@ -265,7 +271,7 @@ class QuestionSelector():
             return
 
         text = src_tree.item(item_id)["text"]
-        dest_tree.insert(parent_id, "end", iid = item_id, text = text, values = "-", open = item_open)
+        dest_tree.insert(parent_id, "end", iid = config_id, text = text, values = "-", open = item_open)
 
     def _copy_subtree(
             self, src_tree: Treeview, dest_tree: Treeview, item_id: str, parent_id: str = "",
@@ -290,28 +296,23 @@ class QuestionSelector():
             return
 
         for item_id in selection:
-            if item_id in self._selected_question_ids:
-                continue
 
-            item_parents = self._get_all_parents(self._question_tree, item_id)
-            item_parents.reverse()
+            parents = reversed(self._get_all_parents(self._question_tree, item_id))
 
-            for i, parent in enumerate(item_parents):
-                if parent in self._selected_question_ids:
-                    continue
+            topics = [None, None, None]
+            if parents:
+                i = 0
+                for parent in parents:
+                    topics[i] = parent
+                    i += 1
+                topics[i] = item_id
+            else:
+                topics[0] = item_id
 
-                parent_id = "" if i == 0 else item_parents[i-1]
-                self._copy_item(self._question_tree, self._selected_tree, parent, parent_id, True)
-                self._selected_question_ids.add(parent)
-
-            parent_id = self._question_tree.parent(item_id)
-            self._copy_subtree(self._question_tree, self._selected_tree, item_id, parent_id)
-
-            subtree_ids = self._get_subtree_ids(self._question_tree, item_id)
-            self._selected_question_ids.update(subtree_ids)
-
-            count = self._count_leaves(self._question_tree, item_id)
-            self._selected_tree.set(item_id, "count", count)
+            config = QuestionConfig(topics)
+            self._copy_item(self._question_tree, self._selected_tree, item_id, "", False, config.id)
+            self._selected_question_ids[config.id] = config
+            self._selected_tree.set(config.id, "count", 1)
 
     def _remove(self) -> None:
         """
@@ -325,13 +326,5 @@ class QuestionSelector():
             if item_id not in self._selected_question_ids:
                 continue
 
-            subtree_ids = self._get_subtree_ids(self._selected_tree, item_id)
-            self._selected_question_ids = self._selected_question_ids - set(subtree_ids)
-
-            parents = self._get_all_parents(self._selected_tree, item_id)
             self._selected_tree.delete(item_id)
-
-            for parent in parents:
-                if parent and not self._selected_tree.get_children(parent):
-                    self._selected_tree.delete(parent)
-                    self._selected_question_ids.remove(parent)
+            self._selected_question_ids.pop(item_id)
