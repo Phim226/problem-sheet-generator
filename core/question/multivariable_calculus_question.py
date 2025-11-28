@@ -1,11 +1,11 @@
-from sympy import Rational, latex
+from sympy import Expr, Rational, latex
 from sympy.abc import t
 from pylatex.utils import NoEscape
 from core.question.question import Question
 from core.question.question_registry import register_question_type
 from core.mathematics.multivariable_calculus import ScalarField, VectorField
 from core.mathematics.geometry import Curve
-from utilities.mathematics import _awkward_rational
+from utilities.mathematics import awkward_number
 
 class MultivariableCalculusQuestion(Question):
 
@@ -37,16 +37,22 @@ class MultivariableCalculusQuestion(Question):
                        "line_integral question topic")
                 raise ValueError(msg)
 
-            answer_is_clumsy = True
-            while answer_is_clumsy:
-                curve: Curve = Curve(ambient_dim = dimension)
-                field: VectorField | ScalarField = (
+            field: VectorField | ScalarField = (
                     VectorField("F", dimension) if subtopic == "vector_field"
                     else ScalarField("phi", dimension)
-                )
+            )
+            linear_components = subtopic == "scalar_field"
+            curve: Curve = Curve(ambient_dim = dimension, linear_components = linear_components)
 
-                answer: Rational = field.calculate_line_integral(curve.curve)
-                answer_is_clumsy = _awkward_rational(answer)
+            answer: Expr = field.calculate_line_integral(curve.curve)
+            answer_is_awkward = awkward_number(answer)
+
+            while answer_is_awkward:
+                field.regenerate()
+                curve.regenerate()
+
+                answer = field.calculate_line_integral(curve.curve)
+                answer_is_awkward = awkward_number(answer)
 
         self._answer: str = self._generate_answer_latex(answer)
         self._question: str = self._generate_question_latex(field, curve)
