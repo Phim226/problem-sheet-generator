@@ -16,8 +16,9 @@ class Question(ABC):
 
     subtopics: dict[str, list[str]] = {}
 
-    def __init__(self, topic: str, nested: bool = False, difficulty: str = "easy"):
+    def __init__(self, topic: str, subtopic: str, nested: bool = False, difficulty: str = "easy"):
         self._topic: str = topic
+        self._subtopic: str = subtopic
         self._nested: bool = nested
         self._difficulty: str = difficulty
 
@@ -60,13 +61,13 @@ class MultivariableCalculusQuestion(Question):
     # TODO: Properly format answer LaTeX.
     def __init__(
             self, topic: str,
-            subtopic: str = "",
+            subtopic: str,
             dimension: int = 3,
             curve_is_parametric: bool = True,
             curve_is_implicit: bool = False,
             **kwargs: bool
     ):
-        super().__init__(topic)
+        super().__init__(topic, subtopic)
 
         self._dimension = dimension
 

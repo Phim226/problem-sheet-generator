@@ -48,7 +48,7 @@ class SheetGenerator():
                 question: Question = create_question(
                     "multivariable_calculus",
                     "line_integral",
-                    **{"subtopic": "scalar_field"}
+                    "scalar_field"
                 )
                 enum.add_item(question.question)
                 answers_list.append(question.answer)
