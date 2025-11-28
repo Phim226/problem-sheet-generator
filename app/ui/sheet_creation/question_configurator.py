@@ -58,8 +58,15 @@ class QuestionConfigurator():
             messagebox.showwarning("Warning", msg)
             return
 
+        selected_questions_dict = self._selector.selected_questions
+        if not selected_questions_dict:
+            msg = "No questions have been selected."
+            messagebox.showwarning("Warning", msg)
+            return
+
+        selected_questions = list(selected_questions_dict.values())
         generator: SheetGenerator = SheetGenerator(self._config)
-        generator.generate(self._selector.selected_questions, self._config.num_questions, bool(self._config.generate_tex_int))
+        generator.generate(selected_questions, self._config.num_questions, bool(self._config.generate_tex_int))
 
         self._root.focus()
 
