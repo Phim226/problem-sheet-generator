@@ -59,6 +59,7 @@ class QuestionConfigurator():
             msg = "Filenames are not valid. Rename them before generating."
             messagebox.showwarning("Warning", msg)
             self._generation_label.config(text = "")
+            self._generation_label.update_idletasks()
             return
 
         selected_questions_dict = self._selector.selected_questions
@@ -66,6 +67,7 @@ class QuestionConfigurator():
             msg = "No questions have been selected."
             messagebox.showwarning("Warning", msg)
             self._generation_label.config(text = "")
+            self._generation_label.update_idletasks()
             return
 
         selected_questions = list(selected_questions_dict.values())
@@ -75,6 +77,8 @@ class QuestionConfigurator():
         self._root.focus()
 
         self._generation_label.config(text = "Generation complete!")
+        self._generation_label.update_idletasks()
+        return
 
     def build(self) -> None:
         validate_filename = self._root.register(self._validate_filename)
@@ -145,9 +149,9 @@ class QuestionConfigurator():
             text = "Generate Problem Sheet",
             command = self._generate_sheets
         )
-        self._generate_button.grid(row = 4, column = 0, padx = 4, pady = 4)
+        self._generate_button.grid(row = 4, column = 0, pady = 4)
 
-        self._generation_label = Label(self._config_frame, text = "")
+        self._generation_label = Label(self._config_frame, anchor = "w", justify = "left", width = 20)
         self._generation_label.grid(row = 4, column = 1)
 
     def _save_config_value(self, widget: Widget | str) -> None:
