@@ -26,7 +26,6 @@ class QuestionConfig():
         return self._topics
 
 # TODO: Improve docstrings.
-# TODO: Have # questions be for the current level only.
 class QuestionSelector():
 
     QUESTION_TREE_CONFIG: dict[str, str | bool] = {
