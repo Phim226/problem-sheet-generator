@@ -6,9 +6,10 @@ if TYPE_CHECKING:
 from logging import error, info
 from os import remove
 from subprocess import CalledProcessError
+from random import choice
 from pylatex import Document, Enumerate
 from core.sheet import Sheet
-from core.question.question_registry import create_question
+from core.question.question_registry import create_question, TOPIC_REGISTRY
 from core.question.question import Question
 
 
@@ -33,12 +34,16 @@ class SheetGenerator():
             margin = (config.margin_left, config.margin_right)
         )
 
+    def _choose_random_topic_and_subtopic(self, question_type: str) -> tuple[str]:
+        topics: dict[str, list[str]] = TOPIC_REGISTRY[question_type]
+        topic = choice(list(topics.keys()))
+        return topic, choice(topics[topic])
+
     # TODO: Change the names of the output files to include the creation date.
     # TODO: Change logic to deal with empty topics in QuestionConfig objects
     def generate(
             self,
             selected_questions: list[QuestionConfig],
-            num_questions: int = 1,
             generate_tex: bool = True
     ) -> None:
         questions_doc = self._question_sheet.document
@@ -46,26 +51,35 @@ class SheetGenerator():
         answers_list = []
         with questions_doc.create(Enumerate()) as enum:
             for selected_q in selected_questions:
-                topics = selected_q.topics
-                # The subtopic has the topic tacked to the front to avoid conflicts in the selection
-                # tree so needs to be removed so that it aligns with subtopics appearing in the
-                # question classes.
-                topics[2] = topics[2].replace(f"{topics[1]}_", "")
+                for _ in range(selected_q.num_questions):
+                    topics = [topic for topic in selected_q.topics]
 
-                question: Question = create_question(
-                    topics[0],
-                    topics[1],
-                    topics[2]
-                )
-                enum.add_item(question.question)
-                answers_list.append(question.answer)
-                info(f"Answer: {question.answer}")
+                    if topics[1] is None:
+                        topics[1], topics[2] = self._choose_random_topic_and_subtopic(topics[0])
+
+                    elif topics[2] is None:
+                        topics[2] = choice(TOPIC_REGISTRY[topics[0]][topics[1]])
+
+                    else:
+                        # When the subtopic comes from the QuestionConfig then it has the topic tacked
+                        # to the front to avoid conflicts in the question selection tree, so needs to
+                        # be removed.
+                        topics[2] = topics[2].replace(f"{topics[1]}_", "")
+
+                    question: Question = create_question(
+                        topics[0],
+                        topics[1],
+                        topics[2]
+                    )
+                    enum.add_item(question.question)
+                    answers_list.append(question.answer)
+                    info(f"Answer: {question.answer}")
 
         answers_doc = self._answer_sheet.document
 
         with answers_doc.create(Enumerate()) as enum:
-            for i in range(num_questions):
-                enum.add_item(answers_list[i])
+            for answer in answers_list:
+                enum.add_item(answer)
 
         try:
             self._generate_output_files(questions_doc, self._question_sheet.file_name, not generate_tex)
@@ -81,6 +95,8 @@ class SheetGenerator():
             error(f"{type(e).__name__}:{msg}")
 
             self._delete_files()
+
+        info("Generation complete.")
 
     @staticmethod
     def _generate_output_files(document: Document, name: str, clean_tex: bool = False):
