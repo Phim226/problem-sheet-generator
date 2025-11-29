@@ -1,5 +1,5 @@
-from sympy import Expr, Rational, latex
-from sympy.abc import t
+from abc import ABC
+from sympy import Expr, latex
 from pylatex.utils import NoEscape
 from core.question.question import Question
 from core.question.question_registry import register_question_type
