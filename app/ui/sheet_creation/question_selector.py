@@ -26,6 +26,7 @@ class QuestionConfig():
         return self._topics
 
 # TODO: Improve docstrings.
+# TODO: Display text of question instead of ids.
 class QuestionSelector():
 
     QUESTION_TREE_CONFIG: dict[str, str | bool] = {
