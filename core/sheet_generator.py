@@ -47,7 +47,11 @@ class SheetGenerator():
         with questions_doc.create(Enumerate()) as enum:
             for selected_q in selected_questions:
                 topics = selected_q.topics
+                # The subtopic has the topic tacked to the front to avoid conflicts in the selection
+                # tree so needs to be removed so that it aligns with subtopics appearing in the
+                # question classes.
                 topics[2] = topics[2].replace(f"{topics[1]}_", "")
+
                 question: Question = create_question(
                     topics[0],
                     topics[1],
