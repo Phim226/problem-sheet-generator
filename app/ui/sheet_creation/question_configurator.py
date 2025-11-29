@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from tkinter import Tk, Widget, messagebox
 from re import search
 from ttkbootstrap import Button, Checkbutton, Entry, IntVar, Label, Labelframe, StringVar
-from app.ui.sheet_creation.question_selector import QuestionSelector
+from app.ui import QuestionSelector
 from core.sheet_generator import SheetGenerator
 
 
