@@ -1,17 +1,9 @@
 import logging
 from abc import ABC, abstractmethod
-from sympy import Expr, latex
-from sympy.abc import t
-from pylatex.utils import NoEscape
-from core.question.question_registry import register_question_type
-from core.mathematics.multivariable_calculus import ScalarField, VectorField, Field
-from core.mathematics.geometry import Curve
-from utilities.mathematics import awkward_number
 
 # TODO: Populate file with question classes.
 # TODO: Give option for answer to be worked.
 # TODO: Populated question classes with dictionaries of topics and subtopics
-@register_question_type("question")
 class Question(ABC):
 
     subtopics: dict[str, list[str]] = {}
@@ -41,76 +33,6 @@ class Question(ABC):
     @abstractmethod
     def _generate_answer_latex(self, *args, **kwargs):
         pass
-
-
-@register_question_type("multivariable_calculus")
-class MultivariableCalculusQuestion(Question):
-
-
-    """ subtopics: dict[str, list[str]] = {
-        "line_integrals": ["scalar_field", "vector_field", "fundamental_theorem_of_line_integrals",
-                          "conservative_vector_field", "green's_theorem"],
-        "surface_integrals": ["scalar_field", "vector_field", "stoke's_theorem", "divergence_theorem"]
-    } """
-
-    subtopics: dict[str, list[str]] = {
-        "line_integrals": ["vector_field", "scalar_field"]
-    }
-
-    # TODO: Improve question LaTeX generation logic based on question subtopic etc.
-    # TODO: Properly format answer LaTeX.
-    def __init__(
-            self, topic: str,
-            subtopic: str,
-            dimension: int = 3,
-            curve_is_parametric: bool = True,
-            curve_is_implicit: bool = False,
-            **kwargs: bool
-    ):
-        super().__init__(topic, subtopic)
-
-        self._dimension = dimension
-
-        if topic == "line_integrals":
-            if subtopic not in ("vector_field", "scalar_field",
-                                "fundamental_theorem_of_line_integrals"):
-                msg = (f"{subtopic} is not a valid subtopic for the "
-                       "line_integral question topic")
-                raise ValueError(msg)
-
-            field: VectorField | ScalarField = (
-                    VectorField("F", dimension) if subtopic == "vector_field"
-                    else ScalarField("phi", dimension)
-            )
-            linear_components = subtopic == "scalar_field"
-            curve: Curve = Curve(ambient_dim = dimension, linear_components = linear_components)
-
-            answer: Expr = field.calculate_line_integral(curve.curve)
-            answer_is_awkward = awkward_number(answer)
-
-            while answer_is_awkward:
-                field.regenerate()
-                curve.regenerate()
-
-                answer = field.calculate_line_integral(curve.curve)
-                answer_is_awkward = awkward_number(answer)
-
-        self._answer: str = self._generate_answer_latex(answer)
-        self._question: str = self._generate_question_latex(field, curve)
-
-    @staticmethod
-    def _generate_question_latex(field: Field, curve: Curve) -> str:
-        is_vector_field = isinstance(field, VectorField)
-        return NoEscape(
-            rf"Let ${field.name_latex}$ be the {"vector field" if is_vector_field else "scalar field"} "
-            rf"{field.field_latex} and $C$ the curve given by {curve.curve_latex}. Calculate "
-            rf"$\displaystyle\int_C{field.name_latex}"
-            rf"{r"\cdot\mathrm{{d}}\mathbf{{r}}" if is_vector_field else r"\,\mathrm{{d}} s"}$."
-        )
-
-    @staticmethod
-    def _generate_answer_latex(answer: str) -> str:
-        return NoEscape(f"${latex(answer)}$")
 
 """ @register_question_type("linear_algebra")
 class LinearAlgebraQuestion(Question):
