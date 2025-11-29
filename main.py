@@ -1,6 +1,6 @@
 from logging import info
 from tkinter import Tk
-from core.question.question_registry import KEYWORD_REGISTRY, QUESTION_REGISTRY, TOPIC_REGISTRY
+from core.question import KEYWORD_REGISTRY, QUESTION_REGISTRY, TOPIC_REGISTRY
 from utilities.misc import configure_log
 from app.app import ProblemSheetGeneratorApp
 

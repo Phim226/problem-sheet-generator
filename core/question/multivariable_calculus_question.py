@@ -1,8 +1,7 @@
 from abc import ABC
 from sympy import Expr, latex
 from pylatex.utils import NoEscape
-from core.question.question import Question
-from core.question.question_registry import register_question_type
+from core.question import Question, register_question, register_type
 from core.mathematics.multivariable_calculus import ScalarField, VectorField
 from core.mathematics.geometry import Curve
 from utilities.mathematics import awkward_number

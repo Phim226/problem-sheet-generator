@@ -9,8 +9,7 @@ from subprocess import CalledProcessError
 from random import choice
 from pylatex import Document, Enumerate
 from core.sheet import Sheet
-from core.question.question_registry import create_question, TOPIC_REGISTRY
-from core.question.question import Question
+from core.question import create_question, TOPIC_REGISTRY, Question
 
 
 # TODO: Include docstrings
@@ -66,7 +65,6 @@ class SheetGenerator():
                         topics[2] = topics[2].replace(f"{topics[1]}_", "")
 
                     question: Question = create_question(
-                        topics[0],
                         topics[1],
                         topics[2]
                     )
