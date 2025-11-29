@@ -30,7 +30,6 @@ class SheetConfig():
             raise ValueError("generate_tex_int must be 0 or 1")
         self._generate_tex_int = value
 
-# TODO: Make a label reporting status of file generation.
 # TODO: Connect selecter information to config
 class QuestionConfigurator():
 
@@ -53,22 +52,29 @@ class QuestionConfigurator():
         self._tex_check_id: str = config_vars[4]
 
     def _generate_sheets(self) -> None:
+        self._generation_label.config(text = "Generating...")
+        self._generation_label.update_idletasks()
+
         if not (self._problem_filename_valid and self._answer_filename_valid):
             msg = "Filenames are not valid. Rename them before generating."
             messagebox.showwarning("Warning", msg)
+            self._generation_label.config(text = "")
             return
 
         selected_questions_dict = self._selector.selected_questions
         if not selected_questions_dict:
             msg = "No questions have been selected."
             messagebox.showwarning("Warning", msg)
+            self._generation_label.config(text = "")
             return
 
         selected_questions = list(selected_questions_dict.values())
         generator: SheetGenerator = SheetGenerator(self._config)
-        generator.generate(selected_questions, self._config.num_questions, bool(self._config.generate_tex_int))
+        generator.generate(selected_questions, bool(self._config.generate_tex_int))
 
         self._root.focus()
+
+        self._generation_label.config(text = "Generation complete!")
 
     def build(self) -> None:
         validate_filename = self._root.register(self._validate_filename)
@@ -140,6 +146,9 @@ class QuestionConfigurator():
             command = self._generate_sheets
         )
         self._generate_button.grid(row = 4, column = 0, padx = 4, pady = 4)
+
+        self._generation_label = Label(self._config_frame, text = "")
+        self._generation_label.grid(row = 4, column = 1)
 
     def _save_config_value(self, widget: Widget | str) -> None:
         if not isinstance(widget, Widget):
