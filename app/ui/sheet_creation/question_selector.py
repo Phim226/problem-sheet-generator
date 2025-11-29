@@ -26,7 +26,6 @@ class QuestionConfig():
         return self._topics
 
 # TODO: Improve docstrings.
-# TODO: Display text of question instead of ids.
 class QuestionSelector():
 
     QUESTION_TREE_CONFIG: dict[str, str | bool] = {
@@ -81,17 +80,17 @@ class QuestionSelector():
         Fills the Question Topics tree with the questions, topics and subtopics that have been
         registered in the topic registry.
         """
-        question_types: list[Question] = sorted(list(TOPIC_REGISTRY.keys())[1:])
+        question_types: list[Question] = sorted(list(TOPIC_REGISTRY.keys()))
         for name in question_types:
-            tree.insert("", "end", iid = name, text = name)
+            tree.insert("", "end", iid = name, text = TOPIC_DISPLAY_REGISTRY[name])
 
             topics = TOPIC_REGISTRY[name].keys()
             for topic in topics:
-                tree.insert(name, "end", iid = topic, text = topic)
+                tree.insert(name, "end", iid = topic, text = TOPIC_DISPLAY_REGISTRY[topic])
 
                 subtopics = TOPIC_REGISTRY[name][topic]
                 for subtopic in subtopics:
-                    tree.insert(topic, "end", iid = f"{topic}_{subtopic}", text = subtopic)
+                    tree.insert(topic, "end", iid = f"{topic}_{subtopic}", text = TOPIC_DISPLAY_REGISTRY[subtopic])
 
 
     def _build_tree(self, config: dict[str, str | bool]) -> Treeview:
