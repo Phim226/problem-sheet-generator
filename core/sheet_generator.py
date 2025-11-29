@@ -40,7 +40,6 @@ class SheetGenerator():
         return topic, choice(topics[topic])
 
     # TODO: Change the names of the output files to include the creation date.
-    # TODO: Change logic to deal with empty topics in QuestionConfig objects
     def generate(
             self,
             selected_questions: list[QuestionConfig],
