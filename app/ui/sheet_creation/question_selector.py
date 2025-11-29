@@ -3,7 +3,7 @@ from uuid import uuid4
 from tkinter import Event, messagebox, Tk
 from ttkbootstrap import Button, Entry, Frame, Scrollbar, Treeview
 from core.question.question import Question
-from core.question.question_registry import TOPIC_REGISTRY, QUESTION_REGISTRY
+from core.question.question_registry import TOPIC_REGISTRY
 
 @dataclass(slots = True)
 class QuestionConfig():
@@ -79,13 +79,13 @@ class QuestionSelector():
     def _populate_question_tree(tree: Treeview) -> None:
         """
         Fills the Question Topics tree with the questions, topics and subtopics that have been
-        registered in the Question and Topic registries.
+        registered in the topic registry.
         """
         question_types: list[Question] = sorted(list(TOPIC_REGISTRY.keys())[1:])
         for name in question_types:
             tree.insert("", "end", iid = name, text = name)
 
-            topics = QUESTION_REGISTRY[name].subtopics.keys()
+            topics = TOPIC_REGISTRY[name].keys()
             for topic in topics:
                 tree.insert(name, "end", iid = topic, text = topic)
 
