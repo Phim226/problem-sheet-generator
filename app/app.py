@@ -11,7 +11,7 @@ class ProblemSheetGeneratorApp():
 
     def __init__(self, root: Tk):
         root.title("Problem Sheet Generator")
-        root.geometry("500x500")
+        root.geometry("600x600")
         root.bind_all("<Button-1>", self._global_mouse_click, add = "+")
         self._root = root
 
