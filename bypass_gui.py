@@ -1,8 +1,8 @@
 from logging import info
-from app.ui.sheet_creation.question_configurator import SheetConfig
-from app.ui.sheet_creation.question_selector import QuestionConfig
+from app.ui import SheetConfig
+from app.ui import QuestionConfig
 from core.sheet_generator import SheetGenerator
-from core.question.question_registry import KEYWORD_REGISTRY, QUESTION_REGISTRY
+from core.question import KEYWORD_REGISTRY, QUESTION_REGISTRY
 from utilities.misc import configure_log
 
 # Use this code to bypass GUI.
