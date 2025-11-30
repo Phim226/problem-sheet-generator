@@ -49,7 +49,7 @@ class Curve(Regenerating):
         self._regenerate()
 
 
-    def _regenerate(self):
+    def _regenerate(self) -> None:
         if not self._manual_components:
             if not  self._manual_limis:
                 self._curve: ParametricRegion = self._generate_random_parametric_curve(self._linear_components)
