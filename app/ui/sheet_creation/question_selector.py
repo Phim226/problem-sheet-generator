@@ -107,6 +107,7 @@ class QuestionSelector():
         columns = ("count",) if config["has_count_column"] else None
         tree = Treeview(tree_frame, columns = columns, show = "tree headings")
         tree.heading("#0", text = config["title"])
+        tree.column("#0", width = 220 if config["has_count_column"] else 270)
 
         if config["has_count_column"]:
             tree.heading("count", text = "#Qs")
