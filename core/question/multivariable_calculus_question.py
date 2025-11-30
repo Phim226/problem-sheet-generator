@@ -22,7 +22,7 @@ class MultivariableCalculusQuestion(Question, ABC):
 @register_question()
 class LineIntegralQuestion(MultivariableCalculusQuestion):
 
-    topic: tuple[str] = ("line_integral", "Line integral")
+    topic: tuple[str] = ("line_integral", "Line integrals")
 
     # TODO: Improve question LaTeX generation logic based on question subtopic etc.
     # TODO: Properly format answer LaTeX.
@@ -36,8 +36,9 @@ class LineIntegralQuestion(MultivariableCalculusQuestion):
     } """
 
     subtopics: dict[str, str] = {
-        "scalar_field": "Line integral of scalar fields",
-        "vector_field": "Line integral of vector fields"
+        "scalar_field": "Line integrals of scalar fields",
+        "vector_field": "Line integrals of vector fields",
+        "fundamental_theorem": "Fundamental theorem of line integrals"
     }
 
     def __init__(self, subtopic, dimension = 3, curve_is_parametric = True, curve_is_implicit = False, **kwargs):
