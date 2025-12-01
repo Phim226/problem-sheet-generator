@@ -105,32 +105,39 @@ class Field():
         return f"{self._name} = {self._field}"
 
 # TODO: Include validation of manual inputs in ScalarField and VectorField.
+# TODO: Improve method of manual definition of fields (using utilities.symbol_manipulation).
 class ScalarField(Regenerating, Field):
 
 
     def __init__(
             self,
-            name: str,
-            dimension: int,
-            component_coeffs: list[list[int]] = None,
-            gen_by_sum: bool = None
+            name: str = "phi",
+            dimension: int = 2,
+            manual_field_expr: Expr = None
     ):
         super().__init__(name, dimension)
 
         self._name_latex = latex(Symbol(name))
         self._dimension = dimension
 
-        self._manual_coeffs = component_coeffs
-        self._gen_by_sum = gen_by_sum
+        self._manual_field_expr = manual_field_expr
 
         self._regenerate()
 
     def _regenerate(self):
-        if self._manual_coeffs:
-            self._field: Expr = self._generate_component_from_coeffs(self._manual_coeffs[0],
-                                                                     self._manual_coeffs[1],
-                                                                     self._manual_coeffs[2],
-                                                                     self._gen_by_sum)
+        if self._manual_field_expr:
+            coord_scalars = ["x", "y", "z"]
+            invalid_symbols = []
+            for var in self._manual_field_expr.free_symbols:
+                if str(var) not in coord_scalars:
+                    invalid_symbols.append(str(var))
+            if invalid_symbols:
+                msg = (f"Manual expression = {self._manual_field_expr} contains invalid "
+                       f"symbols: {invalid_symbols}. Manual expressions should only contain "
+                       f"the symbols: {coord_scalars}")
+                raise ValueError(msg)
+
+            self._field: Expr = scalar_expr_from_expr(self._manual_field_expr, self._C)
 
         else:
             self._field: Expr = self._generate_random_component(allow_zero = False)
