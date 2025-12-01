@@ -67,8 +67,8 @@ class ParametricRegionLatexPrinter(CleanVectorLatexPrinter):
 
     def parametric_curve_print(self, curve: Curve):
         parameter: Symbol = curve.parameter
-        limits: list[int] = curve.curve.limits[parameter]
-        return (rf"$\mathbf{{r}}({parameter})={self.doprint(curve.curve)}$ "
+        limits: list[int] = curve.region.limits[parameter]
+        return (rf"$\mathbf{{r}}({parameter})={self.doprint(curve.region)}$ "
                 rf"for ${limits[0]}\le {parameter}\le {limits[1]}$")
 
     def _print_ParametricRegion(self, region: ParametricRegion):

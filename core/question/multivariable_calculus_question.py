@@ -58,14 +58,14 @@ class LineIntegralQuestion(MultivariableCalculusQuestion):
         linear_components = subtopic == "scalar_field"
         curve: Curve = Curve(ambient_dim = dimension, linear_components = linear_components)
 
-        answer: Expr = field.calculate_line_integral(curve.curve)
+        answer: Expr = field.calculate_line_integral(curve.region)
         answer_is_awkward = awkward_number(answer)
 
         while answer_is_awkward:
             field.regenerate()
             curve.regenerate()
 
-            answer = field.calculate_line_integral(curve.curve)
+            answer = field.calculate_line_integral(curve.region)
             answer_is_awkward = awkward_number(answer)
 
         self._answer: str = self._generate_answer_latex(answer)

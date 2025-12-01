@@ -28,7 +28,7 @@ class Curve(Regenerating):
     def __init__(
             self,
             parameter: Symbol = t,
-            ambient_dim: int = 3,
+            ambient_dim: int = 2,
             linear_components: bool = False,
             components: tuple[Expr] = None,
             limits: tuple[int] = None
@@ -44,19 +44,19 @@ class Curve(Regenerating):
         self._linear_components = linear_components
 
         self._manual_components = components
-        self._manual_limis = limits
+        self._manual_limits = limits
 
         self._regenerate()
 
 
     def _regenerate(self) -> None:
         if not self._manual_components:
-            if not  self._manual_limis:
-                self._curve: ParametricRegion = self._generate_random_parametric_curve(self._linear_components)
+            if not  self._manual_limits:
+                self._region: ParametricRegion = self._generate_random_parametric_curve(self._linear_components)
             else:
-                self._curve: ParametricRegion = ParametricRegion(
+                self._region: ParametricRegion = ParametricRegion(
                     self._generate_random_components(self._linear_components),
-                    (self._parameter,) + self._manual_limis
+                    (self._parameter,) + self._manual_limits
                 )
         else:
             if len(self._manual_components) not in (2, 3):
@@ -83,8 +83,8 @@ class Curve(Regenerating):
             else:
                 self._parameter: Symbol = next(iter(self._manual_components[0].free_symbols))
 
-            lims = self._manual_limis if self._manual_limis else random_limits(-3, 3)
-            self._curve: ParametricRegion = ParametricRegion(
+            lims = self._manual_limits if self._manual_limits else random_limits(-3, 3)
+            self._region: ParametricRegion = ParametricRegion(
                 tuple(self._manual_components),
                 (self._parameter,) + lims
             )
@@ -93,19 +93,19 @@ class Curve(Regenerating):
         self._curve_latex: str = printer.parametric_curve_print(self)
 
         self.is_closed = (
-            self._curve.definition.subs(
+            self._region.definition.subs(
                 self._parameter,
-                self._curve.limits[self._parameter][0]
+                self._region.limits[self._parameter][0]
             )
             ==
-            self._curve.definition.subs(
+            self._region.definition.subs(
                 self._parameter,
-                self._curve.limits[self._parameter][1]
+                self._region.limits[self._parameter][1]
             )
         )
 
-        info((f"Curve is {self.curve.definition} "
-              f"with limits {self.curve.limits[self._parameter]}"))
+        info((f"Curve is {self.region.definition} "
+              f"with limits {self.region.limits[self._parameter]}"))
 
         """ if p is t:
             print(f"Symbol is {t}")
@@ -117,8 +117,8 @@ class Curve(Regenerating):
         return self._curve_latex
 
     @property
-    def curve(self) -> ParametricRegion:
-        return self._curve
+    def region(self) -> ParametricRegion:
+        return self._region
 
     @property
     def parameter(self) -> Symbol:
@@ -150,4 +150,4 @@ class Curve(Regenerating):
         )
 
     def __repr__(self):
-        return f"{self._curve}"
+        return f"{self._region}"
