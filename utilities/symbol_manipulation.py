@@ -1,6 +1,9 @@
 from sympy import Symbol, Expr, Pow, Mul, Number, Add, S, expand, factor_terms
 from sympy.vector import CoordSys3D, BaseScalar
 
+# TODO: Write docstrings
+# TODO: Combine logic of scalar-from-expr and expr-from-scalar
+
 def _scalar_from_symbol(sym: Symbol, C: CoordSys3D) -> BaseScalar:
     for scalar in C.base_scalars():
             if str(sym) == str(scalar)[-1]:
