@@ -1,5 +1,8 @@
 from random import choices, randint
+from more_itertools import distinct_permutations
 from sympy import Expr, Rational, Symbol
+from sympy.combinatorics import IntegerPartition
+
 # TODO: Write docstrings, especially for polynomial_from_coeffs (coeff index corresponds inversely to degree)
 def polynomial_from_coeffs(p: Symbol, coeffs: list[int]) -> Expr:
     poly: Expr = 0
@@ -7,6 +10,55 @@ def polynomial_from_coeffs(p: Symbol, coeffs: list[int]) -> Expr:
     for index, coeff in enumerate(coeffs):
         poly += coeff*p**(degree - index)
     return poly
+
+def weak_compositions(n: int, k: int) -> list[list[int]]:
+    """
+    Returns all weak compositions of the integer n into k parts.
+
+    In other words this function returns all the solutions of the equation
+
+        x_1 + x_2 + ... + x_k = n
+
+    where each x_i is a non-negative integer.
+
+    Parameters
+    ==========
+    n: int
+        The integer we want to find the compositions of.
+
+    k: int
+        The number of parts we are splitting n into. If k<=0 then the function returns an empty
+        list.
+
+    Examples
+    ========
+    >>> all_non_neg_integer_comps(3, 2):
+    [[3, 0], [2, 1], [1, 2], [0, 3]]
+    """
+    if n == 0:
+        return []
+
+    n = [n]
+    partitions = [n]
+    partition = IntegerPartition(n)
+    prev = partition.prev_lex()
+
+    while prev.partition != n:
+        partitions.append(prev.partition)
+        partition = IntegerPartition(prev.partition)
+        prev = partition.prev_lex()
+
+    unordered_comps = []
+    for part in partitions:
+        if len(part) > k:
+            continue
+
+        part += [0]*(k - len(part))
+        unordered_comps.append(part)
+
+    ordered_comps = sum((list(distinct_permutations(comp)) for comp in unordered_comps), [])
+
+    return ordered_comps
 
 def random_weighted_coefficients(
         max_index: int,
