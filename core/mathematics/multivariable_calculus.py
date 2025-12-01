@@ -6,8 +6,8 @@ from sympy import Expr, Symbol, S, factor_terms, latex
 from sympy.vector import (BaseScalar, CoordSys3D, ParametricRegion, Vector, VectorZero,
                           vector_integrate)
 from core.regenerating import Regenerating
-from utilities import CleanVectorLatexPrinter
-from utilities import polynomial_from_coeffs, random_weighted_coefficients
+from core.mathematics.geometry import Curve
+from utilities import polynomial_from_coeffs, random_weighted_coefficients, scalar_expr_from_expr, CleanVectorLatexPrinter
 
 
 # TODO: Write docstrings.
@@ -147,16 +147,28 @@ class ScalarField(Regenerating, Field):
         printer: CleanVectorLatexPrinter = CleanVectorLatexPrinter()
         self._field_latex: str = printer.scalar_field_print(self)
 
-    def line_integral_via_fund_thm(self, curve: ParametricRegion):
-        return self._field.subs()
+    def line_integral_via_fund_thm(self, curve: Curve):
+        region: ParametricRegion = curve.region
+
+        start_point = region.definition.subs(curve.parameter, curve.limits[0])
+        end_point = region.definition.subs(curve.parameter, curve.limits[1])
+
+        scalars = self._C.base_scalars()
+
+        return (
+            self._field.subs([(scalars[i], end_point[i]) for i in range(self._dimension)])
+            -
+            self._field.subs([(scalars[i], start_point[i]) for i in range(self._dimension)])
+        )
+
 
 class VectorField(Regenerating, Field):
 
 
     def __init__(
             self,
-            name: str,
-            dimension: int,
+            name: str = "F",
+            dimension: int = 2,
             component_coeffs: list[list[list[int]]] = None,
             gen_by_sum: bool = None
     ):
