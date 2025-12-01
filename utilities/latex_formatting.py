@@ -4,10 +4,11 @@ if TYPE_CHECKING:
     from core.mathematics.multivariable_calculus import VectorField, ScalarField
     from core.mathematics.geometry import Curve
 from logging import info
-from sympy import Add, Expr, Mul, Number, Pow, Symbol, S, expand, factor_terms, latex
+from sympy import Add, Symbol, latex
 from sympy.printing.latex import LatexPrinter
-from sympy.vector import BaseScalar, BaseVector, CoordSys3D, ParametricRegion, Vector, VectorZero
+from sympy.vector import BaseVector, CoordSys3D, ParametricRegion, Vector, VectorZero
 from sympy.vector.basisdependent import BasisDependent
+from utilities import symbol_from_coord_scalar
 
 # TODO: Write docstrings
 class CleanVectorLatexPrinter(LatexPrinter):
@@ -20,50 +21,7 @@ class CleanVectorLatexPrinter(LatexPrinter):
     def scalar_field_print(self, field: ScalarField) -> str:
         return (f"${field.name_latex}"
                 f"(x, y{", z" if field.dimension == 3 else ""})="
-                f"{latex(self._symbol_from_coord_scalar(field.field))}$")
-
-    @staticmethod
-    def _symbol_from_Mul(expr: Mul) -> Expr:
-        if isinstance(expr, Number):
-            return expr
-
-        args = expr.args
-        if isinstance(expr, Pow):
-            return Symbol(str(args[0])[-1])**args[1]
-
-        expr_has_coeff = isinstance(args[0], Number)
-        variables = args[1:] if expr_has_coeff else args
-        new_expr = args[0] if expr_has_coeff else S.One
-        for var in variables:
-            if isinstance(var, Pow):
-                new_expr *= Symbol(str(var.args[0])[-1])**var.args[1]
-            else:
-                new_expr *= Symbol(str(var)[-1])
-        return new_expr
-
-    def _symbol_from_coord_scalar(self, expr: Expr) -> Expr:
-        if (not expr.free_symbols or
-            not hasattr(next(iter(expr.free_symbols)), "system")):
-            return expr
-
-        expr = expand(expr)
-        if isinstance(expr, BaseScalar):
-            return Symbol(str(expr)[-1])
-
-        elif isinstance(expr, (Mul, Pow)):
-            return self._symbol_from_Mul(expr)
-
-        elif isinstance(expr, Add):
-            new_expr = S.Zero
-            for arg in expr.args:
-                if isinstance(arg, BaseScalar):
-                    new_expr += Symbol(str(arg)[-1])
-                else:
-                    new_expr += self._symbol_from_Mul(arg)
-            return factor_terms(new_expr, sign = True)
-
-        else:
-            return expr
+                f"{latex(symbol_from_coord_scalar(field.field))}$")
 
     @staticmethod
     def _clean_base_vector_latex(vect: BaseVector) -> str:
@@ -87,7 +45,7 @@ class CleanVectorLatexPrinter(LatexPrinter):
                 elif comp == -1:
                     o1.append(f"-{self._clean_base_vector_latex(base_vect)}")
                 else:
-                    scalar_symbols = self._symbol_from_coord_scalar(comp)
+                    scalar_symbols = symbol_from_coord_scalar(comp)
                     arg_str = (
                         rf"\left({self._print(scalar_symbols)}\right)"
                         if isinstance(scalar_symbols, Add)
