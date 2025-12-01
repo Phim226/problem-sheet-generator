@@ -3,8 +3,8 @@ from sympy import Expr, Symbol, factor_terms
 from sympy.abc import t, theta
 from sympy.vector import ParametricRegion
 from core.regenerating import Regenerating
-from utilities.latex_formatting import ParametricRegionLatexPrinter
-from utilities.mathematics import (polynomial_from_coeffs, random_limits,
+from utilities import ParametricRegionLatexPrinter
+from utilities import (polynomial_from_coeffs, random_limits,
                                    random_weighted_coefficients)
 
 # TODO: Write docstrings.

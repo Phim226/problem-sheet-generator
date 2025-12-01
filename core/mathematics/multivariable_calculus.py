@@ -6,8 +6,8 @@ from sympy import Expr, Symbol, S, factor_terms, latex
 from sympy.vector import (BaseScalar, CoordSys3D, ParametricRegion, Vector, VectorZero,
                           vector_integrate)
 from core.regenerating import Regenerating
-from utilities.latex_formatting import CleanVectorLatexPrinter
-from utilities.mathematics import polynomial_from_coeffs, random_weighted_coefficients
+from utilities import CleanVectorLatexPrinter
+from utilities import polynomial_from_coeffs, random_weighted_coefficients
 
 
 # TODO: Write docstrings.
@@ -139,6 +139,9 @@ class ScalarField(Regenerating, Field):
 
         printer: CleanVectorLatexPrinter = CleanVectorLatexPrinter()
         self._field_latex: str = printer.scalar_field_print(self)
+
+    def line_integral_via_fund_thm(self, curve: ParametricRegion):
+        return self._field.subs()
 
 class VectorField(Regenerating, Field):
 

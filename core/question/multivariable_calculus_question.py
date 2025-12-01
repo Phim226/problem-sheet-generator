@@ -4,7 +4,7 @@ from pylatex.utils import NoEscape
 from core.question import Question, register_question, register_type
 from core.mathematics.multivariable_calculus import ScalarField, VectorField
 from core.mathematics.geometry import Curve
-from utilities.mathematics import awkward_number
+from utilities import awkward_number
 
 @register_type()
 class MultivariableCalculusQuestion(Question, ABC):
