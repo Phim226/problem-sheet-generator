@@ -54,6 +54,7 @@ class Curve(Regenerating):
             if not  self._manual_limits:
                 self._region: ParametricRegion = self._generate_random_parametric_curve(self._linear_components)
             else:
+                self._limits = self._manual_limits
                 self._region: ParametricRegion = ParametricRegion(
                     self._generate_random_components(self._linear_components),
                     (self._parameter,) + self._manual_limits
@@ -83,10 +84,10 @@ class Curve(Regenerating):
             else:
                 self._parameter: Symbol = next(iter(self._manual_components[0].free_symbols))
 
-            lims = self._manual_limits if self._manual_limits else random_limits(-3, 3)
+            self._limits = self._manual_limits if self._manual_limits else random_limits(-3, 3)
             self._region: ParametricRegion = ParametricRegion(
                 tuple(self._manual_components),
-                (self._parameter,) + lims
+                (self._parameter,) + self._limits
             )
 
         printer: ParametricRegionLatexPrinter = ParametricRegionLatexPrinter()
@@ -119,6 +120,10 @@ class Curve(Regenerating):
     @property
     def region(self) -> ParametricRegion:
         return self._region
+
+    @property
+    def limits(self) -> tuple[int]:
+        return self._limits
 
     @property
     def parameter(self) -> Symbol:
