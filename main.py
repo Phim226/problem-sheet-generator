@@ -8,7 +8,7 @@ from app import ProblemSheetGeneratorApp
 # TODO: Make pdf of questions and answers viewable in the app.
 # TODO: Temporarily store files and give option to save or export them for permanant storage.
 # TODO: Have problem sheet templates with typical collections of questions.
-# TODO: Each question topic be configurable.
+# TODO: Each question topic be configurable (right click on selected question for extra config options).
 # TODO: Make core and core.mathematics into packages.
 # TODO: Write tests.
 if __name__ == "__main__":
