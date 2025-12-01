@@ -9,7 +9,8 @@ from app import ProblemSheetGeneratorApp
 # TODO: Temporarily store files and give option to save or export them for permanant storage.
 # TODO: Have problem sheet templates with typical collections of questions.
 # TODO: Each question topic be configurable.
-# TODO: Make utilties, core and core.mathematics into packages.
+# TODO: Make core and core.mathematics into packages.
+# TODO: Write tests.
 if __name__ == "__main__":
     configure_log()
 
