@@ -53,6 +53,7 @@ class Curve(Regenerating):
         if not self._manual_components:
             if not  self._manual_limits:
                 self._region: ParametricRegion = self._generate_random_parametric_curve(self._linear_components)
+                self._limits = self._region.limits[self._parameter]
             else:
                 self._limits = self._manual_limits
                 self._region: ParametricRegion = ParametricRegion(
