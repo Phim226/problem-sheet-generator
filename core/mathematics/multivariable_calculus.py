@@ -92,14 +92,14 @@ class Field():
 
         return self._generate_component_from_coeffs(x_coeffs, y_coeffs, z_coeffs)
 
-    def calculate_line_integral(self, curve: ParametricRegion):
+    def calculate_line_integral(self, curve: Curve):
         """
         Calculates line integral of the (scalar or vector) field along the given curve.
 
         The line integral calculated for scalar fields is the line integral with respect to arc
         length.
         """
-        return vector_integrate(self._field, curve)
+        return vector_integrate(self._field, curve.region)
 
     def __repr__(self):
         return f"{self._name} = {self._field}"
