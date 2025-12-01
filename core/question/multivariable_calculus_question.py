@@ -2,7 +2,7 @@ from abc import ABC
 from sympy import Expr, latex
 from pylatex.utils import NoEscape
 from core.question import Question, register_question, register_type
-from core.mathematics.multivariable_calculus import ScalarField, VectorField
+from core.mathematics.multivariable_calculus import ScalarField, VectorField, Field
 from core.mathematics.geometry import Curve
 from utilities import awkward_number
 
@@ -58,28 +58,32 @@ class LineIntegralQuestion(MultivariableCalculusQuestion):
         linear_components = subtopic == "scalar_field"
         curve: Curve = Curve(ambient_dim = dimension, linear_components = linear_components)
 
-        answer: Expr = field.calculate_line_integral(curve.region)
+        answer_func = field.calculate_line_integral if subtopic != "fundamental_theorem" else field.line_integral_via_fund_thm
+        answer: Expr = answer_func(curve)
+
         answer_is_awkward = awkward_number(answer)
 
         while answer_is_awkward:
             field.regenerate()
             curve.regenerate()
 
-            answer = field.calculate_line_integral(curve.region)
+            answer = answer_func(curve)
             answer_is_awkward = awkward_number(answer)
 
         self._answer: str = self._generate_answer_latex(answer)
         self._question: str = self._generate_question_latex(field, curve)
 
-    @staticmethod
-    def _generate_question_latex(vector_field: VectorField, curve: Curve) -> str:
-        return NoEscape(
-            rf"Let ${vector_field.name_latex}$ be the "
-            f"vector field {vector_field.field_latex} and $C$ the "
-            f"curve given by {curve.curve_latex}. "
-            r"Calculate $\displaystyle\int_C"
-            rf"{vector_field.name_latex}\cdot\mathbf{{dr}}$."
+    def _generate_question_latex(self, field: Field, curve: Curve) -> str:
+        setup_latex: str = (f"Let ${field.name_latex}$ be the "
+            f"vector field {field.field_latex} and $C$ the "
+            f"curve given by {curve.curve_latex}. ")
+
+        question_latex = (
+            rf"Calculate $\displaystyle\int_C{r"\nabla" if self._subtopic == "fundamental_theorem" else ""}"
+            rf"{field.name_latex}{r"\, ds" if self._subtopic == "scalar_field" else rf"\cdot\mathbf{{dr}}"}$."
         )
+
+        return NoEscape(setup_latex + question_latex)
 
     @staticmethod
     def _generate_answer_latex(answer: str) -> str:
