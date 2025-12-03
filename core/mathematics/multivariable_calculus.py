@@ -7,7 +7,8 @@ from sympy.vector import (BaseScalar, CoordSys3D, ParametricRegion, Vector, Vect
                           vector_integrate)
 from core.regenerating import Regenerating
 from core.mathematics.geometry import Curve
-from utilities import polynomial_from_coeffs, random_weighted_coefficients, scalar_expr_from_expr, CleanVectorLatexPrinter
+from utilities import (CleanVectorLatexPrinter,
+                       polynomial_from_coeffs, random_weighted_coefficients, scalar_expr_from_expr)
 
 
 # TODO: Write docstrings.

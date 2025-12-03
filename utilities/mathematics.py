@@ -13,7 +13,7 @@ def polynomial_from_coeffs(p: Symbol, coeffs: list[int]) -> Expr:
 
 def weak_compositions(n: int, k: int) -> list[list[int]]:
     """
-    Returns all weak compositions of the integer n into k parts.
+    Returns all weak compositions of the positive integer n into k parts.
 
     In other words this function returns all the solutions of the equation
 
