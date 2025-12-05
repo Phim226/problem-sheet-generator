@@ -18,6 +18,18 @@ class MultivariableCalculusQuestion(Question, ABC):
     ):
         super().__init__(topic, subtopic, **kwargs)
 
+@register_question()
+class IntegralTheoremsQuestion(MultivariableCalculusQuestion):
+
+    topic: tuple[str] = ("integral_theorems", "Integral theorems")
+
+    subtopics: dict[str, str] = {
+        "greens_theorem": "Green's theorem"
+    }
+
+    def __init__(self, subtopic, **kwargs):
+        super().__init__(self.topic[0], subtopic, **kwargs)
+
 
 @register_question()
 class LineIntegralQuestion(MultivariableCalculusQuestion):
@@ -26,14 +38,6 @@ class LineIntegralQuestion(MultivariableCalculusQuestion):
 
     # TODO: Improve question LaTeX generation logic based on question subtopic etc.
     # TODO: Properly format answer LaTeX.
-
-    """ subtopics: dict[str, str] = {
-        "scalar_field": "Line integral of scalar fields",
-        "vector_field": "Line integral of vector fields",
-        "fundamental_theorem": "Fundamental theorem of line integrals",
-        "conservative_vector_field": "Conservative vector fields",
-        "green's_theorem": "Green's theorem"
-    } """
 
     subtopics: dict[str, str] = {
         "scalar_field": "Line integrals of scalar fields",
