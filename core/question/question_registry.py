@@ -74,10 +74,9 @@ def register_question() -> Callable[[Type[Question]], Type[Question]]:
         KEYWORD_REGISTRY[topic_id] = get_kwargs(cls.__init__)
 
         if hasattr(cls.__base__, "name"):
-            TOPIC_REGISTRY[cls.__base__.name[0]] = {topic_id: list(cls.subtopics.keys())}
+            TOPIC_REGISTRY[cls.__base__.name[0]].update({topic_id: list(cls.subtopics.keys())})
 
         TOPIC_DISPLAY_REGISTRY[topic_id] = cls.topic[1]
-        print(cls.subtopics)
         TOPIC_DISPLAY_REGISTRY.update(cls.subtopics)
         return cls
     return wrapper
