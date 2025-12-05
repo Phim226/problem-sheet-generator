@@ -39,7 +39,7 @@ appropriate classes. The type hint "bool" refers to the optional parameter
 
 QUESTION_REGISTRY: dict[str, Type[Question]] = {}
 KEYWORD_REGISTRY: dict[str, Any] = {}
-TOPIC_REGISTRY: dict[str, list[str]] = {}
+TOPIC_REGISTRY: dict[str, dict[str, list[str]]] = {}
 TOPIC_DISPLAY_REGISTRY: dict[str, str] = {}
 
 def get_kwargs(func: Callable) -> dict[str, Any]:
