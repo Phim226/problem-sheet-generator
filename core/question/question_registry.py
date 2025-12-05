@@ -44,6 +44,10 @@ TOPIC_DISPLAY_REGISTRY: dict[str, str] = {}
 
 def get_kwargs(func: Callable) -> dict[str, Any]:
     spec = getfullargspec(func)
+
+    if spec.defaults is None:
+        return {}
+
     kwargs = {key: value for key, value in zip(
         reversed(spec.args),
         reversed(spec.defaults)
