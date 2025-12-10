@@ -177,10 +177,7 @@ def random_weighted_coefficients(
 
 # TODO: Add weighting to small limit range
 # TODO: Make generation of larger limit range correspond to weight increase toward simpler expressions (or vice versa)
-def random_limits(
-        min_limit: int,
-        max_limit: int
-) -> tuple[int, int]:
+def random_limits(min_limit: int, max_limit: int) -> tuple[int, int]:
     lower_limit = randint(min_limit, max_limit - 1)
     return lower_limit, randint(lower_limit + 1, max_limit)
 
