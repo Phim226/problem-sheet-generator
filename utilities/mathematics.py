@@ -56,9 +56,7 @@ def weak_compositions(n: int, k: int) -> list[list[int]]:
         part += [0]*(k - len(part))
         unordered_comps.append(part)
 
-    ordered_comps = sum((list(distinct_permutations(comp)) for comp in unordered_comps), [])
-
-    return ordered_comps
+    return sum((list(distinct_permutations(comp)) for comp in unordered_comps), [])
 
 def random_weighted_coefficients(
         max_index: int,
