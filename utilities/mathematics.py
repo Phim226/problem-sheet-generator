@@ -38,8 +38,8 @@ def weak_compositions(n: int, k: int) -> list[list[int]]:
     if n == 0:
         return []
 
-    n = [n]
-    partitions = [n]
+    n: list[int] = [n]
+    partitions: list[list[int]] = [n]
     partition = IntegerPartition(n)
     prev = partition.prev_lex()
 
