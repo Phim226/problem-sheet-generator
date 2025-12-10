@@ -56,7 +56,7 @@ def scalar_expr_from_expr(expr: Expr, C: CoordSys3D) -> Expr:
 
 
 
-def _symbol_from_Mul(expr: Mul) -> Expr:
+def _symbol_from_mul(expr: Mul) -> Expr:
     if isinstance(expr, Number):
         return expr
 
@@ -84,7 +84,7 @@ def symbol_from_coord_scalar(expr: Expr) -> Expr:
         return Symbol(str(expr)[-1])
 
     elif isinstance(expr, (Mul, Pow)):
-        return _symbol_from_Mul(expr)
+        return _symbol_from_mul(expr)
 
     elif isinstance(expr, Add):
         new_expr = S.Zero
@@ -92,7 +92,7 @@ def symbol_from_coord_scalar(expr: Expr) -> Expr:
             if isinstance(arg, BaseScalar):
                 new_expr += Symbol(str(arg)[-1])
             else:
-                new_expr += _symbol_from_Mul(arg)
+                new_expr += _symbol_from_mul(arg)
         return factor_terms(new_expr, sign = True)
 
     else:
