@@ -1,11 +1,11 @@
 from logging import info
-from sympy import Expr, Symbol, factor_terms
+from random import choice
+from sympy import Expr, Symbol, Polygon, Segment2D, factor_terms, latex
 from sympy.abc import t, theta
-from sympy.vector import ParametricRegion
+from sympy.vector import ParametricRegion, ImplicitRegion
 from core.regenerating import Regenerating
-from utilities import ParametricRegionLatexPrinter
-from utilities import (polynomial_from_coeffs, random_limits,
-                                   random_weighted_coefficients)
+from utilities import (ParametricRegionLatexPrinter,
+                       generate_random_pairs, polynomial_from_coeffs, random_limits, random_weighted_coefficients)
 
 # TODO: Write docstrings.
 # TODO: Allow for curves to be geometric objects, e.g. triangles, circles etc.
@@ -30,6 +30,7 @@ class Curve(Regenerating):
             parameter: Symbol = t,
             ambient_dim: int = 2,
             linear_components: bool = False,
+            force_closed: bool = False,
             components: tuple[Expr] = None,
             limits: tuple[int] = None
     ):
@@ -43,6 +44,8 @@ class Curve(Regenerating):
 
         self._linear_components = linear_components
 
+        self._force_closed = force_closed
+
         self._manual_components = components
         self._manual_limits = limits
 
@@ -52,8 +55,7 @@ class Curve(Regenerating):
     def _regenerate(self) -> None:
         if not self._manual_components:
             if not  self._manual_limits:
-                self._region: ParametricRegion = self._generate_random_parametric_curve(self._linear_components)
-                self._limits = self._region.limits[self._parameter]
+                self._generate_random_curve()
             else:
                 self._limits = self._manual_limits
                 self._region: ParametricRegion = ParametricRegion(
@@ -92,9 +94,9 @@ class Curve(Regenerating):
             )
 
         printer: ParametricRegionLatexPrinter = ParametricRegionLatexPrinter()
-        self._curve_latex: str = printer.parametric_curve_print(self)
+        self._curve_latex: str = printer.parametric_curve_print(self) if isinstance(self._region, ParametricRegion) else latex(self._region)
 
-        self.is_closed = (
+        self._is_closed = (
             self._region.definition.subs(
                 self._parameter,
                 self._region.limits[self._parameter][0]
@@ -104,10 +106,10 @@ class Curve(Regenerating):
                 self._parameter,
                 self._region.limits[self._parameter][1]
             )
-        )
+        ) if isinstance(self._region, ParametricRegion) else self._force_closed
 
-        info((f"Curve is {self.region.definition} "
-              f"with limits {self.region.limits[self._parameter]}"))
+        info((f"Curve is {self._region.definition if isinstance(self._region, ParametricRegion) else self._region} "
+              f"with limits {self._limits}"))
 
         """ if p is t:
             print(f"Symbol is {t}")
@@ -129,6 +131,21 @@ class Curve(Regenerating):
     @property
     def parameter(self) -> Symbol:
         return self._parameter
+
+    def _generate_random_curve(self) -> None:
+        if self._force_closed:
+            self._region = self._generate_random_closed_curve()
+            self._limits = None
+        else:
+            self._region: ParametricRegion = self._generate_random_parametric_curve(self._linear_components)
+            self._limits = self._region.limits[self._parameter]
+
+    def _generate_random_closed_curve(self) -> ImplicitRegion | ParametricRegion | Polygon:
+        curve = Polygon(*generate_random_pairs(3, -2, 2))
+        while isinstance(curve, Segment2D):
+            curve = Polygon(*generate_random_pairs(3, -2, 2))
+
+        return curve
 
     def _generate_random_polynomial(self, linear_components: bool) -> Expr:
         max_index = 2 if linear_components else 4
