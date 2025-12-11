@@ -5,6 +5,8 @@ if TYPE_CHECKING:
     from app.ui import QuestionConfig
 from logging import error, info
 from os import remove
+from os.path import exists
+from pathlib import Path
 from subprocess import CalledProcessError
 from random import choice
 from pylatex import Document, Enumerate
@@ -96,7 +98,13 @@ class SheetGenerator():
         info("Generation complete.")
 
     @staticmethod
-    def _generate_output_files(document: Document, name: str, clean_tex: bool = False):
+    def _generate_output_files(document: Document, name: str, clean_tex: bool = False) -> None:
+        if exists("output"):
+            document.generate_pdf(f"output/{name}", clean_tex = clean_tex)
+            return
+
+        path = Path("output")
+        path.mkdir(exist_ok = True)
         document.generate_pdf(f"output/{name}", clean_tex = clean_tex)
 
     # TODO: Files to delete need to reference output files name. Currently hardcoded.
