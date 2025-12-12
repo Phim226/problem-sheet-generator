@@ -199,3 +199,6 @@ def _awkward_rational(rat: Rational) -> bool:
         return True
     return False
 
+def generate_random_pairs(num: int, inf: int, sup: int) -> list[tuple[int]]:
+    return [(randint(inf, sup), randint(inf, sup)) for _ in range(num)]
+
