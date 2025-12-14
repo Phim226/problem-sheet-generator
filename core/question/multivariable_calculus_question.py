@@ -27,8 +27,34 @@ class IntegralTheoremsQuestion(MultivariableCalculusQuestion):
         "greens_theorem": "Green's theorem"
     }
 
-    def __init__(self, subtopic, **kwargs):
+    def __init__(self, subtopic, dimension = 3, **kwargs):
         super().__init__(self.topic[0], subtopic, **kwargs)
+
+        self._dimension = 2 if subtopic == 'greens_theorem' else dimension
+
+        field: VectorField = VectorField("F", self._dimension)
+
+        region: Curve = Curve(force_closed = subtopic == "greens_theorem")
+
+        answer = field.calculate_line_integral(region)
+
+        self._answer: str = self._generate_answer_latex(answer)
+        self._question: str = self._generate_question_latex(field, region)
+
+    def _generate_question_latex(self, field: Field, curve: Curve):
+        vertices = curve.region.args
+        setup_latex = (f"Let ${field.name_latex}$ be the vector field {field.field_latex} and "
+                       f"$C$ the positively oriented triangle with vertices at ${tuple(vertices[0])}, "
+                       f"{tuple(vertices[1])}$ and ${tuple(vertices[2])}$. ")
+
+
+        question_latex = rf"Use Green's Theorem to calculate $\displaystyle\oint {field.name_latex}\cdot\mathbf{{dr}}$"
+
+        return NoEscape(setup_latex + question_latex)
+
+    @staticmethod
+    def _generate_answer_latex(answer: str) -> str:
+        return NoEscape(f"${latex(answer)}$")
 
 
 @register_question()
@@ -59,7 +85,8 @@ class LineIntegralQuestion(MultivariableCalculusQuestion):
                 VectorField("F", dimension) if subtopic == "vector_field"
                 else ScalarField("phi", dimension)
         )
-        linear_components = subtopic == "scalar_field"
+
+        linear_components: bool = subtopic == "scalar_field"
         curve: Curve = Curve(ambient_dim = dimension, linear_components = linear_components)
 
         answer_func = field.calculate_line_integral if subtopic != "fundamental_theorem" else field.line_integral_via_fund_thm
@@ -80,9 +107,9 @@ class LineIntegralQuestion(MultivariableCalculusQuestion):
     def _generate_question_latex(self, field: Field, curve: Curve) -> str:
         setup_latex: str = (f"Let ${field.name_latex}$ be the "
             f"vector field {field.field_latex} and $C$ the "
-            f"curve given by {curve.curve_latex}. ")
+            f"curve given by {curve.region_latex}. ")
 
-        question_latex = (
+        question_latex: str = (
             rf"Calculate $\displaystyle\int_C{r"\nabla" if self._subtopic == "fundamental_theorem" else ""}"
             rf"{field.name_latex}{r"\, ds" if self._subtopic == "scalar_field" else rf"\cdot\mathbf{{dr}}"}$."
         )
