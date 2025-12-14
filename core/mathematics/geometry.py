@@ -94,7 +94,7 @@ class Curve(Regenerating):
             )
 
         printer: ParametricRegionLatexPrinter = ParametricRegionLatexPrinter()
-        self._curve_latex: str = printer.parametric_curve_print(self) if isinstance(self._region, ParametricRegion) else latex(self._region)
+        self._region_latex: str = printer.parametric_curve_print(self) if isinstance(self._region, ParametricRegion) else latex(self._region)
 
         self._is_closed = (
             self._region.definition.subs(
@@ -117,8 +117,8 @@ class Curve(Regenerating):
             print(f"Symbol is {theta}") """
 
     @property
-    def curve_latex(self) -> str:
-        return self._curve_latex
+    def region_latex(self) -> str:
+        return self._region_latex
 
     @property
     def region(self) -> ParametricRegion:
