@@ -59,7 +59,8 @@ class LineIntegralQuestion(MultivariableCalculusQuestion):
                 VectorField("F", dimension) if subtopic == "vector_field"
                 else ScalarField("phi", dimension)
         )
-        linear_components = subtopic == "scalar_field"
+
+        linear_components: bool = subtopic == "scalar_field"
         curve: Curve = Curve(ambient_dim = dimension, linear_components = linear_components)
 
         answer_func = field.calculate_line_integral if subtopic != "fundamental_theorem" else field.line_integral_via_fund_thm
@@ -82,7 +83,7 @@ class LineIntegralQuestion(MultivariableCalculusQuestion):
             f"vector field {field.field_latex} and $C$ the "
             f"curve given by {curve.curve_latex}. ")
 
-        question_latex = (
+        question_latex: str = (
             rf"Calculate $\displaystyle\int_C{r"\nabla" if self._subtopic == "fundamental_theorem" else ""}"
             rf"{field.name_latex}{r"\, ds" if self._subtopic == "scalar_field" else rf"\cdot\mathbf{{dr}}"}$."
         )
