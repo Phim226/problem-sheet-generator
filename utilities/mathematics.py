@@ -184,6 +184,8 @@ def random_limits(min_limit: int, max_limit: int) -> tuple[int, int]:
 def awkward_number(num: Expr) -> bool:
     if isinstance(num, Rational):
         return _awkward_rational(num)
+    elif isinstance(num, int):
+        return _awkward_rational(Rational(num))
     return False
 
 def _awkward_rational(rat: Rational) -> bool:
