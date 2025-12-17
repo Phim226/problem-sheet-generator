@@ -1,15 +1,12 @@
-from random import randint
 from sympy import Rational, S, pi, sqrt
 from utilities import weak_compositions, awkward_number
 
 def test_weak_compositions(subtests):
-    random_int = randint(1, 100)
-    random_neg_int = randint(-100, -1)
     weak_comps_test_cases = {
         (0, 0): [],
-        (random_int, 0): [],
-        (random_int, 1): [(random_int,)],
-        (random_int, random_neg_int): [],
+        (1, 0): [],
+        (5, 1): [(5,)],
+        (8345, -2): [],
         (1, 2): [(0, 1), (1, 0)],
         (2, 2): [(0, 2), (2, 0), (1, 1)],
         (3, 2): [(0, 3), (3, 0), (1, 2), (2, 1)]
