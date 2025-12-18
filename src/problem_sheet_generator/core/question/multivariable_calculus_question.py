@@ -1,10 +1,10 @@
 from abc import ABC
 from sympy import Expr, latex
 from pylatex.utils import NoEscape
-from core.question import Question, register_question, register_type
-from core.mathematics.multivariable_calculus import ScalarField, VectorField, Field
-from core.mathematics.geometry import Curve
-from utilities import awkward_number
+from problem_sheet_generator.core.question import Question, register_question, register_type
+from problem_sheet_generator.core.mathematics.multivariable_calculus import ScalarField, VectorField, Field
+from problem_sheet_generator.core.mathematics.geometry import Curve
+from problem_sheet_generator.utilities import awkward_number
 
 @register_type()
 class MultivariableCalculusQuestion(Question, ABC):

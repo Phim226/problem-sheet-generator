@@ -5,9 +5,9 @@ from random import random
 from sympy import Expr, Symbol, S, factor_terms, latex
 from sympy.vector import (BaseScalar, CoordSys3D, ParametricRegion, Vector, VectorZero,
                           vector_integrate)
-from core.regenerating import Regenerating
-from core.mathematics.geometry import Curve
-from utilities import (CleanVectorLatexPrinter,
+from problem_sheet_generator.core.regenerating import Regenerating
+from problem_sheet_generator.core.mathematics.geometry import Curve
+from problem_sheet_generator.utilities import (CleanVectorLatexPrinter,
                        polynomial_from_coeffs, random_weighted_coefficients, scalar_expr_from_expr)
 
 

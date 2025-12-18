@@ -11,7 +11,7 @@ def polynomial_from_coeffs(p: Symbol, coeffs: list[int]) -> Expr:
         poly += coeff*p**(degree - index)
     return poly
 
-def weak_compositions(n: int, k: int) -> list[list[int]]:
+def weak_compositions(n: int, k: int) -> list[tuple[int]]:
     """
     Returns all weak compositions of the positive integer n into k parts.
 
@@ -33,9 +33,9 @@ def weak_compositions(n: int, k: int) -> list[list[int]]:
     Examples
     ========
     >>> all_non_neg_integer_comps(3, 2):
-    [[3, 0], [2, 1], [1, 2], [0, 3]]
+    [(0, 3), (3, 0), (1, 2), (2, 1)]
     """
-    if n == 0:
+    if n <= 0 or k <= 0:
         return []
 
     n: list[int] = [n]
@@ -184,17 +184,15 @@ def random_limits(min_limit: int, max_limit: int) -> tuple[int, int]:
 def awkward_number(num: Expr) -> bool:
     if isinstance(num, Rational):
         return _awkward_rational(num)
+    elif isinstance(num, int):
+        return _awkward_rational(Rational(num))
     return False
 
 def _awkward_rational(rat: Rational) -> bool:
-    num_str = str(rat.p)
-    den_str = str(rat.q)
-    num_str.replace("-", "")
-    if len(num_str) > 3:
-        return True
-    if len(den_str) > 3:
-        return True
-    return False
+    return (
+        len(str(abs(rat.p))) > 3 or
+        len(str(abs(rat.q))) > 3
+    )
 
 def generate_random_pairs(num: int, inf: int, sup: int) -> list[tuple[int]]:
     return [(randint(inf, sup), randint(inf, sup)) for _ in range(num)]

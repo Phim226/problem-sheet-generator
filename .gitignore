@@ -10,3 +10,9 @@ output/
 
 # local script
 /mess_about_script.py
+
+#vscode settings
+.vscode/
+
+#Build metadata
+*egg-info/

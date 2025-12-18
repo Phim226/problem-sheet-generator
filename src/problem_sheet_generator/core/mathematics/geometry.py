@@ -3,8 +3,8 @@ from random import choice
 from sympy import Expr, Symbol, Polygon, Segment2D, factor_terms, latex
 from sympy.abc import t, theta
 from sympy.vector import ParametricRegion, ImplicitRegion
-from core.regenerating import Regenerating
-from utilities import (ParametricRegionLatexPrinter,
+from problem_sheet_generator.core.regenerating import Regenerating
+from problem_sheet_generator.utilities import (ParametricRegionLatexPrinter,
                        generate_random_pairs, polynomial_from_coeffs, random_limits, random_weighted_coefficients)
 
 # TODO: Write docstrings.

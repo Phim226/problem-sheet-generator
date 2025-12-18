@@ -1,8 +1,8 @@
 from logging import info
 from tkinter import Tk
-from core.question import KEYWORD_REGISTRY, QUESTION_REGISTRY, TOPIC_REGISTRY
-from utilities import configure_log
-from app import ProblemSheetGeneratorApp
+from problem_sheet_generator.core.question import KEYWORD_REGISTRY, QUESTION_REGISTRY, TOPIC_REGISTRY
+from problem_sheet_generator.utilities import configure_log
+from problem_sheet_generator.app import ProblemSheetGeneratorApp
 
 # TODO: Design UI.
 # TODO: Make pdf of questions and answers viewable in the app.

@@ -2,8 +2,8 @@ from dataclasses import dataclass, field
 from tkinter import Tk, Widget, messagebox
 from re import search
 from ttkbootstrap import Button, Checkbutton, Entry, IntVar, Label, Labelframe, StringVar
-from app.ui import QuestionSelector
-from core.sheet_generator import SheetGenerator
+from problem_sheet_generator.app.ui import QuestionSelector
+from problem_sheet_generator.core.sheet_generator import SheetGenerator
 
 
 @dataclass

@@ -8,7 +8,7 @@ from sympy import Add, Symbol, latex
 from sympy.printing.latex import LatexPrinter
 from sympy.vector import BaseVector, CoordSys3D, ParametricRegion, Vector, VectorZero
 from sympy.vector.basisdependent import BasisDependent
-from utilities import symbol_from_coord_scalar
+from problem_sheet_generator.utilities import symbol_from_coord_scalar
 
 # TODO: Write docstrings
 class CleanVectorLatexPrinter(LatexPrinter):
