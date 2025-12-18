@@ -1,5 +1,5 @@
 from sympy import Rational, S, pi, sqrt
-from utilities import weak_compositions, awkward_number
+from problem_sheet_generator.utilities import weak_compositions, awkward_number
 
 def test_weak_compositions(subtests):
     weak_comps_test_cases = {
@@ -14,6 +14,7 @@ def test_weak_compositions(subtests):
 
     for i, (input, output) in enumerate(weak_comps_test_cases.items()):
         with subtests.test("Weak composition test cases", i = i):
+            print((input, output))
             assert weak_compositions(*input) == output
 
 def test_awkward_number(subtests):
@@ -37,5 +38,6 @@ def test_awkward_number(subtests):
     }
 
     for i, (input, output) in enumerate(awkward_test_cases.items()):
-        with subtests.test("Weak composition test cases", i = i):
+        with subtests.test("Awkward number test cases", i = i):
+            print((input, output))
             assert awkward_number(input) == output

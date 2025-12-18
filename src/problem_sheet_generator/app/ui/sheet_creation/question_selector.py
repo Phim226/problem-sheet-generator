@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from uuid import uuid4
 from tkinter import Event, messagebox, Tk
 from ttkbootstrap import Button, Entry, Frame, Scrollbar, Treeview
-from core.question import TOPIC_REGISTRY, TOPIC_DISPLAY_REGISTRY, Question
+from problem_sheet_generator.core.question import TOPIC_REGISTRY, TOPIC_DISPLAY_REGISTRY, Question
 
 @dataclass(slots = True)
 class QuestionConfig():

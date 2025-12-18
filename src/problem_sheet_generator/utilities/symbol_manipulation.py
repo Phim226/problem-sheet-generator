@@ -1,4 +1,4 @@
-from sympy import Symbol, Expr, Pow, Mul, Number, Add, S, expand, factor_terms
+from sympy import Symbol, Expr, Pow, Mul, Number, Add, S, expand, factor_terms, factor
 from sympy.vector import CoordSys3D, BaseScalar
 
 # TODO: Write docstrings
@@ -48,7 +48,7 @@ def scalar_expr_from_expr(expr: Expr, C: CoordSys3D) -> Expr:
 
             else:
                 new_expr += _scalar_expr_from_mul(arg, C)
-
+        new_expr = factor(new_expr)
         return factor_terms(new_expr, sign = True)
 
     else:
@@ -75,7 +75,8 @@ def _symbol_from_mul(expr: Mul) -> Expr:
     return new_expr
 
 def symbol_from_coord_scalar(expr: Expr) -> Expr:
-    if (not expr.free_symbols or
+    if (not hasattr(expr, "free_symbols") or
+        not expr.free_symbols or
         not hasattr(next(iter(expr.free_symbols)), "system")):
         return expr
 
@@ -93,6 +94,7 @@ def symbol_from_coord_scalar(expr: Expr) -> Expr:
                 new_expr += Symbol(str(arg)[-1])
             else:
                 new_expr += _symbol_from_mul(arg)
+        new_expr = factor(new_expr)
         return factor_terms(new_expr, sign = True)
 
     else:

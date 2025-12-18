@@ -13,3 +13,6 @@ output/
 
 #vscode settings
 .vscode/
+
+#Build metadata
+*egg-info/

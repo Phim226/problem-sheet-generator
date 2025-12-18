@@ -10,8 +10,8 @@ from pathlib import Path
 from subprocess import CalledProcessError
 from random import choice
 from pylatex import Document, Enumerate
-from core.sheet import Sheet
-from core.question import create_question, TOPIC_REGISTRY, Question
+from problem_sheet_generator.core.sheet import Sheet
+from problem_sheet_generator.core.question import create_question, TOPIC_REGISTRY, Question
 
 
 # TODO: Include docstrings
