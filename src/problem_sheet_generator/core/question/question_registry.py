@@ -2,7 +2,7 @@ from __future__ import annotations
 from inspect import getfullargspec
 from typing import Any, Callable, Type, TYPE_CHECKING
 if TYPE_CHECKING:
-    from question import Question
+    from problem_sheet_generator.core.question import Question
 
 
 """
